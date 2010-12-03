@@ -34,7 +34,7 @@ var Downloader = function() {
 
 	setTimeout(function(){
 		req.on('response', function(resp){});
-		throw 'Request Timed Out';
+		throw new Error('Request Timed Out');
 	}, 30000);
     }
 
