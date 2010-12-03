@@ -1,6 +1,6 @@
 var http = require('http')
 var nodeunit = require('nodeunit');
-var urllib = require('../lib/urllib');
+var urllib = require('../../src/libraries/urllib.js');
 
 
 exports['fetch URLs'] = nodeunit.testCase(
