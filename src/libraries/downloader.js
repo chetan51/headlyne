@@ -1,5 +1,7 @@
 var Downloader = function() {
 
+    thisDownloader = this;
+
     this.fetch = function(url, callback)
     {
         var str='';
@@ -20,9 +22,7 @@ var Downloader = function() {
                         resp.on('end', function(){ callback(str); });
                         break;
                     case 301:
-                    case 302:
-			var d = new Downloader();
-                        d.fetch(resp.headers.location, callback);
+                        thisDownloader.fetch(resp.headers.location, callback);
                         break;
                     default:
                         throw new Error('Failed to Retrieve URL');
