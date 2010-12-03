@@ -23,10 +23,37 @@ exports['fetch URLs'] = nodeunit.testCase(
 		serv.on('close', function(errno){ test.done(); });
 		
 	},
-	'Bad URL': function(test)
+	'redirects': function(test)
 	{
 		test.expect(1);
-		test.throws(Downloader.fetch('lksjdflksdjflksdjaflksdjflksdjkfjsdjf.com'));
-		test.done();
-	}	
+		var serv = http.createServer(function (req, res){
+			res.writeHead(200, {'Content-Type': 'text/html'});
+			res.write('<html><head></head></html>');
+			res.end();
+		});
+		
+		serv.listen(7357, function(){
+			var cb = function(str){ serv.close(); };
+			test.doesNotThrow( function(){
+				Downloader.fetch('http://google.com',cb);
+			});
+		});
+		
+		serv.on('close', function(errno){ test.done(); });
+		
+	},
+	'404 (and other http codes)': function(test)
+	{
+		test.expect(1);
+		test.throws(function(){
+			Downloader.fetch('http://google.com/lkjasdkfjsdfjdf', function(str){test.done();});
+		});
+	},
+	'Bad Domain Name': function(test)
+	{
+		test.expect(1);
+		test.throws(function(){
+			Downloader.fetch('http://lksjdflksdjflksdjaflksdjflksdjkfjsdjf.com', function(str){test.done();});
+		});
+	}
 });

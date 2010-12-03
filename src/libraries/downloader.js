@@ -11,7 +11,7 @@ var Downloader = function() {
         }
         var client = http.createClient(urlObj.port, urlObj.hostname);
 
-        var req = client.request('GET', urlObj.href);	
+        var req = client.request('GET', urlObj.href);
         req.on('response', function(resp)
             {
                 switch(resp.statusCode){
@@ -21,15 +21,21 @@ var Downloader = function() {
                         break;
                     case 301:
                     case 302:
-                        fetch(resp.headers.location, callback);
+			var d = new Downloader();
+                        d.fetch(resp.headers.location, callback);
                         break;
                     default:
-                        throw new Error('Failed to Retrieve URL');
+                        throw 'Failed to Retrieve URL';
                         break;
                 }
             }
         );
-        req.end();
+       	req.end();
+
+	setTimeout(function(){
+		req.on('response', function(resp){});
+		throw 'Request Timed Out';
+	}, 30000);
     }
 
 };
