@@ -44,10 +44,10 @@ exports['fetch URLs'] = nodeunit.testCase(
 	},
 	'404 (and other http codes)': function(test)
 	{
-		test.expect(1);
 		test.throws(function(){
-			Downloader.fetch('http://google.com/lkjasdkfjsdfjdf', function(str){test.done();});
+			Downloader.fetch('http://google.com/lkjasdkfjsdfjdf', function(str){});
 		});
+        test.done();
 	},
 	'Bad Domain Name': function(test)
 	{

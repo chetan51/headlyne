@@ -25,7 +25,7 @@ var Downloader = function() {
                         d.fetch(resp.headers.location, callback);
                         break;
                     default:
-                        throw 'Failed to Retrieve URL';
+                        throw new Error('Failed to Retrieve URL');
                         break;
                 }
             }
