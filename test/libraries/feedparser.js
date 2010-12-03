@@ -1,36 +1,6 @@
 var http = require('http')
 var nodeunit = require('nodeunit');
-var urllib = require('../../src/libraries/urllib.js');
-
-
-exports['fetch URLs'] = nodeunit.testCase(
-{
-	'basic': function(test)
-	{
-		test.expect(1);
-		var serv = http.createServer(function (req, res){
-			res.writeHead(200, {'Content-Type': 'text/html'});
-			res.write('<html><head></head></html>');
-			res.end();
-		});
-		
-		serv.listen(7357, function(){
-			urllib.fetch('http://localhost:7357', function(str){
-				test.equal(str, "<html><head></head></html>");
-				serv.close();
-			});
-		});
-		
-		serv.on('close', function(errno){ test.done(); });
-		
-	},
-	'Bad URL': function(test)
-	{
-		test.expect(1);
-		test.throws(urllib.fetch('lksjdflksdjflksdjaflksdjflksdjkfjsdjf.com'));
-		test.done();
-	}	
-});
+var FeedParser = require('../../src/libraries/feedparser.js');
 
 exports['parse XML'] = nodeunit.testCase(
 {
@@ -59,8 +29,8 @@ exports['parse XML'] = nodeunit.testCase(
                 });
 		
 		serv.listen(7358, function(){
-			urllib.fetch('http://localhost:7358', function(str){
-				test.doesNotThrow(urllib.parse(str));
+			FeedParser.fetch('http://localhost:7358', function(str){
+				test.doesNotThrow(FeedParser.parse(str));
 				
 				serv.close();
 			});
@@ -76,8 +46,8 @@ exports['parse XML'] = nodeunit.testCase(
                 });
 		
 		serv.listen(7359, function(){
-			urllib.fetch('http://localhost:7359', function(str){
-				test.throws(urllib.parse(str));
+			FeedParser.fetch('http://localhost:7359', function(str){
+				test.throws(FeedParser.parse(str));
 				serv.close();
 			});
 		});
