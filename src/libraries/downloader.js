@@ -37,7 +37,6 @@ var Downloader = function() {
         }
 
         setTimeout(function(){
-            req.on('response', function(resp){});
             errback(new Error('Request timed out.'));
         }, timeout);
     }
