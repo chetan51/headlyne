@@ -39,7 +39,7 @@ var Downloader = function() {
                         resp.on('end', function(){ callback(str); });
                         break;
                     case 301:
-		    case 302:
+                    case 302:
                         thisDownloader.fetch(resp.headers.location, callback, errback, timeout, max_redirect_level-1);
                         break;
                     default:
