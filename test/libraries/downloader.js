@@ -13,24 +13,21 @@ var Downloader = require('../../src/libraries/downloader.js');
 var okContent = "<html><head></head><body>ok</body></html>";
 
 /*
+ *  Run mock server for tests
+ */
+
+ServerGenerator.createServer('localhost', 7000, function(serv) {});
+
+/*
  *  Tests
  */
 
 exports['fetch URLs'] = nodeunit.testCase({
 
     setUp: function () {
-        
-        thisTest = this;
-
-        ServerGenerator.createServer('localhost', 7000,
-            function(serv) {
-                thisTest.server = serv;
-            }
-        );
     },
 
     tearDown: function () {
-        ServerGenerator.closeServer(this.server, function() {});
     },
 
 	'ok': function(test)
