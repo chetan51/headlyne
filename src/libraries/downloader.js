@@ -8,7 +8,7 @@ var Downloader = function() {
         var u = require('url'), http = require('http');
 
         var urlObj = u.parse(url);
-        if(!urlObj.port){
+        if(urlObj.port == null || typeof(urlObj.port) == 'undefined'){
             urlObj.port = 80;
         }
         var client = http.createClient(urlObj.port, urlObj.hostname);
