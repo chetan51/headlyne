@@ -11,37 +11,45 @@ var Downloader = require('../../src/libraries/downloader.js');
  */
 
 var okContent = "<html><head></head><body>ok</body></html>";
+var serv;
+
 
 /*
  *  Run mock server for tests
  */
-
-ServerGenerator.createServer('localhost', 7000, function(serv) {});
+ServerGenerator.createServer('localhost', 7000, function(server) {serv = server;});
 
 /*
  *  Tests
  */
 
+
 exports['fetch URLs'] = nodeunit.testCase({
 
-    setUp: function () {
+/*    setUp: function () {
     },
-
+ 
     tearDown: function () {
     },
-
+ */
 	'ok': function(test)
 	{
 
 		test.expect(1);
-
-        Downloader.fetch('http://localhost:7000/ok',
-            function(str){
-                test.equal(str, okContent);
-                test.done();
-            }
-        );
 		
+		// First test using a mock must have a timeout.
+		// Otherwise, it makes the request before the server is ready.
+
+		setTimeout(function(){
+	        	Downloader.fetch('http://localhost:7000/ok',
+		            function(str){
+	        	        test.equal(str, okContent);
+	        	        test.done();
+			    },
+			    function(str){ test.done(); }
+		        );
+		}, 1000);
+
 	},
 
 	'redirect': function(test)
@@ -49,12 +57,13 @@ exports['fetch URLs'] = nodeunit.testCase({
 
 		test.expect(1);
 
-        Downloader.fetch('http://localhost:7000/redirect',
-            function(str){
-                test.equal(str, okContent);
-                test.done();   
-            }
-        );
+	        Downloader.fetch('http://localhost:7000/redirect',
+	            function(str){
+	                test.equal(str, okContent);
+	                test.done();   
+	            },
+		    function(str){ test.done(); }
+	        );
 		
 	},
 
@@ -63,13 +72,13 @@ exports['fetch URLs'] = nodeunit.testCase({
 
 		test.expect(1);
 
-        Downloader.fetch('http://localhost:7000/doesntexist',
-            function(str) {},
-            function(err) {
-                test.equal(err.message, 'Error 404: Page not found.');
-                test.done();
-            }
-        );
+	        Downloader.fetch('http://localhost:7000/doesntexist',
+	            function(str) { test.done(); },
+	            function(err) {
+	                test.equal(err.message, 'Error 404: Page not found.');
+	                test.done();
+	            }
+	        );
 
 	},
 
@@ -77,13 +86,13 @@ exports['fetch URLs'] = nodeunit.testCase({
 	{
 		test.expect(1);
 
-        Downloader.fetch('http://invaliddomainname/',
-            function(str) {},
-            function(err) {
-                test.equal(err.message, 'Error 302: Page not found.');
-                test.done();
-            }
-        );
+	        Downloader.fetch('http://invaliddomainname/',
+	            function(str) { test.done(); },
+	            function(err) {
+	                test.equal(err.message, 'Cannot connect to server.');
+	                test.done();
+	            }
+	        );
 
 	},
 
@@ -92,14 +101,14 @@ exports['fetch URLs'] = nodeunit.testCase({
 
 		test.expect(1);
 
-        Downloader.fetch('http://localhost:7000/timeout',
-            function(str) {},
-            function(err) {
-                test.equal(err.message, 'Request timed out.');
-                test.done();
-            },
-            0
-        );
+	        Downloader.fetch('http://localhost:7000/timeout',
+	            function(str) { test.done(); },
+	            function(err) {
+	                test.equal(err.message, 'Request timed out.');
+	                test.done();
+	            },
+	            0
+	        );
 		
 	},
 
@@ -108,14 +117,13 @@ exports['fetch URLs'] = nodeunit.testCase({
 
 		test.expect(1);
 
-        Downloader.fetch('http://localhost:7000/endlessredirect',
-            function(str) {},
-            function(err) {
-                test.equal(err.message, 'Endless redirection.');
-                test.done();
-            }
-        );
+	        Downloader.fetch('http://localhost:7000/endlessredirect',
+	            function(str) { test.done(); },
+	            function(err) {
+	                test.equal(err.message, 'Endless redirection.');
+	                test.done();
+	            }
+	        );
 		
 	}
-
 });
