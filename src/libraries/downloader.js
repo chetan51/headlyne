@@ -2,7 +2,7 @@ var Downloader = function() {
 
     thisDownloader = this;
 
-    this.fetch = function(url, callback, errback)
+    this.fetch = function(url, callback, errback, timeout)
     {
         var str='';
         var u = require('url'), http = require('http');
@@ -32,10 +32,14 @@ var Downloader = function() {
         );
        	req.end();
 
-	setTimeout(function(){
-		req.on('response', function(resp){});
-		errback(new Error('Request timed out.'));
-	}, 30000);
+        if (!timeout) {
+            timeout = 30000;
+        }
+
+        setTimeout(function(){
+            req.on('response', function(resp){});
+            errback(new Error('Request timed out.'));
+        }, timeout);
     }
 
 };
