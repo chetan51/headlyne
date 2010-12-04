@@ -17,7 +17,7 @@ var serv;
 /*
  *  Run mock server for tests
  */
-ServerGenerator.createServer('localhost', 7000, function(server) {serv = server;});
+ServerGenerator.createServer('localhost', 7000, function(server) {});
 
 /*
  *  Tests
