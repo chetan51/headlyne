@@ -67,6 +67,26 @@ exports['fetch URLs'] = nodeunit.testCase({
 		
 	},
 
+    /* To implement later
+     *
+	'ssl request': function(test) {
+
+		test.expect(1);
+
+		Downloader.fetch('https://github.com/danwrong/restler/', // change this to something local
+			function(str){
+				test.equal(str, okContent);
+				test.done();   
+			},
+			function(err){
+				console.log(err);
+				test.done();
+            }
+		);
+
+	},
+    */
+
 	'404 (and other http invalid codes)': function(test)
 	{
 
@@ -89,7 +109,7 @@ exports['fetch URLs'] = nodeunit.testCase({
 	        Downloader.fetch('http://invaliddomainname/',
 	            function(str) { test.done(); },
 	            function(err) {
-	                test.equal(err.message, 'Cannot connect to server.');
+	                test.equal(err.message, 'Error 400: Page not found.');
 	                test.done();
 	            }
 	        );
