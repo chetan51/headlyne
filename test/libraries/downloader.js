@@ -109,7 +109,7 @@ exports['fetch URLs'] = nodeunit.testCase({
 	        Downloader.fetch('http://invaliddomainname/',
 	            function(str) { test.done(); },
 	            function(err) {
-	                test.equal(err.message, 'Error 400: Page not found.');
+	                test.equal(err.message, 'Cannot connect to server.');
 	                test.done();
 	            }
 	        );
