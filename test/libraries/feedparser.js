@@ -1,17 +1,13 @@
 var http = require('http')
 var nodeunit = require('nodeunit');
 var FeedParser = require('../../src/libraries/feedparser.js');
-var Downloader = require('../../src/libraries/downloader.js');
-
 
 exports['parse XML'] = nodeunit.testCase(
 {
 	'basic': function(test)
 	{
-		test.expect(1);
-		var serv = http.createServer(function (req, res){
-                        res.writeHead(200, {'Content-Type': 'text/html'});
-                        res.end('<?xml version="1.0" ?><rss version="2.0">  <channel><title>RSSFeed1</title> '+
+		test.expect(6);
+                var rss = '<?xml version="1.0" ?><rss version="2.0">  <channel><title>RSSFeed1</title> '+
 				'<description>Feed desc.</description>'+
 				'<link>feedlink.com</link>'+
 
@@ -29,40 +25,87 @@ exports['parse XML'] = nodeunit.testCase(
 				'<title>Item2</title>'+
 				'</item>'+
 
-				'</channel></rss>');
-                });
-		serv.listen(7357, 'localhost', function(){
-			Downloader.fetch('http://localhost:7357', function(str){
-				test.doesNotThrow( function(){
-					FeedParser.parse(str, function(items){
-							for(i in items)
-							{
-								console.log("title: "+items[i][0]);
-								console.log("link: "+items[i][1]);
-								console.log("desc: "+items[i][2]);
-							}
-					});
-				} );
-				serv.close();
-			});
-		});
-		serv.on('close', function(errno){ test.done(); });
+				'</channel></rss>';
+
+		FeedParser.parse(rss, function(){test.ok(1);}, function(){test.equal('','Parse-Error');});
+		
+		FeedParser.parse(rss, function(channelinfo, items, type, version)
+			{
+				test.equal(channelinfo.length, 3);
+				for(i in channelinfo)
+				{
+					if(channelinfo[i][0] == 'title')
+						test.equal(channelinfo[i][1], 'RSSFeed1');
+					else if(channelinfo[i][0] == 'link')
+						test.equal(channelinfo[i][1], 'feedlink.com');
+					else if(channelinfo[i][0] == 'description')
+						test.equal(channelinfo[i][1], 'Feed desc.');
+				}
+
+				test.equal(items.length, 3);
+				for(i in items)
+				{
+					
+				}
+				test.done();
+			},
+			function(){ test.equal('','Parse-Error'); test.done(); }
+		);
 	},
-	'BreakTest': function(test)
+	'Malformed': function(test)
 	{
 		test.expect(1);
-		var serv = http.createServer(function (req, res){
-                        res.writeHead(404, {'Content-Type': 'text/html'});
-                        res.end();
-                });
-		
-		serv.listen(7357, function(){
-			Downloader.fetch('http://localhost:7357', function(str){
-				test.throws(FeedParser.parse(str, function(items){}));
-				serv.close();
-			});
-		});
-		serv.on('close', function(errno){ test.done(); });
-		
+		str='<malformed><xml></malformed>';
+		FeedParser.parse(str, function(){
+				test.equal('','Malformed');
+				test.done();
+			}, function(err)
+			{
+				test.equal(err.message, 'Element: must be nested correctly');
+				test.done();
+			}
+		);
+	},
+	'Incomplete': function(test)
+	{
+		test.expect(1);
+		str='<malformed><xml></malfo';
+		FeedParser.parse(str, function(){
+				test.equal('','Incomplete');
+				test.done();
+			}, function(err)
+			{
+				test.equal(err.message, 'Parser timed out.');
+				test.done();
+			}
+		);
+	},
+	'Timed Out': function(test)
+	{
+		test.expect(1);
+		str='<xml></xml>';
+		FeedParser.parse(str, function(){
+				test.equal('','Timed Out');
+				test.done();
+			}, function(err)
+			{
+				test.equal(err.message, 'Parser timed out.');
+				test.done();
+			}, 0
+		);
+	}
+});
+
+exports['strip URLs'] = nodeunit.testCase(
+{
+	'basic': function(test)
+	{
+		test.expect(3);
+		var str='watch this video:    http://vimeo.com/8122132   and then see this picture http://www.flickr.com/photos/pmorgan/32606683/';
+		var ret = FeedParser.stripURLs(str);
+		test.equal(ret.length, 2);
+		test.equal(ret[0], 'http://vimeo.com/8122132');
+		test.equal(ret[1], 'http://www.flickr.com/photos/pmorgan/32606683/');
+		test.done();
 	}
 });
