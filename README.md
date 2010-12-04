@@ -7,6 +7,7 @@
 	- Ni
 	- Connect
 	- Nodeunit
+    - node-xml
 
 ## Infrastructure:
 - app.js	: The driver for the webserver.

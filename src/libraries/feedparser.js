@@ -1,4 +1,4 @@
-var xml = require('./node-xml')
+var xml = require('node-xml');
 
 var FeedParser = function() {
 
