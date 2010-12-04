@@ -1,59 +1,128 @@
-var http = require('http')
+/*
+ *  Module dependencies
+ */
+
 var nodeunit = require('nodeunit');
+var ServerGenerator = require('../../test/mocks/server.js');
 var Downloader = require('../../src/libraries/downloader.js');
 
-exports['fetch URLs'] = nodeunit.testCase(
-{
-	'basic': function(test)
+/*
+ *  Constants
+ */
+
+var okContent = "<html><head></head><body>ok</body></html>";
+
+/*
+ *  Tests
+ */
+
+exports['fetch URLs'] = nodeunit.testCase({
+
+    setUp: function () {
+        
+        thisTest = this;
+
+        ServerGenerator.createServer('localhost', 7000,
+            function(serv) {
+                thisTest.server = serv;
+            }
+        );
+    },
+
+    tearDown: function () {
+        ServerGenerator.closeServer(this.server, function() {});
+    },
+
+	'ok': function(test)
 	{
+
 		test.expect(1);
-		var serv = http.createServer(function (req, res){
-			res.writeHead(200, {'Content-Type': 'text/html'});
-			res.write('<html><head></head></html>');
-			res.end();
-		});
-		
-		serv.listen(7357, function(){
-			Downloader.fetch('http://localhost:7357', function(str){
-				test.equal(str, "<html><head></head></html>");
-				serv.close();
-			});
-		});
-		
-		serv.on('close', function(errno){ test.done(); });
+
+        Downloader.fetch('http://localhost:7000/ok',
+            function(str){
+                test.equal(str, okContent);
+                test.done();
+            }
+        );
 		
 	},
-	'redirects': function(test)
+
+	'redirect': function(test)
 	{
+
 		test.expect(1);
-		var serv = http.createServer(function (req, res){
-			res.writeHead(200, {'Content-Type': 'text/html'});
-			res.write('<html><head></head></html>');
-			res.end();
-		});
-		
-		serv.listen(7357, function(){
-			var cb = function(str){ serv.close(); };
-			test.doesNotThrow( function(){
-				Downloader.fetch('http://google.com',cb);
-			});
-		});
-		
-		serv.on('close', function(errno){ test.done(); });
+
+        Downloader.fetch('http://localhost:7000/redirect',
+            function(str){
+                test.equal(str, okContent);
+                test.done();   
+            }
+        );
 		
 	},
-	'404 (and other http codes)': function(test)
+
+	'404 (and other http invalid codes)': function(test)
 	{
-		test.throws(function(){
-			Downloader.fetch('http://google.com/lkjasdkfjsdfjdf', function(str){});
-		});
-        test.done();
+
+		test.expect(1);
+
+        Downloader.fetch('http://localhost:7000/doesntexist',
+            function(str) {},
+            function(err) {
+                test.equal(err.message, 'Error 404: Page not found.');
+                test.done();
+            }
+        );
+
 	},
-	'Bad Domain Name': function(test)
+
+	'bad domain name': function(test)
 	{
 		test.expect(1);
-		test.throws(function(){
-			Downloader.fetch('http://lksjdflksdjflksdjaflksdjflksdjkfjsdjf.com', function(str){test.done();});
-		});
+
+        Downloader.fetch('http://invaliddomainname/',
+            function(str) {},
+            function(err) {
+                test.equal(err.message, 'Error 302: Page not found.');
+                test.done();
+            }
+        );
+
+	},
+
+/*  This test takes too long to run (obviously), but we still
+ *  need it somehow to test the timeout function. Somehow make
+ *  it run in parallel with the other tests or something.
+ *
+    'timeout': function(test)
+	{
+
+		test.expect(1);
+
+        Downloader.fetch('http://localhost:7000/timeout',
+            function(str) {},
+            function(err) {
+                test.equal(err.message, 'Request timed out.');
+                test.done();
+            }
+        );
+		
+	},
+*/
+
+	'endless redirects': function(test)
+	{
+
+		test.expect(1);
+
+        Downloader.fetch('http://localhost:7000/endlessredirect',
+            function(str) {},
+            function(err) {
+                test.equal(err.message, 'Endless redirection.');
+                test.done();
+            }
+        );
+		
 	}
+
 });
