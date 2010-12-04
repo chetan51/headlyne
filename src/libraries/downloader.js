@@ -32,7 +32,7 @@ var Downloader = function() {
         );
        	req.end();
 
-        if (!timeout) {
+        if (timeout == null || typeof(timeout) == 'undefined') {
             timeout = 30000;
         }
 

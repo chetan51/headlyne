@@ -90,10 +90,6 @@ exports['fetch URLs'] = nodeunit.testCase({
 
 	},
 
-/*  This test takes too long to run (obviously), but we still
- *  need it somehow to test the timeout function. Somehow make
- *  it run in parallel with the other tests or something.
- *
     'timeout': function(test)
 	{
 
@@ -104,11 +100,11 @@ exports['fetch URLs'] = nodeunit.testCase({
             function(err) {
                 test.equal(err.message, 'Request timed out.');
                 test.done();
-            }
+            },
+            0
         );
 		
 	},
-*/
 
 	'endless redirects': function(test)
 	{
