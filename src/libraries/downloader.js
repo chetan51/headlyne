@@ -2,7 +2,7 @@ var Downloader = function() {
 
     thisDownloader = this;
 
-    this.fetch = function(url, callback)
+    this.fetch = function(url, callback, errback)
     {
         var str='';
         var u = require('url'), http = require('http');
@@ -25,7 +25,7 @@ var Downloader = function() {
                         thisDownloader.fetch(resp.headers.location, callback);
                         break;
                     default:
-                        throw new Error('Failed to Retrieve URL');
+                        errback(new Error("Error " + resp.statusCode + ": Page not found."));
                         break;
                 }
             }
@@ -34,7 +34,7 @@ var Downloader = function() {
 
 	setTimeout(function(){
 		req.on('response', function(resp){});
-		throw new Error('Request Timed Out');
+		errback(new Error('Request timed out.'));
 	}, 30000);
     }
 
