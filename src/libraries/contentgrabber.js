@@ -1,6 +1,6 @@
 
 /* Dependencies */
-var Readability = require('readability.js');
+var Readability = require('node-readability');
 var jsdom       = require('jsdom');
 
 /*
