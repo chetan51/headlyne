@@ -4,6 +4,7 @@
  */
 var nodeunit = require('nodeunit');
 var ContentGrabber = require('../../src/libraries/contentgrabber.js');
+var fs = require('fs');
 
 /*
  *  Sample data
@@ -23,7 +24,10 @@ exports['grab content from page'] = nodeunit.testCase(
  */
 	'basic': function(test) {
 		test.expect(1);
-		test.equal(1, 1);
+		var html = fs.readFileSync('./test/mocks/nodejsblog.html', 'utf-8');
+		//console.log(html);
+		console.log(ContentGrabber.readable(html));
+		test.ok(1);
 		test.done();
 	}
 });

@@ -16,6 +16,14 @@ var ContentGrabber = function() {
 	{
 		return jsdom.jsdom(html);
 	};
+
+	this.readable = function(html)
+	{
+		Readability.init(thisContentGrabber.domify(html), true);
+		var article_element = Readability.grabArticle();
+
+		return Readability.getInnerText(article_element, false);
+	};
 };
 
 module.exports = new ContentGrabber();

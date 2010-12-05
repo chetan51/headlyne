@@ -3,6 +3,8 @@ var dbg = function(s) {
 		console.log("Readability: " + s);
 };
 
+var jsdom = require('jsdom');
+
 /*
  * Readability. An Arc90 Lab Experiment. 
  * Website: http://lab.arc90.com/experiments/Readability
@@ -13,6 +15,11 @@ var dbg = function(s) {
  *
  * Modified by Chetan Surpur and Manoj Mardithaya.
 **/
+
+//HACKISH
+var readStyle= '';
+var readMargin= '';
+var readSize= '';
 
 var Readability = {
 	version:     '0.5.1',
@@ -44,6 +51,8 @@ var Readability = {
 		videoRe:                /http:\/\/(www\.)?(youtube|vimeo)\.com/i
 	},
 
+	document: '',      // init will populate this.
+
 	/**
 	 * Runs Readability.
 	 * 
@@ -56,7 +65,9 @@ var Readability = {
 	 *
 	 * @return void
 	 **/
-	init: function(preserveUnlikelyCandidates) {
+	init: function(dom, preserveUnlikelyCandidates) {
+		document = dom;
+
 		preserveUnlikelyCandidates = (typeof preserveUnlikelyCandidates == 'undefined') ? false : preserveUnlikelyCandidates;
 
 		if(document.body && !Readability.bodyCache)
@@ -268,7 +279,7 @@ var Readability = {
 		/* Remove all style tags in head (not doing this on IE) - TODO: Why not? */
 		var styleTags = document.getElementsByTagName("style");
 		for (var j=0;j < styleTags.length; j++)
-			if (navigator.appName != "Microsoft Internet Explorer")
+//			if (navigator.appName != "Microsoft Internet Explorer")
 				styleTags[j].textContent = "";
 
 		/* Turn all double br's into p's */
@@ -421,8 +432,9 @@ var Readability = {
 				}
 				else
 				{
+//HACKISH
 					/* EXPERIMENTAL */
-					for(var i = 0, il = node.childNodes.length; i < il; i++) {
+					/*for(var i = 0, il = node.childNodes.length; i < il; i++) {
 						var childNode = node.childNodes[i];
 						if(childNode.nodeType == Node.TEXT_NODE) {
 							dbg("replacing text node with a p tag with the same content.");
@@ -432,7 +444,7 @@ var Readability = {
 							p.className = 'Readability-styled';
 							childNode.parentNode.replaceChild(p, childNode);
 						}
-					}
+					}*/
 				}
 			} 
 		}
@@ -590,9 +602,9 @@ var Readability = {
 
 		normalizeSpaces = (typeof normalizeSpaces == 'undefined') ? true : normalizeSpaces;
 
-		if (navigator.appName == "Microsoft Internet Explorer")
-			textContent = e.innerText.replace( Readability.regexps.trimRe, "" );
-		else
+//		if (navigator.appName == "Microsoft Internet Explorer")
+//			textContent = e.innerText.replace( Readability.regexps.trimRe, "" );
+//		else
 			textContent = e.textContent.replace( Readability.regexps.trimRe, "" );
 
 		if(normalizeSpaces)
