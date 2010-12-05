@@ -10,6 +10,7 @@
 	- node-xml
 	- jsdom
 	- node-htmlparser
+	- node-readability
 
 ## Infrastructure:
 	- app.js                : The driver for the webserver.

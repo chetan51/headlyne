@@ -1,6 +1,6 @@
 
 /* Dependencies */
-var Readability = require('./external/readability.js');
+var Readability = require('readability.js');
 var jsdom       = require('jsdom');
 
 /*
