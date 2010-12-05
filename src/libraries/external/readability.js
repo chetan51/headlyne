@@ -1,5 +1,5 @@
 var dbg = function(s) {
-	if(typeof console !== 'undefined')
+	if(typeof console !== 'undefined' && false)
 		console.log("Readability: " + s);
 };
 
@@ -69,13 +69,16 @@ var Readability = {
 		
 		if (style == null) {
 			readStyle = "";
-		}
+		} else
+			readStyle = style;
 		if (margin == null) {
 			readMargin = "";
-		}
+		} else
+			readMargin = margin;
 		if (size == null) {
 			readSize = "";
-		}
+		} else
+			readSize = size;
 
 		preserveUnlikelyCandidates = (typeof preserveUnlikelyCandidates == 'undefined') ? false : preserveUnlikelyCandidates;
 

@@ -5,6 +5,7 @@
 var nodeunit = require('nodeunit');
 var ContentGrabber = require('../../src/libraries/contentgrabber.js');
 var fs = require('fs');
+var jsdom = require('jsdom');
 
 /*
  *  Sample data
@@ -23,11 +24,13 @@ exports['grab content from page'] = nodeunit.testCase(
     },
  */
 	'basic': function(test) {
-		test.expect(1);
+		test.expect(2);
 		var html = fs.readFileSync('./test/mocks/nodejsblog.html', 'utf-8');
-		//console.log(html);
-		console.log(ContentGrabber.readable(html));
-		test.ok(1);
+		
+		var dom = ContentGrabber.readable(html);
+
+		test.equal((dom.innerHTML).length, 7005);
+		test.equal(dom.childNodes[0].childNodes.length, 75);
 		test.done();
 	}
 });
