@@ -16,11 +16,6 @@ var jsdom = require('jsdom');
  * Modified by Chetan Surpur and Manoj Mardithaya.
 **/
 
-//HACKISH
-var readStyle= '';
-var readMargin= '';
-var readSize= '';
-
 var Readability = {
 	version:     '0.5.1',
 	emailSrc:    'http://lab.arc90.com/experiments/Readability/email.php',
@@ -50,8 +45,12 @@ var Readability = {
 		killBreaksRe:           /(<br\s*\/?>(\s|&nbsp;?)*){1,}/g,
 		videoRe:                /http:\/\/(www\.)?(youtube|vimeo)\.com/i
 	},
-
-	document: '',      // init will populate this.
+	
+	/* Function init will populate these. */
+	document: '',
+	readStyle: '',
+	readMargin: '',
+	readSize: '',
 
 	/**
 	 * Runs Readability.
@@ -65,8 +64,18 @@ var Readability = {
 	 *
 	 * @return void
 	 **/
-	init: function(dom, preserveUnlikelyCandidates) {
+	init: function(dom, preserveUnlikelyCandidates, style, margin, size) {
 		document = dom;
+		
+		if (style == null) {
+			readStyle = "";
+		}
+		if (margin == null) {
+			readMargin = "";
+		}
+		if (size == null) {
+			readSize = "";
+		}
 
 		preserveUnlikelyCandidates = (typeof preserveUnlikelyCandidates == 'undefined') ? false : preserveUnlikelyCandidates;
 
