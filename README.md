@@ -8,6 +8,8 @@
 	- Connect
 	- Nodeunit
 	- node-xml
+	- jsdom
+	- node-htmlparser
 
 ## Infrastructure:
 	- app.js                : The driver for the webserver.
