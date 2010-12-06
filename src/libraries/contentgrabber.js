@@ -18,7 +18,7 @@ var ContentGrabber = function()
 
 	this.readable = function(html)
 	{
-		Readability.init( thisContentGrabber.domify(html) );
+		Readability.init(html);
 		var article_element = Readability.grabArticle();
 		return article_element.innerHTML;
 	};

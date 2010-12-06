@@ -5,7 +5,6 @@
 var nodeunit = require('nodeunit');
 var ContentGrabber = require('../../src/libraries/contentgrabber.js');
 var fs = require('fs');
-var jsdom = require('jsdom');
 
 /**
  *  Sample data
@@ -36,7 +35,6 @@ exports['grab content from page'] = nodeunit.testCase(
 		
 		var html = fs.readFileSync(sampleHTMLFile, 'utf-8');
 		var readableHTML = ContentGrabber.readable(html);
-		
 		test.notEqual(readableHTML.search(sampleHTMLFirstLine), -1);
 		test.notEqual(readableHTML.search(sampleHTMLLastLine), -1);
 		test.done();
