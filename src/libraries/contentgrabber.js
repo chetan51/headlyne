@@ -20,7 +20,7 @@ var ContentGrabber = function()
 	{
 		Readability.init( thisContentGrabber.domify(html) );
 		var article_element = Readability.grabArticle();
-		return article_element;
+		return article_element.innerHTML;
 	};
 };
 
