@@ -3,7 +3,7 @@
  */
 var nodeunit = require('nodeunit');
 var ServerGenerator = require('../../test/mocks/server.js');
-var Downloader = require('../../src/libraries/downloader.js');
+var Downloader = require('../../src/libraries/Downloader.js');
 
 /*
  *  Constants

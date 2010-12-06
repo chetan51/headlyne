@@ -1,9 +1,8 @@
-
 /**
  *  Module dependencies
  **/
 var nodeunit = require('nodeunit');
-var ContentGrabber = require('../../src/libraries/contentgrabber.js');
+var ContentGrabber = require('../../src/libraries/ContentGrabber.js');
 var fs = require('fs');
 
 /**
@@ -14,8 +13,7 @@ var html='<html><head></head><body><div id="lol">hello</div></body></html>';
 /**
  *  Test Constants
  **/
-
-var sampleHTMLFile       = './test/mocks/nodejsblog.html';
+var sampleHTMLFile       = './test/mocks/sample_page.html';
 var sampleHTMLFirstLine  = "Three reasons: speed, easability, and reusability.";
 var sampleHTMLLastLine   = "Sorry about that everyone!";
 
@@ -30,14 +28,23 @@ exports['grab content from page'] = nodeunit.testCase(
     tearDown: function () {
     },
  */
-	'basic': function(test) {
+	'basic': function(test)
+	{
 		test.expect(2);
 		
 		var html = fs.readFileSync(sampleHTMLFile, 'utf-8');
-		var readableHTML = ContentGrabber.readable(html);
-		test.notEqual(readableHTML.search(sampleHTMLFirstLine), -1);
-		test.notEqual(readableHTML.search(sampleHTMLLastLine), -1);
-		test.done();
+		
+		ContentGrabber.readable(
+			html,
+			function(readableHTML) {
+				test.notEqual(readableHTML.search(sampleHTMLFirstLine), -1);
+				test.notEqual(readableHTML.search(sampleHTMLLastLine), -1);
+				test.done();
+			},
+			function(error) {
+				test.done();
+			}
+		);
 	}
 });
 

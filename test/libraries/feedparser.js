@@ -1,6 +1,6 @@
 var http = require('http')
 var nodeunit = require('nodeunit');
-var FeedParser = require('../../src/libraries/feedparser.js');
+var FeedParser = require('../../src/libraries/FeedParser.js');
 
 exports['parse XML'] = nodeunit.testCase(
 {
