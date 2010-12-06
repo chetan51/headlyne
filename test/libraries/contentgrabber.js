@@ -34,12 +34,19 @@ exports['grab content from page'] = nodeunit.testCase(
 		test.expect(2);
 		
 		var html = fs.readFileSync(sampleHTMLFile, 'utf-8');
-		var readableHTML = ContentGrabber.readable(html);
 		
-		test.notEqual(readableHTML.search(sampleHTMLFirstLine), -1);
-		test.notEqual(readableHTML.search(sampleHTMLLastLine), -1);
+		ContentGrabber.readable(
+			html,
+			function(readableHTML) {
+				test.notEqual(readableHTML.search(sampleHTMLFirstLine), -1);
+				test.notEqual(readableHTML.search(sampleHTMLLastLine), -1);
+				test.done();
+			},
+			function(error) {
+				test.done();
+			}
+		);
 		
-		test.done();
 	}
 });
 
