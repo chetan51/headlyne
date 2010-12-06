@@ -11,6 +11,7 @@
 	- jsdom
 	- node-htmlparser
 	- node-readability
+	- [node-webworker v0.8.2](https://github.com/pgriess/node-webworker)
 
 ## Infrastructure:
 	- app.js                : The driver for the webserver.
