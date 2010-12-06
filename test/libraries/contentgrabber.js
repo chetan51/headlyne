@@ -1,27 +1,28 @@
 
-/*
+/**
  *  Module dependencies
- */
+ **/
 var nodeunit = require('nodeunit');
 var ContentGrabber = require('../../src/libraries/ContentGrabber.js');
 var fs = require('fs');
+var jsdom = require('jsdom');
 
-/*
+/**
  *  Sample data
- */
+ **/
 var html='<html><head></head><body><div id="lol">hello</div></body></html>';
 
-/*
+/**
  *  Test Constants
- */
+ **/
 
 var sampleHTMLFile       = './test/mocks/sample_page.html';
 var sampleHTMLFirstLine  = "Three reasons: speed, easability, and reusability.";
 var sampleHTMLLastLine   = "Sorry about that everyone!";
 
-/*
+/**
  *  Tests
- */
+ **/
 exports['grab content from page'] = nodeunit.testCase(
 {
 /*    setUp: function () {
@@ -46,7 +47,6 @@ exports['grab content from page'] = nodeunit.testCase(
 				test.done();
 			}
 		);
-		
 	}
 });
 

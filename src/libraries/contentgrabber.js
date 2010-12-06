@@ -1,16 +1,15 @@
-
 /* Dependencies */
 var jsdom       = require('jsdom');
 var path        = require('path');
 var Worker      = require('webworker').Worker;
 
-/*
+/**
  * ContentGrabber: given a URL, fetch *only* the text
  * content from that page.
- */
+ **/
 
-var ContentGrabber = function() {
-
+var ContentGrabber = function()
+{
 	thisContentGrabber = this;
 	
 	this.domify = function(html)
@@ -41,7 +40,6 @@ var ContentGrabber = function() {
 			command : 'grabContent',
 			html    : html
 		});
-
 	};
 };
 
