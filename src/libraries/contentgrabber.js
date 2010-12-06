@@ -22,7 +22,7 @@ var ContentGrabber = function() {
 		Readability.init(thisContentGrabber.domify(html), true);
 		var article_element = Readability.grabArticle();
 
-		return Readability.getInnerText(article_element, false);
+		return article_element.innerHTML;
 	};
 };
 

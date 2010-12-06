@@ -12,6 +12,14 @@ var fs = require('fs');
 var html='<html><head></head><body><div id="lol">hello</div></body></html>';
 
 /*
+ *  Test Constants
+ */
+
+var sampleHTMLFile       = './test/mocks/nodejsblog.html';
+var sampleHTMLFirstLine  = "Three reasons: speed, easability, and reusability.";
+var sampleHTMLLastLine   = "Sorry about that everyone!";
+
+/*
  *  Tests
  */
 exports['grab content from page'] = nodeunit.testCase(
@@ -23,11 +31,14 @@ exports['grab content from page'] = nodeunit.testCase(
     },
  */
 	'basic': function(test) {
-		test.expect(1);
-		var html = fs.readFileSync('./test/mocks/nodejsblog.html', 'utf-8');
-		//console.log(html);
-		console.log(ContentGrabber.readable(html));
-		test.ok(1);
+		test.expect(2);
+		
+		var html = fs.readFileSync(sampleHTMLFile, 'utf-8');
+		var readableHTML = ContentGrabber.readable(html);
+		
+		test.notEqual(readableHTML.search(sampleHTMLFirstLine), -1);
+		test.notEqual(readableHTML.search(sampleHTMLLastLine), -1);
+		
 		test.done();
 	}
 });
