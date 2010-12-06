@@ -1,15 +1,14 @@
-
 /* Dependencies */
 var Readability = require('node-readability');
 var jsdom       = require('jsdom');
 
-/*
+/**
  * ContentGrabber: given a URL, fetch *only* the text
  * content from that page.
- */
+ **/
 
-var ContentGrabber = function() {
-
+var ContentGrabber = function()
+{
 	thisContentGrabber = this;
 	
 	this.domify = function(html)
@@ -19,10 +18,9 @@ var ContentGrabber = function() {
 
 	this.readable = function(html)
 	{
-		Readability.init(thisContentGrabber.domify(html), true);
+		Readability.init( thisContentGrabber.domify(html) );
 		var article_element = Readability.grabArticle();
-
-		return article_element.innerHTML;
+		return article_element;
 	};
 };
 
