@@ -1,6 +1,6 @@
 var Downloader = function() {
 	
-	thisDownloader = this;
+	var self = this;
 	
 	this.fetch = function(url, callback, errback, timeout, max_redirect_level)
 	{
@@ -39,7 +39,7 @@ var Downloader = function() {
 					break;
 				case 301:
 				case 302:
-					thisDownloader.fetch(resp.headers.location, callback, errback, timeout, max_redirect_level-1);
+					self.fetch(resp.headers.location, callback, errback, timeout, max_redirect_level-1);
 					break;
 				default:
 					errback(new Error("Error " + resp.statusCode + ": Page not found."));

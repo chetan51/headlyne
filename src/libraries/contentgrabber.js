@@ -10,7 +10,7 @@ var Worker      = require('webworker').Worker;
 
 var ContentGrabber = function()
 {
-	thisContentGrabber = this;
+	var self = this;
 	
 	this.domify = function(html)
 	{
