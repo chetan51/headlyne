@@ -5,12 +5,8 @@
 /**
  * Model dependencies
  **/
-var Mongo      = require('mongodb'),
-    Db         = Mongo.Db,
-    Connection = Mongo.Connection,
-    Server     = Mongo.Server,
-    BSON       = Mongo.BSONPure;
-var crypto     = require('crypto');
+var crypto         = require('crypto');
+var DatabaseDriver = require('../libraries/DatabaseDriver.js');
 
 /**
  * DB Access Parameters
@@ -23,59 +19,10 @@ var db_name = 'headlyne',
 
 var Feed = function()
 {
-	function getCollection(collection_name, errback, callback)
-	{
-		var db = new Db(db_name, new Server(db_addr, db_port, {}));
-		//db.authenticate(db_user, db_port))
-		db.open(
-			function(err, db2)
-			{
-			if(err != null) {
-				errback(new Error('Database Connection Error'));
-			} else {
-				db2.collection(
-					collection_name,
-					function(err, collection)
-					{
-						if(err != null) {
-							errback(new Error('Database Access Error'));
-						} else {
-							callback(collection);
-						}
-					}
-				);
-			}
-			}
-		);
-	}
-	
-	function ensureExists(collection, key, obj, errback, callback)
-	{
-		collection.findOne(
-			key,
-			function(err, doc)
-			{
-				if(err != null)
-					errback(new Error('Database Search Error'));
-				else {
-					if(typeof(doc) == 'undefined') {
-						collection.insert(
-							obj,
-							function(err, inserted_docs)
-							{
-								if(err != null)
-									errback(new Error('Database Insertion Error'));
-								else
-									callback(inserted_docs[0].url_hash);
-							}
-						);
-					} else {
-						callback(doc.url_hash);
-					}
-				}
-			}
-		);
-	}
+	/**
+	 * Initilializer (temporary)
+	 **/
+	DatabaseDriver.init(db_name, db_addr, db_port, db_user, db_pass);
 	
 	/**
 	 * Saves a feed to the database.
@@ -90,7 +37,7 @@ var Feed = function()
 	 **/
 	this.save = function(url, title, author, description, errback, callback)
 	{
-		getCollection(
+		DatabaseDriver.getCollection(
 			'feeds',
 			function(err)
 			{
@@ -102,7 +49,7 @@ var Feed = function()
 				hasher.update(url);
 				var url_hash = hasher.digest('hex');
 				
-				ensureExists(
+				DatabaseDriver.ensureExists(
 					collection,
 					{'url_hash': url_hash},
 					{'url': url,
@@ -144,7 +91,7 @@ var Feed = function()
 	 **/
 	this.get = function(feed_id, errback, callback)
 	{
-		getCollection(
+		DatabaseDriver.getCollection(
 			'feeds',
 			function(err)
 			{
