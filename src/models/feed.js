@@ -3,14 +3,13 @@
  **/
 
 /**
- * Dependencies
+ * Model dependencies
  **/
-var Mongo = require('../lib/mongodb');
-
-var	Db = Mongo.Db,
-	Connection = Mongo.Connection,
-	Server = Mongo.Server,
-	BSON = Mongo.BSONPure;
+var Mongo      = require('../lib/mongodb'),
+    Db         = Mongo.Db,
+    Connection = Mongo.Connection,
+    Server     = Mongo.Server,
+    BSON       = Mongo.BSONPure;
 
 
 var Feed = function()
