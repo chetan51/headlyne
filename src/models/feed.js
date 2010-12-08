@@ -5,7 +5,7 @@
 /**
  * Model dependencies
  **/
-var Mongo      = require('../lib/mongodb'),
+var Mongo      = require('mongodb'),
     Db         = Mongo.Db,
     Connection = Mongo.Connection,
     Server     = Mongo.Server,
