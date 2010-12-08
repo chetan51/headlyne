@@ -15,7 +15,60 @@ var	Db = Mongo.Db,
 
 var Feed = function()
 {
-// Randomly assorted mongodb code, for get, put:
+	
+	/*
+	 * 	Saves a feed to the database.
+	 * 	
+	 * 		Arguments:    url
+	 * 		              title
+	 * 		              author
+	 * 		              description
+	 * 		              
+	 *		Returns:      the feed_id of the item that was saved
+	 *		              false on error
+	 */
+	this.save = function(url, title, author, description)
+	{
+		
+	}
+	
+	/*
+	 * 	Gets a feed from the database.
+	 * 	
+	 * 		Arguments:    feed_id
+	 * 		              
+	 *		Returns:      JSON object {
+	 *		                  feed_id
+	 *		                  url
+	 *		                  title
+	 *		                  author
+	 *		                  description
+	 *		                  time_modified
+	 *		              } if feed exists
+	 *		              false if feed doesn't exist
+	 */
+	this.get = function(feed_id)
+	{
+		
+	}
+
+	/*
+	 * 	Checks if a feed is up to date, relative to a given
+	 * 	expiry length.
+	 * 	
+	 * 		Arguments:    feed_id
+	 * 		              expiry_length (in minutes)
+	 * 		              
+	 *		Returns:      true if feed.time_modified
+	 *		                  < now - expiry_length
+	 *		              false otherwise
+	 */
+	this.isUpToDate = function(feed_id, expiry_length)
+	{
+		
+	}
+
+/*// Randomly assorted mongodb code, for get, put:
 	var db = new Db('headlyne', new Server("127.0.0.1", 27017, {}));
 	db.open(
 		function(err, db2)
@@ -67,7 +120,7 @@ var Feed = function()
 				}
 			);
 		}
-	);
+	);*/
 };
 
 module.exports = new Feed();
