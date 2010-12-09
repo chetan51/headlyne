@@ -423,3 +423,354 @@ exports['delete'] = nodeunit.testCase(
 		);	
 	}
 });
+
+exports['push/pop'] = nodeunit.testCase(
+{
+	setUp: function (callback) {
+		/**
+		 * DB Access Parameters
+		 **/
+		var db_name = 'headlyne',
+		    db_addr = '127.0.0.1',
+		    db_port = 27017,
+		    db_user = 'username',
+		    db_pass = 'password';
+
+		DatabaseDriver.init(
+		    db_name,
+		    db_addr,
+		    db_port,
+		    db_user,
+		    db_pass
+		);
+		callback();
+	},
+	 
+	tearDown: function (callback) {
+		DatabaseDriver.getCollection(
+			'feeds',
+			function(err)
+			{
+				console.log('Suite-teardown: '+err.message);
+			},
+			function(collection)
+			{
+				collection.remove(
+					function(err, doc)
+					{
+						if(err != null)
+							console.log('Test-suite cannot terminate.');
+						else {
+							callback();
+						}
+					}
+				);
+			}
+		);
+	},
+
+	'single push': function(test)
+	{
+		test.expect(2);
+		FeedModel.save(
+			'url',
+			'title',
+			'author',
+			'description',
+			function(err)
+			{
+				console.log(err.message);
+				test.done();
+			},
+			function(feed)
+			{
+				var time = new Date().getTime();
+				time = parseInt(time) - 120000;
+				FeedModel.pushFeedItems(
+					feed.url,
+					[{
+						'url': 'page url',
+						'title': 'item title',
+						'description': 'item desc',
+						'time_published': time
+					}],
+					function(err)
+					{
+						console.log(err.message);
+						test.done();
+					},
+					function(new_feed)
+					{
+						test.equal(new_feed.items.length, 1);
+						test.equal(new_feed.items[0].url, 'page url');
+						test.done();
+					}
+				);
+			}
+		);
+	},
+	
+	'feedless push': function(test)
+	{
+		test.expect(1);
+		var time = new Date().getTime();
+		time = parseInt(time) - 120000;
+		FeedModel.pushFeedItems(
+			'invalid url',
+			[{
+				'url': 'page url',
+				'title': 'item title',
+				'description': 'item desc',
+				'time_published': time
+			}],
+			function(err)
+			{
+				test.equal(err.message, 'No such feed');
+				test.done();
+			},
+			function(new_feed)
+			{
+				test.done();
+			}
+		);
+		
+		
+	},
+	
+	'multiple push': function(test)
+	{
+		test.expect(3);
+		FeedModel.save(
+			'url',
+			'title',
+			'author',
+			'description',
+			function(err)
+			{
+				console.log(err.message);
+				test.done();
+			},
+			function(feed)
+			{
+				var time = new Date().getTime();
+				time = parseInt(time) - 120000;
+				FeedModel.pushFeedItems(
+					feed.url,
+					[	{
+						 'url': 'page url',
+						 'title': 'item title',
+						 'description': 'item desc',
+						 'time_published': time
+						},
+						{
+						 'url': 'page2 url',
+						 'title': 'item2 title',
+						 'description': 'item2 desc',
+						 'time_published': time + 15500
+						}
+					],
+					function(err)
+					{
+						console.log(err.message);
+						test.done();
+					},
+					function(new_feed)
+					{
+						test.equal(new_feed.items.length, 2);
+						test.equal(new_feed.items[0].url, 'page url');
+						test.equal(new_feed.items[1].url, 'page2 url');
+						test.done();
+					}
+				);
+			}
+		);
+	},
+
+	'single pop': function(test)
+	{
+		test.expect(3);
+		FeedModel.save(
+			'url',
+			'title',
+			'author',
+			'description',
+			function(err)
+			{
+				console.log(err.message);
+				test.done();
+			},
+			function(feed)
+			{
+				var time = new Date().getTime();
+				time = parseInt(time) - 120000;
+				FeedModel.pushFeedItems(
+					feed.url,
+					[{
+						'url': 'page url',
+						'title': 'item title',
+						'description': 'item desc',
+						'time_published': time
+					}],
+					function(err)
+					{
+						console.log(err.message);
+						test.done();
+					},
+					function(feed)
+					{
+						//One item pushed.
+						FeedModel.popFeedItems(
+							feed.url,
+							function(err)
+							{
+								console.log(err.message);
+								test.done();
+							},
+							function(feed, items)
+							{
+								test.equal(feed.items.length, 0);
+								test.equal(items.length, 1);
+								test.equal(items[0].url, 'page url');
+								test.done();
+							}
+						);
+					}
+				);
+			}
+		);
+	},
+	
+	'multiple pop': function(test)
+	{
+		test.expect(4);
+		FeedModel.save(
+			'url',
+			'title',
+			'author',
+			'description',
+			function(err)
+			{
+				console.log(err.message);
+				test.done();
+			},
+			function(feed)
+			{
+				var time = new Date().getTime();
+				time = parseInt(time) - 120000;
+				FeedModel.pushFeedItems(
+					feed.url,
+					[
+						{
+						 'url': 'page url',
+						 'title': 'item title',
+						 'description': 'item desc',
+						 'time_published': time
+						},
+						{
+						 'url': 'page2 url',
+						 'title': 'item2 title',
+						 'description': 'item2 desc',
+						 'time_published': time - 15500
+						},
+						{
+						 'url': 'page3 url',
+						 'title': 'item3 title',
+						 'description': 'item3 desc',
+						 'time_published': time - 99000
+						}
+					],
+					function(err)
+					{
+						console.log(err.message);
+						test.done();
+					},
+					function(feed)
+					{
+						//One item pushed.
+						FeedModel.popFeedItems(
+							feed.url,
+							function(err)
+							{
+								console.log(err.message);
+								test.done();
+							},
+							function(feed, items)
+							{
+								test.equal(feed.items.length, 1);
+								test.equal(items.length, 2);
+								test.equal(items[0].url, 'page url');
+								test.equal(items[1].url, 'page2 url');
+								test.done();
+							},
+							2	// pop 2 items
+						);
+					}
+				);
+			}
+		);
+	},
+	
+	'too many pop': function(test)
+	{
+		test.expect(4);
+		FeedModel.save(
+			'url',
+			'title',
+			'author',
+			'description',
+			function(err)
+			{
+				console.log(err.message);
+				test.done();
+			},
+			function(feed)
+			{
+				var time = new Date().getTime();
+				time = parseInt(time) - 120000;
+				FeedModel.pushFeedItems(
+					feed.url,
+					[
+						{
+						 'url': 'page url',
+						 'title': 'item title',
+						 'description': 'item desc',
+						 'time_published': time
+						},
+						{
+						 'url': 'page2 url',
+						 'title': 'item2 title',
+						 'description': 'item2 desc',
+						 'time_published': time - 15500
+						}
+					],
+					function(err)
+					{
+						console.log(err.message);
+						test.done();
+					},
+					function(feed)
+					{
+						//One item pushed.
+						FeedModel.popFeedItems(
+							feed.url,
+							function(err)
+							{
+								console.log(err.message);
+								test.done();
+							},
+							function(feed, items)
+							{
+								test.equal(feed.items.length, 0);
+								test.equal(items.length, 2);
+								test.equal(items[0].url, 'page url');
+								test.equal(items[1].url, 'page2 url');
+								test.done();
+							},
+							3	// attempt to pop 3 items
+						);
+					}
+				);
+			}
+		);
+	}
+});

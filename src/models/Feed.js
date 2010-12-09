@@ -201,20 +201,82 @@ var Feed = function()
 			function(feed)
 			{
 				// The feed exists.
-				feed.items.push(feed_items);
-				DatabaseDriver.update(
-					{'url_hash':feed.url_hash},
-					{
-						'items': feed.items,
-						'time_modified': new Date().getTime()
-					},
+				feed.items = feed.items.concat(feed_items);
+				feed.time_modified = new Date().getTime();
+				DatabaseDriver.getCollection(
+					'feeds',
 					function(err)
 					{
 						errback(err);
 					},
-					function(feed)
+					function(collection)
 					{
-						callback(feed);
+					DatabaseDriver.update(
+						collection,
+						{'url_hash': feed.url_hash},
+						feed,
+						function(err)
+						{
+							errback(err);
+						},
+						function(feed)
+						{
+							callback(feed);
+						}
+					);
+					}
+				);
+			}
+		);
+	}
+
+	/**
+	 * Pops a feed item from a feed.
+	 *
+	 * 	Arguments:    feed_url
+	 *
+	 * 	Returns:      updated feed, popped items.
+	 **/
+	this.popFeedItems = function(feed_url, errback, callback, pop_size)
+	{
+		if(pop_size == null || typeof(pop_size) == 'undefined')
+		{
+			pop_size = 1;
+		}
+
+		self.get(
+			feed_url,
+			function(err)
+			{
+				errback(err);
+			},
+			function(feed)
+			{
+				// The feed exists.
+				var feed_items = feed.items.splice(0, pop_size);
+				feed.time_modified = new Date().getTime();
+				
+				DatabaseDriver.getCollection(
+					'feeds',
+					function(err)
+					{
+						errback(err);
+					},
+					function(collection)
+					{
+						DatabaseDriver.update(
+							collection,
+							{'url_hash':feed.url_hash},
+							feed,
+							function(err)
+							{
+								errback(err);
+							},
+							function(new_feed)
+							{
+								callback(new_feed, feed_items);
+							}
+						);
 					}
 				);
 			}

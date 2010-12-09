@@ -111,7 +111,7 @@ var DatabaseDriver = function()
 			function(err, doc)
 			{
 				if(err != null)
-					errback(new Error('Database Search Error'));
+					errback(new Error('Database Update Error:'+ err.message));
 				else {
 					callback(doc);
 				}
