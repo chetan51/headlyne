@@ -11,7 +11,7 @@ var Mongo      = require('mongodb'),
 
 exports['save'] = nodeunit.testCase(
 {
-	setUp: function () {
+	setUp: function (callback) {
 		/**
 		 * DB Access Parameters
 		 **/
@@ -28,9 +28,30 @@ exports['save'] = nodeunit.testCase(
 		    db_user,
 		    db_pass
 		);
+		callback();
 	},
 	 
-	tearDown: function () {
+	tearDown: function (callback) {
+		DatabaseDriver.getCollection(
+			'feeds',
+			function(err)
+			{
+				console.log('Suite-teardown: '+err);
+			},
+			function(collection)
+			{
+				collection.remove(
+					function(err, doc)
+					{
+						if(err != null)
+							console.log('Test-suite cannot terminate.');
+						else {
+							callback();
+						}
+					}
+				);
+			}
+		);
 	},
 
 	'save 1 feed': function(test)
@@ -45,9 +66,9 @@ exports['save'] = nodeunit.testCase(
 			{
 				console.log(err.message);
 			},
-			function(feed_id)
+			function(feed)
 			{
-				console.log(feed_id);
+				console.log(feed);
 			}
 		);
 		test.ok(1);
@@ -67,7 +88,7 @@ exports['save'] = nodeunit.testCase(
 				console.log(err.message);
 				test.done();
 			},
-			function(feed_id)
+			function(feed)
 			{
 				FeedModel.save(
 					'doubled_url',
@@ -79,9 +100,9 @@ exports['save'] = nodeunit.testCase(
 						console.log(err.message);
 						test.done();
 					},
-					function(feed_id2)
+					function(feed2)
 					{
-						test.equal(feed_id, feed_id2);
+						test.equal(feed, feed2);
 						test.done();
 					}
 				);
@@ -92,6 +113,49 @@ exports['save'] = nodeunit.testCase(
 
 exports['get'] = nodeunit.testCase(
 {
+	setUp: function (callback) {
+		/**
+		 * DB Access Parameters
+		 **/
+		var db_name = 'headlyne',
+		    db_addr = '127.0.0.1',
+		    db_port = 27017,
+		    db_user = 'username',
+		    db_pass = 'password';
+
+		DatabaseDriver.init(
+		    db_name,
+		    db_addr,
+		    db_port,
+		    db_user,
+		    db_pass
+		);
+		callback();
+	},
+	 
+	tearDown: function (callback) {
+		DatabaseDriver.getCollection(
+			'feeds',
+			function(err)
+			{
+				console.log('Suite-teardown: '+err);
+			},
+			function(collection)
+			{
+				collection.remove(
+					function(err, doc)
+					{
+						if(err != null)
+							console.log('Test-suite cannot terminate.');
+						else {
+							callback();
+						}
+					}
+				);
+			}
+		);
+	},
+
 	'save & retrieve': function(test)
 	{
 		test.expect(3);
@@ -109,16 +173,253 @@ exports['get'] = nodeunit.testCase(
 			{
 				FeedModel.get(
 					feed_id,
-					function(err){ test.done(); },
-					function(feed)
+					function(err){
+						console.log(err.message);
+						test.done();
+					},
+					function(recv_feed)
 					{
-						test.equal(feed.title, 'some_title');
-						test.equal(feed.author, 'an author');
-						test.equal(feed.description, 'long description');
+						test.equal(recv_feed.title, 'some_title');
+						test.equal(recv_feed.author, 'an author');
+						test.equal(recv_feed.description, 'long description');
 						test.done();
 					}
 				);
 			}
 		);
+	},
+
+	'invalid get': function(test)
+	{
+		test.expect(1);
+		FeedModel.get(
+			'invalid id',
+			function(err)
+			{
+				test.equal(err.message, 'No such feed');
+				test.done();
+			},
+			function(feed)
+			{
+				test.done();
+			}
+		);
+	}
+});
+
+exports['isUpToDate'] = nodeunit.testCase(
+{
+	setUp: function (callback) {
+		/**
+		 * DB Access Parameters
+		 **/
+		var db_name = 'headlyne',
+		    db_addr = '127.0.0.1',
+		    db_port = 27017,
+		    db_user = 'username',
+		    db_pass = 'password';
+
+		DatabaseDriver.init(
+		    db_name,
+		    db_addr,
+		    db_port,
+		    db_user,
+		    db_pass
+		);
+		callback();
+	},
+	 
+	tearDown: function (callback) {
+		DatabaseDriver.getCollection(
+			'feeds',
+			function(err)
+			{
+				console.log('Suite-teardown: '+err);
+			},
+			function(collection)
+			{
+				collection.remove(
+					function(err, doc)
+					{
+						if(err != null)
+							console.log('Test-suite cannot terminate.');
+						else {
+							callback();
+						}
+					}
+				);
+			}
+		);
+	},
+
+	'basic': function(test)
+	{
+		test.expect(1);
+		FeedModel.save(
+			'some url',
+			'some title',
+			'some author',
+			'some description',
+			function(err)
+			{
+				console.log(err.message);
+				test.done();
+			},
+			function(feed_id)
+			{
+				FeedModel.isUpToDate(
+					feed_id,
+					5,
+					function(err)
+					{
+						console.log(err.message);
+						test.done();
+					},
+					function(check)
+					{
+						test.ok(check);
+						test.done();
+					}
+				);
+			}
+		);
+	},
+	
+	'expiry': function(test)
+	{
+		test.expect(1);
+		FeedModel.save(
+			'some url',
+			'some title',
+			'some author',
+			'some description',
+			function(err)
+			{
+				console.log(err.message);
+				test.done();
+			},
+			function(feed_id)
+			{
+				FeedModel.isUpToDate(
+					feed_id,
+					0,
+					function(err)
+					{
+						console.log(err.message);
+						test.done();
+					},
+					function(check)
+					{
+						test.ok(!check);
+						test.done();
+					}
+				);
+			}
+		);
+	},
+});
+
+exports['delete'] = nodeunit.testCase(
+{
+	setUp: function (callback) {
+		/**
+		 * DB Access Parameters
+		 **/
+		var db_name = 'headlyne',
+		    db_addr = '127.0.0.1',
+		    db_port = 27017,
+		    db_user = 'username',
+		    db_pass = 'password';
+
+		DatabaseDriver.init(
+		    db_name,
+		    db_addr,
+		    db_port,
+		    db_user,
+		    db_pass
+		);
+		callback();
+	},
+	 
+	tearDown: function (callback) {
+		DatabaseDriver.getCollection(
+			'feeds',
+			function(err)
+			{
+				console.log('Suite-teardown: '+err.message);
+			},
+			function(collection)
+			{
+				collection.remove(
+					function(err, doc)
+					{
+						if(err != null)
+							console.log('Test-suite cannot terminate.');
+						else {
+							callback();
+						}
+					}
+				);
+			}
+		);
+	},
+
+	'delete from empty collection': function(test)
+	{
+		test.expect(1);
+		FeedModel.remove(
+			'some_id',
+			function(err)
+			{
+				console.log(err.message);
+				test.done();
+			},
+			function()
+			{
+				test.ok(1);
+				test.done();
+			}
+		);	
+	},
+
+	'delete saved': function(test)
+	{
+		test.expect(1);
+		FeedModel.save(
+			'url',
+			'title',
+			'author',
+			'description',
+			function(err)
+			{
+				console.log(err.message);
+				test.done();
+			},
+			function(feed_id)
+			{
+				FeedModel.remove(
+					feed_id,
+					function(err)
+					{
+						console.log(err.message);
+						test.done();
+					},
+					function()
+					{
+						FeedModel.get(
+							feed_id,
+							function(err){
+								test.equal(err.message, 'No such feed');
+								test.done();
+							},
+							function(recv_feed)
+							{
+								test.done();
+							}
+						);
+					}
+				);
+			}
+		);	
 	}
 });

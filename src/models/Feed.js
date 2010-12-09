@@ -13,6 +13,8 @@ var DatabaseDriver = require('../libraries/DatabaseDriver.js');
  **/
 var Feed = function()
 {
+	var self = this;
+
 	/**
 	 * Saves a feed to the database.
 	 * 	
@@ -34,7 +36,7 @@ var Feed = function()
 			},
 			function(collection)
 			{
-				var hasher = crypto.createHash('sha512');
+				var hasher = crypto.createHash('sha256');
 				hasher.update(url);
 				var url_hash = hasher.digest('hex');
 				
@@ -47,16 +49,17 @@ var Feed = function()
 					 'title': title,
 					 'author': author,
 					 'description': description,
-					 'time_modified': new Date().getTime()
+					 'time_modified': new Date().getTime(),
+					 'items': []
 					},
 					function(err)
 					{
 						errback(err);
 						collection.db.close();
 					},
-					function(feed_id)
+					function(feed)
 					{
-						callback(feed_id);
+						callback(feed.url_hash);
 						collection.db.close();
 					}
 				);
@@ -114,13 +117,63 @@ var Feed = function()
 	 * 	Arguments:    feed_id
 	 * 	              expiry_length (in minutes)
 	 * 	              
-	 * 	Returns:      true if feed.time_modified
-	 * 	                  < now - expiry_length
+	 * 	Returns:      true if feed.time_modified + expiry_length
+	 * 	                  > now
 	 * 	              false otherwise
 	 **/
-	this.isUpToDate = function(feed_id, expiry_length)
+	this.isUpToDate = function(feed_id, expiry_length, errback, callback)
 	{
-		
+		expiry_length = expiry_length*1000*60;
+		self.get(
+			feed_id,
+			function(err)
+			{
+				errback(err);
+			},
+			function(feed)
+			{
+				var now = new Date().getTime();
+				var expires = parseInt(feed.time_modified) + parseInt(expiry_length);
+				if( now < expires )
+					callback(true);
+				else
+					callback(false);
+			}
+		);
+	}
+
+	/**
+	 * Deletes a feed.
+	 *
+	 * 	Arguments:    feed_id
+	 *
+	 * 	Returns:      calls the callback with no parameters
+	 * 	              if the deletion was successful.
+	 * 	              Otherwise, it calls the errback.
+	 **/
+	this.remove = function(feed_id, errback, callback)
+	{
+		DatabaseDriver.getCollection(
+			'feeds',
+			function(err)
+			{
+				errback(err);
+			},
+			function(collection)
+			{
+				collection.remove(
+					{'url_hash':feed_id},
+					function(err, doc)
+					{
+						if(err != null)
+							errback(new Error('Database Deletion Error'));
+						else {
+							callback();
+						}
+					}
+				);
+			}
+		);
 	}
 };
 

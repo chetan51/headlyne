@@ -89,11 +89,11 @@ var DatabaseDriver = function()
 								if(err != null)
 									errback(new Error('Database Insertion Error'));
 								else
-									callback(inserted_docs[0].url_hash);
+									callback(inserted_docs[0]);
 							}
 						);
 					} else {
-						callback(doc.url_hash);
+						callback(doc);
 					}
 				}
 			}
