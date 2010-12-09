@@ -70,6 +70,39 @@ var DatabaseDriver = function()
 	/**
 	 *	Checks if an object exists in the collection for a given
 	 *	key. If it doesn't exist, it inserts the given object at
+	 *	the given key location. Otherwise, it returns an error.
+	 **/
+	this.ensureInsert = function(collection, key, obj, errback, callback)
+	{
+		collection.findOne(
+			key,
+			function(err, doc)
+			{
+				if(err != null)
+					errback(new Error('Database Search Error'));
+				else {
+					if(typeof(doc) == 'undefined') {
+						collection.insert(
+							obj,
+							function(err, inserted_docs)
+							{
+								if(err != null)
+									errback(new Error('Database Insertion Error'));
+								else
+									callback(inserted_docs[0]);
+							}
+						);
+					} else {
+						errback(new Error('Database match exists'));
+					}
+				}
+			}
+		);
+	}
+	
+	/**
+	 *	Checks if an object exists in the collection for a given
+	 *	key. If it doesn't exist, it inserts the given object at
 	 *	the given key location.
 	 **/
 	this.ensureExists = function(collection, key, obj, errback, callback)
