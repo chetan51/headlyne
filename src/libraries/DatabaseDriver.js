@@ -56,7 +56,7 @@ var DatabaseDriver = function()
 					function(err, collection)
 					{
 						if(err != null) {
-							errback(new Error('Database Access Error'));
+							errback(new Error('Database Access Error'+err.message));
 						} else {
 							callback(collection);
 						}

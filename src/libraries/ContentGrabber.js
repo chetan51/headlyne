@@ -41,6 +41,11 @@ var ContentGrabber = function()
 			html    : html
 		});
 	};
+
+	this.snip = function(fulltext)
+	{
+		return fulltext;
+	}
 };
 
 module.exports = new ContentGrabber();
