@@ -68,7 +68,7 @@ exports['save'] = nodeunit.testCase(
 			},
 			function(feed)
 			{
-				console.log(feed);
+				console.log(feed.url_hash);
 			}
 		);
 		test.ok(1);
@@ -102,7 +102,7 @@ exports['save'] = nodeunit.testCase(
 					},
 					function(feed2)
 					{
-						test.equal(feed, feed2);
+						test.equal(feed.url_hash, feed2.url_hash);
 						test.done();
 					}
 				);
@@ -169,10 +169,10 @@ exports['get'] = nodeunit.testCase(
 				console.log(err.message);
 				test.done();
 			},
-			function(feed_id)
+			function(feed)
 			{
 				FeedModel.get(
-					feed_id,
+					'to_get_url',
 					function(err){
 						console.log(err.message);
 						test.done();
@@ -193,7 +193,7 @@ exports['get'] = nodeunit.testCase(
 	{
 		test.expect(1);
 		FeedModel.get(
-			'invalid id',
+			'invalid url',
 			function(err)
 			{
 				test.equal(err.message, 'No such feed');
@@ -265,10 +265,10 @@ exports['isUpToDate'] = nodeunit.testCase(
 				console.log(err.message);
 				test.done();
 			},
-			function(feed_id)
+			function(feed)
 			{
 				FeedModel.isUpToDate(
-					feed_id,
+					feed.url,
 					5,
 					function(err)
 					{
@@ -298,10 +298,10 @@ exports['isUpToDate'] = nodeunit.testCase(
 				console.log(err.message);
 				test.done();
 			},
-			function(feed_id)
+			function(feed)
 			{
 				FeedModel.isUpToDate(
-					feed_id,
+					feed.url,
 					0,
 					function(err)
 					{
@@ -368,7 +368,7 @@ exports['delete'] = nodeunit.testCase(
 	{
 		test.expect(1);
 		FeedModel.remove(
-			'some_id',
+			'some_url',
 			function(err)
 			{
 				console.log(err.message);
@@ -395,10 +395,10 @@ exports['delete'] = nodeunit.testCase(
 				console.log(err.message);
 				test.done();
 			},
-			function(feed_id)
+			function(feed)
 			{
 				FeedModel.remove(
-					feed_id,
+					feed.url,
 					function(err)
 					{
 						console.log(err.message);
@@ -407,7 +407,7 @@ exports['delete'] = nodeunit.testCase(
 					function()
 					{
 						FeedModel.get(
-							feed_id,
+							feed.url,
 							function(err){
 								test.equal(err.message, 'No such feed');
 								test.done();

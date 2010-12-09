@@ -23,7 +23,7 @@ var Feed = function()
 	 * 	              author
 	 * 	              description
 	 * 	              
-	 * 	Returns:      the feed_id of the item that was saved
+	 * 	Returns:      the feed that was saved
 	 * 	              false on error
 	 **/
 	this.save = function(url, title, author, description, errback, callback)
@@ -59,7 +59,7 @@ var Feed = function()
 					},
 					function(feed)
 					{
-						callback(feed.url_hash);
+						callback(feed);
 						collection.db.close();
 					}
 				);
@@ -70,7 +70,7 @@ var Feed = function()
 	/**
 	 * Gets a feed from the database.
 	 * 
-	 * 	Arguments:    feed_id
+	 * 	Arguments:    feed_url
 	 * 	              
 	 * 	Returns:      JSON object {
 	 * 	                  feed_id
@@ -81,8 +81,12 @@ var Feed = function()
 	 * 	                  time_modified
 	 * 	              }
 	 **/
-	this.get = function(feed_id, errback, callback)
+	this.get = function(feed_url, errback, callback)
 	{
+		var hasher = crypto.createHash('sha256');
+		hasher.update(feed_url);
+		var feed_id = hasher.digest('hex');
+
 		DatabaseDriver.getCollection(
 			'feeds',
 			function(err)
@@ -114,18 +118,18 @@ var Feed = function()
 	 * Checks if a feed is up to date, relative to a given
 	 * expiry length.
 	 * 
-	 * 	Arguments:    feed_id
+	 * 	Arguments:    feed_url
 	 * 	              expiry_length (in minutes)
 	 * 	              
 	 * 	Returns:      true if feed.time_modified + expiry_length
 	 * 	                  > now
 	 * 	              false otherwise
 	 **/
-	this.isUpToDate = function(feed_id, expiry_length, errback, callback)
+	this.isUpToDate = function(feed_url, expiry_length, errback, callback)
 	{
 		expiry_length = expiry_length*1000*60;
 		self.get(
-			feed_id,
+			feed_url,
 			function(err)
 			{
 				errback(err);
@@ -145,14 +149,17 @@ var Feed = function()
 	/**
 	 * Deletes a feed.
 	 *
-	 * 	Arguments:    feed_id
+	 * 	Arguments:    feed_url
 	 *
 	 * 	Returns:      calls the callback with no parameters
 	 * 	              if the deletion was successful.
 	 * 	              Otherwise, it calls the errback.
 	 **/
-	this.remove = function(feed_id, errback, callback)
+	this.remove = function(feed_url, errback, callback)
 	{
+		var hasher = crypto.createHash('sha256');
+		hasher.update(feed_url);
+		var feed_id = hasher.digest('hex');
 		DatabaseDriver.getCollection(
 			'feeds',
 			function(err)
@@ -170,6 +177,44 @@ var Feed = function()
 						else {
 							callback();
 						}
+					}
+				);
+			}
+		);
+	}
+
+	/**
+	 * Pushes a feed item into a feed.
+	 *
+	 * 	Arguments:    feed_url, Feed({url, title, description, time_published})
+	 *
+	 * 	Returns:      updated feed.
+	 **/
+	this.pushFeedItems = function(feed_url, feed_items, errback, callback)
+	{
+		self.get(
+			feed_url,
+			function(err)
+			{
+				errback(err);
+			},
+			function(feed)
+			{
+				// The feed exists.
+				feed.items.push(feed_items);
+				DatabaseDriver.update(
+					{'url_hash':feed.url_hash},
+					{
+						'items': feed.items,
+						'time_modified': new Date().getTime()
+					},
+					function(err)
+					{
+						errback(err);
+					},
+					function(feed)
+					{
+						callback(feed);
 					}
 				);
 			}

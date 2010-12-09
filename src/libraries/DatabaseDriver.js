@@ -99,6 +99,25 @@ var DatabaseDriver = function()
 			}
 		);
 	}
+
+	/**
+	 * 	Updates all objects matching the key with the given obj_part
+	 **/
+	this.update = function(collection, key, obj_part, errback, callback)
+	{
+		collection.update(
+			key,
+			obj_part,
+			function(err, doc)
+			{
+				if(err != null)
+					errback(new Error('Database Search Error'));
+				else {
+					callback(doc);
+				}
+			}
+		);
+	}
 };
 
 module.exports = new DatabaseDriver();
