@@ -9,21 +9,10 @@ var crypto         = require('crypto');
 var DatabaseDriver = require('../libraries/DatabaseDriver.js');
 
 /**
- * DB Access Parameters
+ * The Feed model
  **/
-var db_name = 'headlyne',
-    db_addr = '127.0.0.1',
-    db_port = 27017,
-    db_user = 'username',
-    db_pass = 'password';
-
 var Feed = function()
 {
-	/**
-	 * Initilializer (temporary)
-	 **/
-	DatabaseDriver.init(db_name, db_addr, db_port, db_user, db_pass);
-	
 	/**
 	 * Saves a feed to the database.
 	 * 	

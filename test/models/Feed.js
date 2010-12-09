@@ -1,6 +1,7 @@
 var http = require('http')
 var nodeunit = require('nodeunit');
 var FeedModel = require('../../src/models/Feed.js');
+var DatabaseDriver = require('../../src/libraries/DatabaseDriver.js');
 var Mongo      = require('mongodb'),
     Db         = Mongo.Db,
     Connection = Mongo.Connection,
@@ -10,6 +11,28 @@ var Mongo      = require('mongodb'),
 
 exports['save'] = nodeunit.testCase(
 {
+	setUp: function () {
+		/**
+		 * DB Access Parameters
+		 **/
+		var db_name = 'headlyne',
+		    db_addr = '127.0.0.1',
+		    db_port = 27017,
+		    db_user = 'username',
+		    db_pass = 'password';
+
+		DatabaseDriver.init(
+		    db_name,
+		    db_addr,
+		    db_port,
+		    db_user,
+		    db_pass
+		);
+	},
+	 
+	tearDown: function () {
+	},
+
 	'save 1 feed': function(test)
 	{
 		test.expect(1);
