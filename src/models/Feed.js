@@ -122,37 +122,6 @@ var Feed = function()
 	{
 		
 	}
-
-/*// Randomly assorted mongodb code, for get, put:
-	var db = new Db('headlyne', new Server("127.0.0.1", 27017, {}));
-	db.open(
-		function(err, db2)
-		{
-			db2.collection(
-				'feeds',
-				function(err, collection)
-				{
-
-					collection.update(
-						{'feed_id': 123},
-						{$set:{'time_modified':12days}},
-						function(err, updated_doc)
-						{
-						}
-					);
-					collection.remove(
-						{'feed_id': 124},
-						function(err, removed)
-						{
-						}
-					);
-
-					db.close();
-					db2.close();
-				}
-			);
-		}
-	);*/
 };
 
 module.exports = new Feed();
