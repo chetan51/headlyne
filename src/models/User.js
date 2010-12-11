@@ -62,7 +62,7 @@ var User = function()
 					},
 					function(user)
 					{
-						delete user['password_hash'];
+						//delete user['password_hash'];
 						callback(user);
 					}
 				);
@@ -108,7 +108,7 @@ var User = function()
 							if(typeof(doc) == 'undefined') {
 								errback(new Error('No such User'));
 							} else {
-								delete doc['password_hash'];
+								//delete doc['password_hash'];
 								callback(doc);
 							}
 						}
