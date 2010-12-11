@@ -22,20 +22,21 @@ var DatabaseDriver = function()
 	 *	Initializes the Database Driver with what database
 	 *	connection to use.
 	 **/
-	this.init = function(name, address, port, username, password)
+	this.init = function(
+		name,
+		address,
+		port,
+		username,
+		password,
+		errback,
+		callback    )
 	{
 		this.database.name     = name;
 		this.database.address  = address;
 		this.database.port     = port;
 		this.database.username = username;
 		this.database.password = password;
-	}
-	
-	/**
-	 *	Gets a specified collection from the database.
-	 **/
-	this.getCollection = function(collection_name, errback, callback)
-	{
+
 		var db = new Db(
 				this.database.name,
 		                new Server(
@@ -48,21 +49,30 @@ var DatabaseDriver = function()
 		db.open(
 			function(err, db2)
 			{
-			if(err != null) {
-				errback(new Error('Database Connection Error'));
-			} else {
-				db2.collection(
-					collection_name,
-					function(err, collection)
-					{
-						if(err != null) {
-							errback(new Error('Database Access Error'+err.message));
-						} else {
-							callback(collection);
-						}
-					}
-				);
+				if(err != null)
+					errback(new Error('Database Connection Error'));
+				else {
+					this.database.db = db2;
+					callback();
+				}
 			}
+		);
+	}
+	
+	/**
+	 *	Gets a specified collection from the database.
+	 **/
+	this.getCollection = function(collection_name, errback, callback)
+	{
+		this.database.db.collection(
+			collection_name,
+			function(err, collection)
+			{
+				if(err != null) {
+					errback(new Error('Database Access Error'+err.message));
+				} else {
+					callback(collection);
+				}
 			}
 		);
 	}
@@ -150,6 +160,14 @@ var DatabaseDriver = function()
 				}
 			}
 		);
+	}
+
+	/**
+	 * 	Terminates the database connection.
+	 **/
+	this.close = function()
+	{
+		this.database.db.close();
 	}
 };
 
