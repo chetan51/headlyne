@@ -189,11 +189,10 @@ exports['get'] = nodeunit.testCase(
 				console.log(err.message);
 				test.done();
 			},
-			function(webpage)
+			function(user1)
 			{
 				UserModel.get(
 					'my_user',
-					'my_pass',
 					function(err){
 						console.log(err.message);
 						test.done();
@@ -214,7 +213,6 @@ exports['get'] = nodeunit.testCase(
 		test.expect(1);
 		UserModel.get(
 			'invalid username',
-			'pass',
 			function(err)
 			{
 				test.equal(err.message, 'No such User');

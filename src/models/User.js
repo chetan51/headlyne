@@ -14,17 +14,17 @@ var DatabaseDriver = require('../libraries/DatabaseDriver.js');
 var User = function()
 {
 	var self = this;
-
 	/**
-	 * Saves a new user
+	 * Saves a new user to the database.
 	 * 	
 	 * 	Arguments:    username
 	 * 	              password
-	 * 	              first_name
-	 * 	              last_name
-	 * 	              email_id
+	 * 	              first name
+	 * 	              last name
+	 * 	              email address
 	 * 	              
-	 * 	Returns:      the saved object.
+	 * 	Returns:      JSON object of the User that was saved
+	 * 	              (password is stripped)
 	 **/
 	this.save = function(username, password, first_name, last_name, email_id, errback, callback)
 	{
@@ -40,24 +40,29 @@ var User = function()
 				hasher.update(password);
 				var key = hasher.digest('hex');
 
+				var hasher = crypto.createHash('sha256');
+				hasher.update(username);
+				var usn = hasher.digest('hex');
+
 				DatabaseDriver.ensureInsert(
 					collection,
-					{'username': username},
-					{'username': username,
-					 'password': key,
+					{'username_hash': usn},
+					{'username_hash': usn,
+					 'username': username,
+					 'password_hash': key,
 					 'first_name': first_name,
 					 'last_name': last_name,
 					 'email_id': email_id,
-					 'feeds': {}
+					 'feeds': [],
+					 'session':{}
 					},
 					function(err)
 					{
 						errback(err);
-						collection.db.close();
 					},
 					function(user)
 					{
-						delete user['password'];
+						delete user['password_hash'];
 						callback(user);
 					}
 				);
@@ -69,22 +74,22 @@ var User = function()
 	 * Gets a user from the database.
 	 * 
 	 * 	Arguments:    username
-	 * 	              password
 	 * 	              
 	 * 	Returns:      JSON object {
 	 * 	                  username
 	 * 	                  first_name
 	 * 	                  last_name
 	 * 	                  email_id
-	 * 	                  feeds[]
+	 * 	                  feeds{}[]
+	 * 	                  session{}
 	 * 	              }
 	 **/
-	this.get = function(username, password, errback, callback)
+	this.get = function(username, errback, callback)
 	{
 		var hasher = crypto.createHash('sha256');
-		hasher.update(password);
+		hasher.update(username);
 		var key = hasher.digest('hex');
-
+		
 		DatabaseDriver.getCollection(
 			'users',
 			function(err)
@@ -94,10 +99,7 @@ var User = function()
 			function(collection)
 			{
 				collection.findOne(
-					{
-						'username': username,
-						'password': key
-					},
+					{'username_hash': key},
 					function(err, doc)
 					{
 						if(err != null)
@@ -106,7 +108,7 @@ var User = function()
 							if(typeof(doc) == 'undefined') {
 								errback(new Error('No such User'));
 							} else {
-								delete doc['password'];
+								delete doc['password_hash'];
 								callback(doc);
 							}
 						}
@@ -119,14 +121,13 @@ var User = function()
 	/**
 	 * Update user information.
 	 *
-	 * 	Arguments:    username, password, new_password, first_name, last_name, email_id
+	 * 	Arguments:    username, new_password, first_name, last_name, email_id
 	 * 	              For unchanged parameters, pass null.
 	 *
 	 * 	Returns:      updated user object.
 	 **/
 	this.update = function(
 		username,
-		password,
 		new_password,
 		first_name,
 		last_name,
@@ -136,7 +137,6 @@ var User = function()
 	{
 		self.get(
 			username,
-			password,
 			function(err)
 			{
 				errback(err);
@@ -148,7 +148,7 @@ var User = function()
 				{
 					var hasher = crypto.createHash('sha256');
 					hasher.update(new_password);
-					user.password = hasher.digest('hex');
+					user.password_hash = hasher.digest('hex');
 				}
 				if(first_name != null)
 					user.first_name = first_name;
@@ -167,10 +167,7 @@ var User = function()
 					{
 						DatabaseDriver.update(
 							collection,
-							{
-								'username': user.username,
-								'password': user.password
-							},
+							{'username_hash': user.username_hash},
 							user,
 							function(err)
 							{
@@ -179,6 +176,53 @@ var User = function()
 							function(user)
 							{
 								callback(user);
+							}
+						);
+					}
+				);
+			}
+		);
+	}
+
+	/**
+	 * Sets a session to the user.
+	 *
+	 * 	Arguments:    username, session.
+	 *
+	 * 	Returns:      saved session object.
+	 **/
+	this.setSession = function(username, session, errback, callback)
+	{
+		self.get(
+			username,
+			function(err)
+			{
+				errback(err);
+			},
+			function(user)
+			{
+				// The user exists.
+				user.session = session;
+
+				DatabaseDriver.getCollection(
+					'users',
+					function(err)
+					{
+						errback(err);
+					},
+					function(collection)
+					{
+						DatabaseDriver.update(
+							collection,
+							{'username_hash': user.username_hash},
+							user,
+							function(err)
+							{
+								errback(err);
+							},
+							function(user)
+							{
+								callback(user.session);
 							}
 						);
 					}
