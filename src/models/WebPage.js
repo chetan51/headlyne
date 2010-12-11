@@ -52,12 +52,10 @@ var WebPage = function()
 					function(err)
 					{
 						errback(err);
-						collection.db.close();
 					},
 					function(feed)
 					{
 						callback(feed);
-						collection.db.close();
 					}
 				);
 			}

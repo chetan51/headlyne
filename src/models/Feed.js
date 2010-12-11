@@ -26,9 +26,9 @@ var Feed = function()
 	 * 	Returns:      the feed that was saved
 	 * 	              false on error
 	 **/
-	this.save = function(db_driver, url, title, author, description, errback, callback)
+	this.save = function(url, title, author, description, errback, callback)
 	{
-		db_driver.getCollection(
+		DatabaseDriver.getCollection(
 			'feeds',
 			function(err)
 			{
@@ -40,7 +40,7 @@ var Feed = function()
 				hasher.update(url);
 				var url_hash = hasher.digest('hex');
 				
-				db_driver.ensureExists(
+				DatabaseDriver.ensureExists(
 					collection,
 					{'url_hash': url_hash},
 					{'url': url,
@@ -79,13 +79,13 @@ var Feed = function()
 	 * 	                  time_modified
 	 * 	              }
 	 **/
-	this.get = function(db_driver, feed_url, errback, callback)
+	this.get = function(feed_url, errback, callback)
 	{
 		var hasher = crypto.createHash('sha256');
 		hasher.update(feed_url);
 		var feed_id = hasher.digest('hex');
 
-		db_driver.getCollection(
+		DatabaseDriver.getCollection(
 			'feeds',
 			function(err)
 			{
@@ -123,11 +123,10 @@ var Feed = function()
 	 * 	                  > now
 	 * 	              false otherwise
 	 **/
-	this.isUpToDate = function(db_driver, feed_url, expiry_length, errback, callback)
+	this.isUpToDate = function(feed_url, expiry_length, errback, callback)
 	{
 		expiry_length = expiry_length*1000*60;
 		self.get(
-			db_driver,
 			feed_url,
 			function(err)
 			{
@@ -154,12 +153,12 @@ var Feed = function()
 	 * 	              if the deletion was successful.
 	 * 	              Otherwise, it calls the errback.
 	 **/
-	this.remove = function(db_driver, feed_url, errback, callback)
+	this.remove = function(feed_url, errback, callback)
 	{
 		var hasher = crypto.createHash('sha256');
 		hasher.update(feed_url);
 		var feed_id = hasher.digest('hex');
-		db_driver.getCollection(
+		DatabaseDriver.getCollection(
 			'feeds',
 			function(err)
 			{
@@ -189,10 +188,9 @@ var Feed = function()
 	 *
 	 * 	Returns:      updated feed.
 	 **/
-	this.pushFeedItems = function(db_driver, feed_url, feed_items, errback, callback)
+	this.pushFeedItems = function(feed_url, feed_items, errback, callback)
 	{
 		self.get(
-			db_driver,
 			feed_url,
 			function(err)
 			{
@@ -203,7 +201,7 @@ var Feed = function()
 				// The feed exists.
 				feed.items = feed.items.concat(feed_items);
 				feed.time_modified = new Date().getTime();
-				db_driver.getCollection(
+				DatabaseDriver.getCollection(
 					'feeds',
 					function(err)
 					{
@@ -211,7 +209,7 @@ var Feed = function()
 					},
 					function(collection)
 					{
-					db_driver.update(
+					DatabaseDriver.update(
 						collection,
 						{'url_hash': feed.url_hash},
 						feed,
@@ -237,7 +235,7 @@ var Feed = function()
 	 *
 	 * 	Returns:      updated feed, popped items.
 	 **/
-	this.popFeedItems = function(db_driver, feed_url, errback, callback, pop_size)
+	this.popFeedItems = function(feed_url, errback, callback, pop_size)
 	{
 		if(pop_size == null || typeof(pop_size) == 'undefined')
 		{
@@ -245,7 +243,6 @@ var Feed = function()
 		}
 
 		self.get(
-			db_driver,
 			feed_url,
 			function(err)
 			{
@@ -257,7 +254,7 @@ var Feed = function()
 				var feed_items = feed.items.splice(0, pop_size);
 				feed.time_modified = new Date().getTime();
 				
-				db_driver.getCollection(
+				DatabaseDriver.getCollection(
 					'feeds',
 					function(err)
 					{
@@ -265,7 +262,7 @@ var Feed = function()
 					},
 					function(collection)
 					{
-						db_driver.update(
+						DatabaseDriver.update(
 							collection,
 							{'url_hash':feed.url_hash},
 							feed,

@@ -21,8 +21,7 @@ exports['save'] = nodeunit.testCase(
 		    db_user = 'username',
 		    db_pass = 'password';
 
-		this._db = new DatabaseDriver();
-		this._db.init(
+		DatabaseDriver.init(
 		    db_name,
 		    db_addr,
 		    db_port,
@@ -40,11 +39,11 @@ exports['save'] = nodeunit.testCase(
 	},
 	 
 	tearDown: function (callback) {
-		this._db.getCollection(
+		DatabaseDriver.getCollection(
 			'feeds',
 			function(err)
 			{
-				console.log('Suite-teardown: '+err);
+				console.log('Suite-teardown: '+err.message);
 			},
 			function(collection)
 			{
@@ -54,7 +53,7 @@ exports['save'] = nodeunit.testCase(
 						if(err != null)
 							console.log('Test-suite cannot terminate.');
 						else {
-							this._db.close();
+							DatabaseDriver.close();
 							callback();
 						}
 					}
@@ -63,11 +62,10 @@ exports['save'] = nodeunit.testCase(
 		);
 	},
 
-	'save 1 feed': function(test)
+	'basic': function(test)
 	{
 		test.expect(1);
 		FeedModel.save(
-			_db,
 			'url',
 			'titles',
 			'my_name',
@@ -75,21 +73,21 @@ exports['save'] = nodeunit.testCase(
 			function(err)
 			{
 				console.log(err.message);
+				test.done();
 			},
 			function(feed)
 			{
+				test.ok(1);
 				console.log(feed.url_hash);
+				test.done();
 			}
 		);
-		test.ok(1);
-		test.done();
 	},
 
-	'save feed twice': function(test)
+	'duplicate': function(test)
 	{
 		test.expect(1);
 		FeedModel.save(
-			this._db,
 			'doubled_url',
 			'titles',
 			'feed_auth',
@@ -102,7 +100,6 @@ exports['save'] = nodeunit.testCase(
 			function(feed)
 			{
 				FeedModel.save(
-					this._db,
 					'doubled_url',
 					'diff_title',
 					'diff_name',
@@ -135,8 +132,7 @@ exports['get'] = nodeunit.testCase(
 		    db_user = 'username',
 		    db_pass = 'password';
 
-		this._db = new DatabaseDriver();
-		this._db.init(
+		DatabaseDriver.init(
 		    db_name,
 		    db_addr,
 		    db_port,
@@ -154,11 +150,11 @@ exports['get'] = nodeunit.testCase(
 	},
 	 
 	tearDown: function (callback) {
-		this._db.getCollection(
+		DatabaseDriver.getCollection(
 			'feeds',
 			function(err)
 			{
-				console.log('Suite-teardown: '+err);
+				console.log('Suite-teardown: '+err.message);
 			},
 			function(collection)
 			{
@@ -168,7 +164,7 @@ exports['get'] = nodeunit.testCase(
 						if(err != null)
 							console.log('Test-suite cannot terminate.');
 						else {
-							this._db.close();
+							DatabaseDriver.close();
 							callback();
 						}
 					}
@@ -177,11 +173,10 @@ exports['get'] = nodeunit.testCase(
 		);
 	},
 
-	'save & retrieve': function(test)
+	'basic': function(test)
 	{
 		test.expect(3);
 		FeedModel.save(
-			this._db,
 			'to_get_url',
 			'some_title',
 			'an author',
@@ -194,7 +189,6 @@ exports['get'] = nodeunit.testCase(
 			function(feed)
 			{
 				FeedModel.get(
-					this._db,
 					'to_get_url',
 					function(err){
 						console.log(err.message);
@@ -212,11 +206,10 @@ exports['get'] = nodeunit.testCase(
 		);
 	},
 
-	'invalid get': function(test)
+	'invalid': function(test)
 	{
 		test.expect(1);
 		FeedModel.get(
-			this._db,
 			'invalid url',
 			function(err)
 			{
@@ -243,8 +236,7 @@ exports['isUpToDate'] = nodeunit.testCase(
 		    db_user = 'username',
 		    db_pass = 'password';
 
-		this._db = new DatabaseDriver();
-		this._db.init(
+		DatabaseDriver.init(
 		    db_name,
 		    db_addr,
 		    db_port,
@@ -262,7 +254,7 @@ exports['isUpToDate'] = nodeunit.testCase(
 	},
 	 
 	tearDown: function (callback) {
-		this._db.getCollection(
+		DatabaseDriver.getCollection(
 			'feeds',
 			function(err)
 			{
@@ -276,7 +268,7 @@ exports['isUpToDate'] = nodeunit.testCase(
 						if(err != null)
 							console.log('Test-suite cannot terminate.');
 						else {
-							this._db.close();
+							DatabaseDriver.close();
 							callback();
 						}
 					}
@@ -289,7 +281,6 @@ exports['isUpToDate'] = nodeunit.testCase(
 	{
 		test.expect(1);
 		FeedModel.save(
-			this._db,
 			'some url',
 			'some title',
 			'some author',
@@ -302,7 +293,6 @@ exports['isUpToDate'] = nodeunit.testCase(
 			function(feed)
 			{
 				FeedModel.isUpToDate(
-					this._db,
 					feed.url,
 					5,
 					function(err)
@@ -320,11 +310,10 @@ exports['isUpToDate'] = nodeunit.testCase(
 		);
 	},
 	
-	'expiry': function(test)
+	'expired': function(test)
 	{
 		test.expect(1);
 		FeedModel.save(
-			this._db,
 			'some url',
 			'some title',
 			'some author',
@@ -337,7 +326,6 @@ exports['isUpToDate'] = nodeunit.testCase(
 			function(feed)
 			{
 				FeedModel.isUpToDate(
-					this._db,
 					feed.url,
 					0,
 					function(err)
@@ -368,8 +356,7 @@ exports['delete'] = nodeunit.testCase(
 		    db_user = 'username',
 		    db_pass = 'password';
 
-		this._db = new DatabaseDriver();
-		this._db.init(
+		DatabaseDriver.init(
 		    db_name,
 		    db_addr,
 		    db_port,
@@ -387,7 +374,7 @@ exports['delete'] = nodeunit.testCase(
 	},
 	 
 	tearDown: function (callback) {
-		this._db.getCollection(
+		DatabaseDriver.getCollection(
 			'feeds',
 			function(err)
 			{
@@ -401,7 +388,7 @@ exports['delete'] = nodeunit.testCase(
 						if(err != null)
 							console.log('Test-suite cannot terminate.');
 						else {
-							this._db.close();
+							DatabaseDriver.close();
 							callback();
 						}
 					}
@@ -410,11 +397,10 @@ exports['delete'] = nodeunit.testCase(
 		);
 	},
 
-	'delete from empty collection': function(test)
+	'Empty collection': function(test)
 	{
 		test.expect(1);
 		FeedModel.remove(
-			this._db,
 			'some_url',
 			function(err)
 			{
@@ -429,11 +415,10 @@ exports['delete'] = nodeunit.testCase(
 		);	
 	},
 
-	'delete saved': function(test)
+	'basic': function(test)
 	{
 		test.expect(1);
 		FeedModel.save(
-			this._db,
 			'url',
 			'title',
 			'author',
@@ -446,7 +431,6 @@ exports['delete'] = nodeunit.testCase(
 			function(feed)
 			{
 				FeedModel.remove(
-					this._db,
 					feed.url,
 					function(err)
 					{
@@ -456,7 +440,6 @@ exports['delete'] = nodeunit.testCase(
 					function()
 					{
 						FeedModel.get(
-							this._db,
 							feed.url,
 							function(err){
 								test.equal(err.message, 'No such feed');
@@ -486,8 +469,7 @@ exports['push/pop'] = nodeunit.testCase(
 		    db_user = 'username',
 		    db_pass = 'password';
 
-		this._db = new DatabaseDriver();
-		this._db.init(
+		DatabaseDriver.init(
 		    db_name,
 		    db_addr,
 		    db_port,
@@ -505,7 +487,7 @@ exports['push/pop'] = nodeunit.testCase(
 	},
 	 
 	tearDown: function (callback) {
-		this._db.getCollection(
+		DatabaseDriver.getCollection(
 			'feeds',
 			function(err)
 			{
@@ -519,7 +501,7 @@ exports['push/pop'] = nodeunit.testCase(
 						if(err != null)
 							console.log('Test-suite cannot terminate.');
 						else {
-							this._db.close();
+							DatabaseDriver.close();
 							callback();
 						}
 					}
@@ -532,7 +514,6 @@ exports['push/pop'] = nodeunit.testCase(
 	{
 		test.expect(2);
 		FeedModel.save(
-			this._db,
 			'url',
 			'title',
 			'author',
@@ -547,7 +528,6 @@ exports['push/pop'] = nodeunit.testCase(
 				var time = new Date().getTime();
 				time = parseInt(time) - 120000;
 				FeedModel.pushFeedItems(
-					this._db,
 					feed.url,
 					[{
 						'url': 'page url',
@@ -577,7 +557,6 @@ exports['push/pop'] = nodeunit.testCase(
 		var time = new Date().getTime();
 		time = parseInt(time) - 120000;
 		FeedModel.pushFeedItems(
-			this._db,
 			'invalid url',
 			[{
 				'url': 'page url',
@@ -603,7 +582,6 @@ exports['push/pop'] = nodeunit.testCase(
 	{
 		test.expect(3);
 		FeedModel.save(
-			this._db,
 			'url',
 			'title',
 			'author',
@@ -618,7 +596,6 @@ exports['push/pop'] = nodeunit.testCase(
 				var time = new Date().getTime();
 				time = parseInt(time) - 120000;
 				FeedModel.pushFeedItems(
-					this._db,
 					feed.url,
 					[	{
 						 'url': 'page url',
@@ -654,7 +631,6 @@ exports['push/pop'] = nodeunit.testCase(
 	{
 		test.expect(3);
 		FeedModel.save(
-			this._db,
 			'url',
 			'title',
 			'author',
@@ -669,7 +645,6 @@ exports['push/pop'] = nodeunit.testCase(
 				var time = new Date().getTime();
 				time = parseInt(time) - 120000;
 				FeedModel.pushFeedItems(
-					this._db,
 					feed.url,
 					[{
 						'url': 'page url',
@@ -686,7 +661,6 @@ exports['push/pop'] = nodeunit.testCase(
 					{
 						//One item pushed.
 						FeedModel.popFeedItems(
-							this._db,
 							feed.url,
 							function(err)
 							{
@@ -711,7 +685,6 @@ exports['push/pop'] = nodeunit.testCase(
 	{
 		test.expect(4);
 		FeedModel.save(
-			this._db,
 			'url',
 			'title',
 			'author',
@@ -726,7 +699,6 @@ exports['push/pop'] = nodeunit.testCase(
 				var time = new Date().getTime();
 				time = parseInt(time) - 120000;
 				FeedModel.pushFeedItems(
-					this._db,
 					feed.url,
 					[
 						{
@@ -757,7 +729,6 @@ exports['push/pop'] = nodeunit.testCase(
 					{
 						//One item pushed.
 						FeedModel.popFeedItems(
-							this._db,
 							feed.url,
 							function(err)
 							{
@@ -784,7 +755,6 @@ exports['push/pop'] = nodeunit.testCase(
 	{
 		test.expect(4);
 		FeedModel.save(
-			this._db,
 			'url',
 			'title',
 			'author',
@@ -799,7 +769,6 @@ exports['push/pop'] = nodeunit.testCase(
 				var time = new Date().getTime();
 				time = parseInt(time) - 120000;
 				FeedModel.pushFeedItems(
-					this._db,
 					feed.url,
 					[
 						{
@@ -824,7 +793,6 @@ exports['push/pop'] = nodeunit.testCase(
 					{
 						//One item pushed.
 						FeedModel.popFeedItems(
-							this._db,
 							feed.url,
 							function(err)
 							{

@@ -26,9 +26,16 @@ exports['save'] = nodeunit.testCase(
 		    db_addr,
 		    db_port,
 		    db_user,
-		    db_pass
+		    db_pass,
+		    function(err)
+		    {
+			    console.log('Suite-setup: '+err.message);
+		    },
+		    function()
+		    {
+			    callback();
+		    }
 		);
-		callback();
 	},
 	 
 	tearDown: function (callback) {
@@ -36,7 +43,7 @@ exports['save'] = nodeunit.testCase(
 			'webpages',
 			function(err)
 			{
-				console.log('Suite-teardown: '+err);
+				console.log('Suite-teardown: '+err.message);
 			},
 			function(collection)
 			{
@@ -46,6 +53,7 @@ exports['save'] = nodeunit.testCase(
 						if(err != null)
 							console.log('Test-suite cannot terminate.');
 						else {
+							DatabaseDriver.close();
 							callback();
 						}
 					}
@@ -126,9 +134,16 @@ exports['get'] = nodeunit.testCase(
 		    db_addr,
 		    db_port,
 		    db_user,
-		    db_pass
+		    db_pass,
+		    function(err)
+		    {
+			    console.log('Suite-setup: '+err.message);
+		    },
+		    function()
+		    {
+			    callback();
+		    }
 		);
-		callback();
 	},
 	 
 	tearDown: function (callback) {
@@ -136,7 +151,7 @@ exports['get'] = nodeunit.testCase(
 			'webpages',
 			function(err)
 			{
-				console.log('Suite-teardown: '+err);
+				console.log('Suite-teardown: '+err.message);
 			},
 			function(collection)
 			{
@@ -146,6 +161,7 @@ exports['get'] = nodeunit.testCase(
 						if(err != null)
 							console.log('Test-suite cannot terminate.');
 						else {
+							DatabaseDriver.close();
 							callback();
 						}
 					}

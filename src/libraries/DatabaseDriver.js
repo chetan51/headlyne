@@ -17,6 +17,7 @@ var DatabaseDriver = function()
 	 *	Class variables
 	 */
 	this.database = {};    // database connection information
+	var self = this;
 	
 	/**
 	 *	Initializes the Database Driver with what database
@@ -31,32 +32,40 @@ var DatabaseDriver = function()
 		errback,
 		callback    )
 	{
-		this.database.name     = name;
-		this.database.address  = address;
-		this.database.port     = port;
-		this.database.username = username;
-		this.database.password = password;
-
-		var db = new Db(
-				this.database.name,
+		self.database.name     = name;
+		self.database.address  = address;
+		self.database.port     = port;
+		self.database.username = username;
+		self.database.password = password;
+		
+		self.database.db = new Db(
+				self.database.name,
 		                new Server(
-		                    this.database.address,
-		                    this.database.port,
+		                    self.database.address,
+		                    self.database.port,
 		                    {}
 		                )
 		);
 		//db.authenticate(db_user, db_port))
-		db.open(
+		self.database.db.open(
 			function(err, db2)
 			{
 				if(err != null)
-					errback(new Error('Database Connection Error'));
+					errback(new Error('Database Connection Error: '+err.message));
 				else {
-					this.database.db = db2;
+					self.database.db = db2;
 					callback();
 				}
 			}
 		);
+	}
+
+	/**
+	 * 	Terminates the database connection.
+	 **/
+	this.close = function()
+	{
+		self.database.db.close();
 	}
 	
 	/**
@@ -64,12 +73,12 @@ var DatabaseDriver = function()
 	 **/
 	this.getCollection = function(collection_name, errback, callback)
 	{
-		this.database.db.collection(
+		self.database.db.collection(
 			collection_name,
 			function(err, collection)
 			{
 				if(err != null) {
-					errback(new Error('Database Access Error'+err.message));
+					errback(new Error('Database Access Error: '+err.message));
 				} else {
 					callback(collection);
 				}
@@ -160,14 +169,6 @@ var DatabaseDriver = function()
 				}
 			}
 		);
-	}
-
-	/**
-	 * 	Terminates the database connection.
-	 **/
-	this.close = function()
-	{
-		this.database.db.close();
 	}
 };
 

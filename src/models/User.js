@@ -59,7 +59,6 @@ var User = function()
 					{
 						delete user['password'];
 						callback(user);
-						collection.db.close();
 					}
 				);
 			}
