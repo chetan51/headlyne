@@ -9,7 +9,8 @@ var http            = require('http'),
 /**
  *	Constants and mocks
  **/
-var mock_server_host = "localhost",
+var mock_server      = null;
+    mock_server_host = "localhost",
     mock_server_port = 7500;
 
 var basic_feed_url = "http://" +
@@ -28,12 +29,18 @@ exports['get feed teaser'] = nodeunit.testCase(
 		ServerGenerator.createServer(
 			mock_server_host,
 			mock_server_port,
-			function() {}
+			function(server) {
+				mock_server = server;
+			}
 		);
 		callback();
 	},
 	 
 	tearDown: function(callback) {
+		ServerGenerator.closeServer(
+			mock_server,
+			function() {}
+		);
 		callback();
 	},
 
@@ -49,7 +56,25 @@ exports['get feed teaser'] = nodeunit.testCase(
 			},
 			function(err) {
 				test.done();
-			}
+			},
+			true
+		);
+	},
+
+	'feed in not in database and instant is off': function(test) {
+		test.expect(1);
+		
+		FeedServer.getFeedTeaser(
+			basic_feed_url,
+			10,
+			function(feed) {
+				test.notEqual(feed, null);
+				test.done();
+			},
+			function(err) {
+				test.done();
+			},
+			false
 		);
 	}
 
