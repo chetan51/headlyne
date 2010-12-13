@@ -16,7 +16,7 @@ var ServerGenerator = function() {
 	
 	this.createServer = function(host, port, callback)
 	{
-		Ni.config('root', "./mock_app");
+		Ni.config('root', __dirname + "/mock_app");
 
 		Ni.boot(function() {
 			var serv = http.createServer(
@@ -52,6 +52,10 @@ var ServerGenerator = function() {
 							res.end();
 							break;
 						case '/basic_feed':
+							res.writeHead(200, {'Content-Type': 'text/html'});
+							res.write(Ni.view('basic_feed').template);
+							res.end();
+							break;
 						default:
 							res.writeHead(404, {'Content-Type': 'text/html'});
 							res.end();
