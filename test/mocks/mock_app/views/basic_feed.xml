@@ -1,2 +1,26 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet type="text/xsl" media="screen" href="/~d/styles/atom10full.xsl"?><?xml-stylesheet type="text/css" media="screen" href="http://feeds.feedburner.com/~d/styles/itemcontent.css"?><feed xmlns="http://www.w3.org/2005/Atom" xmlns:feedburner="http://rssnamespace.org/feedburner/ext/1.0"><title>The Blog of Chetan Surpur</title><link href="http://chetansurpur.com" /><updated>2010-12-03T12:34:27Z</updated><id>http://chetansurpur.com</id><atom10:link xmlns:atom10="http://www.w3.org/2005/Atom" rel="self" type="application/atom+xml" href="http://feeds.feedburner.com/TheBlogOfChetanSurpur" /><feedburner:info uri="theblogofchetansurpur" /><atom10:link xmlns:atom10="http://www.w3.org/2005/Atom" rel="hub" href="http://pubsubhubbub.appspot.com/" /><feedburner:browserFriendly></feedburner:browserFriendly><entry><title>Life Hack - The 30/30 Minute Work Cycle Feels Like Magic</title><author><name>Chetan Surpur</name></author><link href="http://chetansurpur.com/blog/2010/11/magic-work-cycle.html" /><updated>2010-11-09T00:00:00Z</updated><published>2010-11-09T00:00:00Z</published><id>http://chetansurpur.com/blog/2010/11/magic-work-cycle.html</id><content type="html">Work hard, play hard.</content></entry><entry><title>World's Most Badly Designed Public Restroom (PIC)</title><author><name>Chetan Surpur</name></author><link href="http://chetansurpur.com/blog/2010/10/worst-restroom-design.html" /><updated>2010-10-18T00:00:00Z</updated><published>2010-10-18T00:00:00Z</published><id>http://chetansurpur.com/blog/2010/10/worst-restroom-design.html</id><content type="html">Not all engineers deserve to live.</content></entry><entry><title>A Curious Breach Of Privacy</title><author><name>Chetan Surpur</name></author><link href="http://chetansurpur.com/blog/2010/10/breach-of-privacy.html" /><updated>2010-10-14T00:00:00Z</updated><published>2010-10-14T00:00:00Z</published><id>http://chetansurpur.com/blog/2010/10/breach-of-privacy.html</id><content type="html">I'm gonna steal your identity from your trash can.</content></entry><entry><title>Why Node.js Is Totally Awesome</title><author><name>Chetan Surpur</name></author><link href="http://chetansurpur.com/blog/2010/10/why-node-js-is-totally-awesome.html" /><updated>2010-10-11T00:00:00Z</updated><published>2010-10-11T00:00:00Z</published><id>http://chetansurpur.com/blog/2010/10/why-node-js-is-totally-awesome.html</id><content type="html">Or rather, why it's the future of the Internet.</content></entry></feed>
+<?xml version="1.0" encoding="utf-8"?>
+ 
+<feed xmlns="http://www.w3.org/2005/Atom">
+ 
+	<title>Example Feed</title>
+	<subtitle>A subtitle.</subtitle>
+	<link href="http://example.org/feed/" rel="self" />
+	<link href="http://example.org/" />
+	<id>urn:uuid:60a76c80-d399-11d9-b91C-0003939e0af6</id>
+	<updated>2003-12-13T18:30:02Z</updated>
+	<author>
+		<name>John Doe</name>
+		<email>johndoe@example.com</email>
+	</author>
+ 
+	<entry>
+		<title>Atom-Powered Robots Run Amok</title>
+		<link href="http://example.org/2003/12/13/atom03" />
+		<link rel="alternate" type="text/html" href="http://example.org/2003/12/13/atom03.html"/>
+		<link rel="edit" href="http://example.org/2003/12/13/atom03/edit"/>
+		<id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+		<updated>2003-12-13T18:30:02Z</updated>
+		<summary>Some text.</summary>
+	</entry>
+ 
+</feed>

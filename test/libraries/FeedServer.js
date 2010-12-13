@@ -13,8 +13,9 @@ var mock_server      = null;
     mock_server_host = "localhost",
     mock_server_port = 7500;
 
-var basic_feed_url = "http://" + mock_server_host + ":" + mock_server_port
-                     + "/basic_feed";
+var basic_feed_url   = "http://" + mock_server_host + ":" + mock_server_port
+                     + "/basic_feed",
+    basic_feed_title = "Example Feed";
 
 /**
  *	Tests
@@ -66,7 +67,7 @@ exports['get feed teaser'] = nodeunit.testCase(
 			basic_feed_url,
 			10,
 			function(feed) {
-				test.equal(feed.url, basic_feed_url);
+				test.equal(feed.title, basic_feed_title);
 				test.done();
 			},
 			function(err) {

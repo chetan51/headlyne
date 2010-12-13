@@ -9,6 +9,7 @@
  *	Module dependencies
  **/
 var Downloader     = require('./Downloader.js'),
+    FeedParser     = require('./FeedParser.js'),
     ContentGrabber = require('./ContentGrabber.js'),
     FeedModel      = require('../models/Feed.js');
 
@@ -43,7 +44,27 @@ var FeedServer = function()
 	this.getFeedTeaser = function(url, num_feed_items, callback,
 	                              errback, instant)
 	{
-		callback(null);
+		if (instant) {
+			callback(null);
+		}
+		else {
+			Downloader.fetch(
+				url,
+				function(data) {
+					FeedParser.parse(
+						data,
+						function(feed) {
+							console.log(feed);
+							callback(feed);
+						},
+						function(err) {},
+						30000
+					);
+				},
+				function(err) {},
+				30000
+			);
+		}
 	}
 };
 
