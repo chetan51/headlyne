@@ -3,7 +3,7 @@
  **/
 var http            = require('http'),
     nodeunit        = require('nodeunit'),
-    ServerGenerator = require('../mocks/server.js');
+    ServerGenerator = require('../mocks/ServerGenerator.js');
     FeedServer      = require('../../src/libraries/FeedServer.js');
 
 /**
