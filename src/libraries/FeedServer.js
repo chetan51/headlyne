@@ -57,9 +57,21 @@ var FeedServer = function()
 							// Mocking feed
 							feed =
 								{
-									title: "RSS Title"
+									title: "RSS Title",
+									author: "Sample author",
+									description: "Sample RSS feed"
 								}
-							callback(feed);
+					
+							FeedModel.save(
+								url,
+								feed.title,
+								feed.author,
+								feed.description,
+								function(err) {},
+								function(feed) {
+									callback(feed);
+								}
+							);
 						},
 						function(err) {},
 						30000

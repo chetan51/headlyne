@@ -106,6 +106,7 @@ exports['get feed teaser'] = nodeunit.testCase(
 				test.equal(feed.title, basic_feed_title);
 				FeedModel.get(
 					basic_feed_url,
+					function(err) {},
 					function(feed) {
 						test.equal(feed.title, basic_feed_title);
 						test.done();
