@@ -3,7 +3,9 @@
  **/
 var http            = require('http'),
     nodeunit        = require('nodeunit'),
+    Step            = require('step'),
     ServerGenerator = require('../mocks/ServerGenerator.js'),
+    DatabaseMocker  = require('../mocks/DatabaseMocker.js'),
     FeedModel       = require('../../src/models/Feed.js'),
     FeedServer      = require('../../src/libraries/FeedServer.js');
 
@@ -25,21 +27,54 @@ exports['get feed teaser'] = nodeunit.testCase(
 {
 	
 	setUp: function(callback) {
-		ServerGenerator.createServer(
-			mock_server_host,
-			mock_server_port,
-			function(server) {
-				mock_server = server;
-				callback();
+		Step(
+			function mockServer() {
+				var done = this;
+				
+				ServerGenerator.createServer(
+					mock_server_host,
+					mock_server_port,
+					function(server) {
+						mock_server = server;
+						done();
+					}
+				);
+			},
+			function mockDatabase() {
+				DatabaseMocker.setUp(
+					function() {
+						callback();
+					},
+					function(err) {
+						console.log(err);
+					}
+				);
 			}
 		);
 	},
 	 
 	tearDown: function(callback) {
-		ServerGenerator.closeServer(
-			mock_server,
-			function() {
-				callback();
+		Step(
+			function closeServer() {
+				var done = this;
+				
+				ServerGenerator.closeServer(
+					mock_server,
+					function() {
+						callback();
+					}
+				);
+			},
+			function clearDatabase() {
+				DatabaseMocker.tearDown(
+					'feeds',
+					function() {
+						callback();
+					},
+					function(err) {
+						console.log(err);
+					}
+				);
 			}
 		);
 	},
