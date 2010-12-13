@@ -12,6 +12,7 @@
 *	node-htmlparser
 *	node-readability
 *	[node-webworker v0.8.2](https://github.com/pgriess/node-webworker)
+*	[step v0.0.3](https://github.com/creationix/step)
 
 ## Infrastructure:
 *	app.js                : The driver for the webserver.
