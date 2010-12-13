@@ -13,11 +13,8 @@ var mock_server      = null;
     mock_server_host = "localhost",
     mock_server_port = 7500;
 
-var basic_feed_url = "http://" +
-                     mock_server_host +
-                     ":" +
-                     mock_server_port +
-                     "/basic_feed";
+var basic_feed_url = "http://" + mock_server_host + ":" + mock_server_port
+                     + "/basic_feed";
 
 /**
  *	Tests

@@ -40,7 +40,8 @@ var FeedServer = function()
 	 *		           callback function for error
 	 *		           return results instantly?
 	 **/
-	this.getFeedTeaser = function(url, num_feed_items, callback, errback, instant)
+	this.getFeedTeaser = function(url, num_feed_items, callback,
+	                              errback, instant)
 	{
 		callback(null);
 	}
