@@ -79,7 +79,7 @@ exports['get feed teaser'] = nodeunit.testCase(
 		);
 	},
 
-	'feed in not in database and instant is on': function(test) {
+	'feed not in database and instant on': function(test) {
 		test.expect(1);
 		
 		FeedServer.getFeedTeaser(
@@ -96,7 +96,7 @@ exports['get feed teaser'] = nodeunit.testCase(
 		);
 	},
 
-	'feed in not in database and instant is off': function(test) {
+	'feed not in database and instant off': function(test) {
 		test.expect(2);
 		
 		FeedServer.getFeedTeaser(
