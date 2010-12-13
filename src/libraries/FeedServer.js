@@ -54,7 +54,11 @@ var FeedServer = function()
 					FeedParser.parse(
 						data,
 						function(feed) {
-							console.log(feed);
+							// Mocking feed
+							feed =
+								{
+									title: "RSS Title"
+								}
 							callback(feed);
 						},
 						function(err) {},
