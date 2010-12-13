@@ -2,7 +2,7 @@
  *  Module dependencies
  */
 var nodeunit = require('nodeunit');
-var ServerGenerator = require('../../test/mocks/server.js');
+var ServerGenerator = require('../../test/mocks/ServerGenerator.js');
 var Downloader = require('../../src/libraries/Downloader.js');
 
 /*
