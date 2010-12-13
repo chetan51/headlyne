@@ -28,17 +28,18 @@ exports['get feed teaser'] = nodeunit.testCase(
 			mock_server_port,
 			function(server) {
 				mock_server = server;
+				callback();
 			}
 		);
-		callback();
 	},
 	 
 	tearDown: function(callback) {
 		ServerGenerator.closeServer(
 			mock_server,
-			function() {}
+			function() {
+				callback();
+			}
 		);
-		callback();
 	},
 
 	'feed in not in database and instant is on': function(test) {
@@ -65,7 +66,7 @@ exports['get feed teaser'] = nodeunit.testCase(
 			basic_feed_url,
 			10,
 			function(feed) {
-				test.notEqual(feed, null);
+				test.equal(feed.url, basic_feed_url);
 				test.done();
 			},
 			function(err) {

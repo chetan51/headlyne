@@ -6,57 +6,63 @@
  * Module dependencies
  */
 var http = require('http'),
-    url = require('url');
+    url = require('url'),
+    Ni = require('ni');
 
 /*
  * The generator class
  */
 var ServerGenerator = function() {
 	
-	this.createServer = function(host, port, callback) {
-		
-		var serv = http.createServer(
-			function (req, res) {
-				var parsed_url = url.parse(req.url, true);
-		
-				switch(parsed_url.pathname) {
-		
-					case '/ok':
-						res.writeHead(200, {'Content-Type': 'text/html'});
-						res.write('<html><head></head><body>ok</body></html>');
-						res.end();
-						break;
+	this.createServer = function(host, port, callback)
+	{
+		Ni.config('root', "./mock_app");
+
+		Ni.boot(function() {
+			var serv = http.createServer(
+				function (req, res) {
+					var parsed_url = url.parse(req.url, true);
 			
-					case '/redirect':
-						res.writeHead(301, {'Content-Type': 'text/html', 'Location': "http://" + host + ":" + port + "/ok"});
-						res.end();
-						break;
+					switch(parsed_url.pathname) {
 			
-					case '/timeout':
-						setTimeout( function() {
+						case '/ok':
 							res.writeHead(200, {'Content-Type': 'text/html'});
 							res.write('<html><head></head><body>ok</body></html>');
 							res.end();
-						}, 60000);
-						break;
-					case '/endlessredirect':
-						res.writeHead(301,
-							{	'Content-Type': 'text/html',
-								'Location': "http://" + host + ":" + port + "/endlessredirect"
-							}
-						);
-						res.end();
-						break;
-					default:
-						res.writeHead(404, {'Content-Type': 'text/html'});
-						res.end();
-						break;
+							break;
+				
+						case '/redirect':
+							res.writeHead(301, {'Content-Type': 'text/html', 'Location': "http://" + host + ":" + port + "/ok"});
+							res.end();
+							break;
+				
+						case '/timeout':
+							setTimeout( function() {
+								res.writeHead(200, {'Content-Type': 'text/html'});
+								res.write('<html><head></head><body>ok</body></html>');
+								res.end();
+							}, 60000);
+							break;
+						case '/endlessredirect':
+							res.writeHead(301,
+								{	'Content-Type': 'text/html',
+									'Location': "http://" + host + ":" + port + "/endlessredirect"
+								}
+							);
+							res.end();
+							break;
+						case '/basic_feed':
+						default:
+							res.writeHead(404, {'Content-Type': 'text/html'});
+							res.end();
+							break;
+					}
 				}
-			}
-		);
-		
-		serv.listen(port, host, function() {
-			callback(serv);   
+			);
+			
+			serv.listen(port, host, function() {
+				callback(serv);   
+			});
 		});
 	}
 
