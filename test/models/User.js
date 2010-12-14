@@ -12,10 +12,19 @@ var Mongo      = require('mongodb'),
 
 exports['save'] = nodeunit.testCase(
 {
+
 	setUp: function (callback) {
 		DatabaseMocker.setUp(
 			function() {
-				callback();
+				DatabaseMocker.clear(
+					'users',
+					function() {
+						callback();
+					},
+					function(err) {
+						console.log(err);
+					}
+				);
 			},
 			function(err) {
 				console.log(err);
@@ -24,9 +33,10 @@ exports['save'] = nodeunit.testCase(
 	},
 	 
 	tearDown: function (callback) {
-		DatabaseMocker.tearDown(
+		DatabaseMocker.clear(
 			'users',
 			function() {
+				DatabaseMocker.tearDown();
 				callback();
 			},
 			function(err) {
@@ -34,7 +44,7 @@ exports['save'] = nodeunit.testCase(
 			}
 		);
 	},
-
+	
 	'basic': function(test)
 	{
 		test.expect(1);

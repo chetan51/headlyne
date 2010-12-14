@@ -15,7 +15,15 @@ exports['save'] = nodeunit.testCase(
 	setUp: function (callback) {
 		DatabaseMocker.setUp(
 			function() {
-				callback();
+				DatabaseMocker.clear(
+					'feeds',
+					function() {
+						callback();
+					},
+					function(err) {
+						console.log(err);
+					}
+				);
 			},
 			function(err) {
 				console.log(err);
@@ -24,9 +32,10 @@ exports['save'] = nodeunit.testCase(
 	},
 	 
 	tearDown: function (callback) {
-		DatabaseMocker.tearDown(
+		DatabaseMocker.clear(
 			'feeds',
 			function() {
+				DatabaseMocker.tearDown();
 				callback();
 			},
 			function(err) {
