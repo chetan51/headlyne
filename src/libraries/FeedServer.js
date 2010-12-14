@@ -45,15 +45,27 @@ var FeedServer = function()
 	                              errback, instant)
 	{
 		if (instant) {
-			FeedModel.get(
+			FeedModel.isUpToDate(
 				url,
+				30,
 				function(err) {
 					if (err.message == "No such feed") {
 						callback(null);
 					}
 				},
-				function(feed) {
-					callback(feed);
+				function(result) {
+					if (result) {
+						FeedModel.get(
+							url,
+							function(err) {},
+							function(feed) {
+								callback(feed);
+							}
+						);
+					}
+					else {
+						callback(null);
+					}
 				}
 			);
 		}
