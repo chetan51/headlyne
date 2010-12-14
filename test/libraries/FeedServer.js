@@ -202,6 +202,45 @@ exports['get feed teaser'] = nodeunit.testCase(
 			},
 			false
 		);
+	},
+	
+	'feed in database and not up to date and instant off': function(test) {
+		test.expect(1);
+		
+		// First, we make sure the feed is in the database
+		FeedServer.getFeedTeaser(
+			basic_feed_url,
+			10,
+			function(feed) {
+				// Then we make FeedServer think the feed expired
+				var isUpToDate_backup = FeedModel.isUpToDate;
+				FeedModel.isUpToDate = function(feed_url, expire_length, errback, callback) {
+					callback(false);
+				}
+
+				// Now we try to retrieve it
+				FeedServer.getFeedTeaser(
+					basic_feed_url,
+					10,
+					function(feed) {
+						test.equal(feed.title, basic_feed_title);
+						
+						// Restore FeedModel.isUpToDate
+						FeedModel.isUpToDate = isUpToDate_backup;
+
+						test.done();
+					},
+					function(err) {
+						test.done();
+					},
+					false
+				);
+			},
+			function(err) {
+				test.done();
+			},
+			false
+		);
 	}
 	
 });
