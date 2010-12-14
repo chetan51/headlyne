@@ -2,6 +2,7 @@ var http = require('http')
 var nodeunit = require('nodeunit');
 var FeedModel = require('../../src/models/Feed.js');
 var DatabaseDriver = require('../../src/libraries/DatabaseDriver.js');
+var DatabaseMocker = require('../mocks/DatabaseMocker.js');
 var Mongo      = require('mongodb'),
     Db         = Mongo.Db,
     Connection = Mongo.Connection,
@@ -12,52 +13,33 @@ var Mongo      = require('mongodb'),
 exports['save'] = nodeunit.testCase(
 {
 	setUp: function (callback) {
-		/**
-		 * DB Access Parameters
-		 **/
-		var db_name = 'headlyne',
-		    db_addr = '127.0.0.1',
-		    db_port = 27017,
-		    db_user = 'username',
-		    db_pass = 'password';
-
-		DatabaseDriver.init(
-		    db_name,
-		    db_addr,
-		    db_port,
-		    db_user,
-		    db_pass,
-		    function(err)
-		    {
-			    console.log('Suite-setup: '+err.message);
-		    },
-		    function()
-		    {
-			callback();
-		    }
+		DatabaseMocker.setUp(
+			function() {
+				DatabaseMocker.clear(
+					'feeds',
+					function() {
+						callback();
+					},
+					function(err) {
+						console.log(err);
+					}
+				);
+			},
+			function(err) {
+				console.log(err);
+			}
 		);
 	},
 	 
 	tearDown: function (callback) {
-		DatabaseDriver.getCollection(
+		DatabaseMocker.clear(
 			'feeds',
-			function(err)
-			{
-				console.log('Suite-teardown: '+err.message);
+			function() {
+				DatabaseMocker.tearDown();
+				callback();
 			},
-			function(collection)
-			{
-				collection.remove(
-					function(err, doc)
-					{
-						if(err != null)
-							console.log('Test-suite cannot terminate.');
-						else {
-							DatabaseDriver.close();
-							callback();
-						}
-					}
-				);
+			function(err) {
+				console.log(err);
 			}
 		);
 	},
