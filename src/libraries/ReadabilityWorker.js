@@ -1,13 +1,17 @@
+/*
+ *	ReadabilityWorker: Provides a WebWorker that talks to Readability
+ *	so that the main server is not blocked.
+ */
 
-/* Dependencies */
+/*
+ *	Module Dependencies
+ */
 var Worker       = require('webworker').Worker;
 var Readability  = require('node-readability');
 
 /*
- * ReadabilityInterfacer: Provides a WebWorker that talks to Readability
- * so that the main server is not blocked.
+ *	Listeners
  */
-
 onmessage = function(message)
 {
 	switch (message.data.command) {
@@ -30,5 +34,4 @@ onmessage = function(message)
 
 onclose = function()
 {
-	
 };
