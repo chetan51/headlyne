@@ -5,7 +5,7 @@ var http            = require('http'),
     nodeunit        = require('nodeunit'),
     Step            = require('step'),
     ServerGenerator = require('../mocks/ServerGenerator.js'),
-    DatabaseMocker  = require('../mocks/DatabaseMocker.js'),
+    DatabaseFaker  = require('../mocks/DatabaseFaker.js'),
     FeedModel       = require('../../src/models/Feed.js'),
     FeedServer      = require('../../src/libraries/FeedServer.js');
 
@@ -41,9 +41,9 @@ exports['get feed teaser'] = nodeunit.testCase(
 				);
 			},
 			function mockDatabase() {
-				DatabaseMocker.setUp(
+				DatabaseFaker.setUp(
 					function() {
-						DatabaseMocker.clear(
+						DatabaseFaker.clear(
 							'feeds',
 							function() {
 								callback();
@@ -74,10 +74,10 @@ exports['get feed teaser'] = nodeunit.testCase(
 				);
 			},
 			function closeDatabase() {
-				DatabaseMocker.clear(
+				DatabaseFaker.clear(
 					'feeds',
 					function() {
-						DatabaseMocker.tearDown();
+						DatabaseFaker.tearDown();
 						callback();
 					},
 					function(err) {
@@ -195,6 +195,45 @@ exports['get feed teaser'] = nodeunit.testCase(
 						test.done();
 					},
 					true
+				);
+			},
+			function(err) {
+				test.done();
+			},
+			false
+		);
+	},
+	
+	'feed in database and not up to date and instant off': function(test) {
+		test.expect(1);
+		
+		// First, we make sure the feed is in the database
+		FeedServer.getFeedTeaser(
+			basic_feed_url,
+			10,
+			function(feed) {
+				// Then we make FeedServer think the feed expired
+				var isUpToDate_backup = FeedModel.isUpToDate;
+				FeedModel.isUpToDate = function(feed_url, expire_length, errback, callback) {
+					callback(false);
+				}
+
+				// Now we try to retrieve it
+				FeedServer.getFeedTeaser(
+					basic_feed_url,
+					10,
+					function(feed) {
+						test.equal(feed.title, basic_feed_title);
+						
+						// Restore FeedModel.isUpToDate
+						FeedModel.isUpToDate = isUpToDate_backup;
+
+						test.done();
+					},
+					function(err) {
+						test.done();
+					},
+					false
 				);
 			},
 			function(err) {

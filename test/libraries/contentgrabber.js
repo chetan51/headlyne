@@ -22,12 +22,15 @@ var sampleHTMLLastLine   = "Sorry about that everyone!";
  **/
 exports['grab content from page'] = nodeunit.testCase(
 {
-/*    setUp: function () {
-    },
- 
-    tearDown: function () {
-    },
- */
+	
+	setUp: function (callback) {
+		callback();
+	},
+
+	tearDown: function (callback) {
+		callback();
+	},
+
 	'basic': function(test)
 	{
 		test.expect(2);
@@ -46,10 +49,12 @@ exports['grab content from page'] = nodeunit.testCase(
 			}
 		);
 	}
+
 });
 
 exports['DOM Testing'] = nodeunit.testCase(
 {
+	
 	'basic': function(test)
 	{
 		test.expect(2);
@@ -59,4 +64,5 @@ exports['DOM Testing'] = nodeunit.testCase(
 		test.equal(dom.getElementById('lol').innerHTML, 'jigglypuff!');
 		test.done();
 	}
+
 });

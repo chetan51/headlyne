@@ -18,9 +18,9 @@ var db_name = 'headlyne',
     db_pass = 'password';
 
 /*
- * The database mocker class
+ * The database faker class
  */
-var DatabaseMocker = function() {
+var DatabaseFaker = function() {
 
 	this.setUp = function(callback, errback)
 	{
@@ -71,4 +71,4 @@ var DatabaseMocker = function() {
 	}
 };
 
-module.exports = new DatabaseMocker();
+module.exports = new DatabaseFaker();
