@@ -18,13 +18,15 @@ ServerGenerator.createServer('localhost', 7000, function() {});
 /*
  *  Tests
  */
-exports['fetch URLs'] = nodeunit.testCase({
-/*	setUp: function () {
+exports['fetch URLs'] = nodeunit.testCase(
+{
+	
+	setUp: function () {
 	},
 	 
 	tearDown: function () {
 	},
- */
+
 	'ok': function(test) {
 		
 		test.expect(1);
@@ -132,5 +134,5 @@ exports['fetch URLs'] = nodeunit.testCase({
 			}
 		);
 	}
-});
 
+});
