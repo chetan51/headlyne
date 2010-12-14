@@ -61,7 +61,7 @@ exports['get feed teaser'] = nodeunit.testCase(
 				ServerGenerator.closeServer(
 					mock_server,
 					function() {
-						callback();
+						done();
 					}
 				);
 			},
@@ -110,6 +110,50 @@ exports['get feed teaser'] = nodeunit.testCase(
 					function(feed) {
 						test.equal(feed.title, basic_feed_title);
 						test.done();
+					}
+				);
+			},
+			function(err) {
+				test.done();
+			},
+			false
+		);
+	},
+	
+	'feed in database and up to date and instant on': function(test) {
+		test.expect(2);
+		
+		// First, we make sure the feed is in the database and up to date
+		FeedServer.getFeedTeaser(
+			basic_feed_url,
+			10,
+			function(feed) {
+				FeedModel.get(
+					basic_feed_url,
+					function(err) {
+						test.done();
+					},
+					function(feed) {
+						// Now we try to retrieve it
+						FeedServer.getFeedTeaser(
+							basic_feed_url,
+							10,
+							function(feed) {
+								test.equal(feed.title, basic_feed_title);
+								FeedModel.get(
+									basic_feed_url,
+									function(err) {},
+									function(feed) {
+										test.equal(feed.title, basic_feed_title);
+										test.done();
+									}
+								);
+							},
+							function(err) {
+								test.done();
+							},
+							true
+						);
 					}
 				);
 			},

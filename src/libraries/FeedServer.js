@@ -45,7 +45,17 @@ var FeedServer = function()
 	                              errback, instant)
 	{
 		if (instant) {
-			callback(null);
+			FeedModel.get(
+				url,
+				function(err) {
+					if (err.message == "No such feed") {
+						callback(null);
+					}
+				},
+				function(feed) {
+					callback(feed);
+				}
+			);
 		}
 		else {
 			Downloader.fetch(
