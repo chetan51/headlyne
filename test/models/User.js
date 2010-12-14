@@ -2,7 +2,7 @@ var http = require('http')
 var nodeunit = require('nodeunit');
 var UserModel = require('../../src/models/User.js');
 var DatabaseDriver = require('../../src/libraries/DatabaseDriver.js');
-var DatabaseMocker = require('../mocks/DatabaseMocker.js');
+var DatabaseFaker = require('../mocks/DatabaseFaker.js');
 var Mongo      = require('mongodb'),
     Db         = Mongo.Db,
     Connection = Mongo.Connection,
@@ -14,9 +14,9 @@ exports['save'] = nodeunit.testCase(
 {
 
 	setUp: function (callback) {
-		DatabaseMocker.setUp(
+		DatabaseFaker.setUp(
 			function() {
-				DatabaseMocker.clear(
+				DatabaseFaker.clear(
 					'users',
 					function() {
 						callback();
@@ -33,10 +33,10 @@ exports['save'] = nodeunit.testCase(
 	},
 	 
 	tearDown: function (callback) {
-		DatabaseMocker.clear(
+		DatabaseFaker.clear(
 			'users',
 			function() {
-				DatabaseMocker.tearDown();
+				DatabaseFaker.tearDown();
 				callback();
 			},
 			function(err) {

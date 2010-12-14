@@ -5,7 +5,7 @@ var http            = require('http'),
     nodeunit        = require('nodeunit'),
     Step            = require('step'),
     ServerGenerator = require('../mocks/ServerGenerator.js'),
-    DatabaseMocker  = require('../mocks/DatabaseMocker.js'),
+    DatabaseFaker  = require('../mocks/DatabaseFaker.js'),
     FeedModel       = require('../../src/models/Feed.js'),
     FeedServer      = require('../../src/libraries/FeedServer.js');
 
@@ -41,9 +41,9 @@ exports['get feed teaser'] = nodeunit.testCase(
 				);
 			},
 			function mockDatabase() {
-				DatabaseMocker.setUp(
+				DatabaseFaker.setUp(
 					function() {
-						DatabaseMocker.clear(
+						DatabaseFaker.clear(
 							'feeds',
 							function() {
 								callback();
@@ -74,10 +74,10 @@ exports['get feed teaser'] = nodeunit.testCase(
 				);
 			},
 			function closeDatabase() {
-				DatabaseMocker.clear(
+				DatabaseFaker.clear(
 					'feeds',
 					function() {
-						DatabaseMocker.tearDown();
+						DatabaseFaker.tearDown();
 						callback();
 					},
 					function(err) {
