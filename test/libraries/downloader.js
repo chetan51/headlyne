@@ -21,10 +21,12 @@ ServerGenerator.createServer('localhost', 7000, function() {});
 exports['fetch URLs'] = nodeunit.testCase(
 {
 	
-	setUp: function () {
+	setUp: function (callback) {
+		callback();
 	},
-	 
-	tearDown: function () {
+
+	tearDown: function (callback) {
+		callback();
 	},
 
 	'ok': function(test) {

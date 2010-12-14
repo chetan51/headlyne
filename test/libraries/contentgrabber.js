@@ -23,10 +23,12 @@ var sampleHTMLLastLine   = "Sorry about that everyone!";
 exports['grab content from page'] = nodeunit.testCase(
 {
 	
-	setUp: function () {
+	setUp: function (callback) {
+		callback();
 	},
 
-	tearDown: function () {
+	tearDown: function (callback) {
+		callback();
 	},
 
 	'basic': function(test)
