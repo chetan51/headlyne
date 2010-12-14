@@ -43,7 +43,15 @@ exports['get feed teaser'] = nodeunit.testCase(
 			function mockDatabase() {
 				DatabaseMocker.setUp(
 					function() {
-						callback();
+						DatabaseMocker.clear(
+							'feeds',
+							function() {
+								callback();
+							},
+							function(err) {
+								console.log(err);
+							}
+						);
 					},
 					function(err) {
 						console.log(err);
@@ -65,10 +73,11 @@ exports['get feed teaser'] = nodeunit.testCase(
 					}
 				);
 			},
-			function clearDatabase() {
-				DatabaseMocker.tearDown(
+			function closeDatabase() {
+				DatabaseMocker.clear(
 					'feeds',
 					function() {
+						DatabaseMocker.tearDown();
 						callback();
 					},
 					function(err) {
