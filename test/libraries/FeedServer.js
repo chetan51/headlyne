@@ -165,6 +165,7 @@ exports['get feed teaser'] = nodeunit.testCase(
 			10,
 			function(feed) {
 				// Then we make FeedServer think the feed expired
+				var isUpToDate_backup = FeedModel.isUpToDate;
 				FeedModel.isUpToDate = function(feed_url, expire_length, errback, callback) {
 					callback(false);
 				}
@@ -175,6 +176,10 @@ exports['get feed teaser'] = nodeunit.testCase(
 					10,
 					function(feed) {
 						test.equal(feed, null);
+						
+						// Restore FeedModel.isUpToDate
+						FeedModel.isUpToDate = isUpToDate_backup;
+
 						test.done();
 					},
 					function(err) {
