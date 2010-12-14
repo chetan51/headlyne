@@ -41,7 +41,7 @@ var DatabaseMocker = function() {
 		);
 	}
 	
-	this.tearDown = function(collection, callback, errback)
+	this.clear = function(collection, callback, errback)
 	{
 		DatabaseDriver.getCollection(
 			collection,
@@ -57,13 +57,17 @@ var DatabaseMocker = function() {
 						if(err != null)
 							errback(err);
 						else {
-							DatabaseDriver.close();
 							callback();
 						}
 					}
 				);
 			}
 		);
+	}
+	
+	this.tearDown = function()
+	{
+		DatabaseDriver.close();
 	}
 };
 
