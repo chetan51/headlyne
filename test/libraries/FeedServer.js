@@ -128,33 +128,25 @@ exports['get feed teaser'] = nodeunit.testCase(
 			basic_feed_url,
 			10,
 			function(feed) {
-				FeedModel.get(
+				// Now we try to retrieve it
+				FeedServer.getFeedTeaser(
 					basic_feed_url,
+					10,
+					function(feed) {
+						test.equal(feed.title, basic_feed_title);
+						FeedModel.get(
+							basic_feed_url,
+							function(err) {},
+							function(feed) {
+								test.equal(feed.title, basic_feed_title);
+								test.done();
+							}
+						);
+					},
 					function(err) {
 						test.done();
 					},
-					function(feed) {
-						// Now we try to retrieve it
-						FeedServer.getFeedTeaser(
-							basic_feed_url,
-							10,
-							function(feed) {
-								test.equal(feed.title, basic_feed_title);
-								FeedModel.get(
-									basic_feed_url,
-									function(err) {},
-									function(feed) {
-										test.equal(feed.title, basic_feed_title);
-										test.done();
-									}
-								);
-							},
-							function(err) {
-								test.done();
-							},
-							true
-						);
-					}
+					true
 				);
 			},
 			function(err) {
