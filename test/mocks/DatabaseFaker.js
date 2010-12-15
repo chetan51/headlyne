@@ -21,12 +21,12 @@ var db_name = 'headlyne',
 /*
  * The database faker class
  */
-var DatabaseFaker = function() {
+var DatabaseFaker = function()
+{
+	var self = this;
 
 	this.setUp = function(clear_collections, callback)
 	{
-		var self = this;
-		
 		DatabaseDriver.init(
 			db_name,
 			db_addr,
@@ -88,8 +88,6 @@ var DatabaseFaker = function() {
 	
 	this.tearDown = function(clear_collections, callback)
 	{
-		var self = this;
-		
 		Step(
 			function clearCollections() {
 				var step = this;

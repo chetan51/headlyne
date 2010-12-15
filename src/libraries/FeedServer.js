@@ -20,7 +20,7 @@ var Downloader     = require('./Downloader.js'),
  **/
 var FeedServer = function()
 {    
-	var thisFeedServer = this;
+	var self = this;
 	
 	/**
 	 *	Gets feed and items for feed for previewing to the user.
@@ -41,8 +41,6 @@ var FeedServer = function()
 	 **/
 	this.getFeedTeaserUrgently = function(url, num_feed_items, callback, errback)
 	{
-		var self = this;
-
 		FeedModel.isUpToDate(
 			url,
 			30,
@@ -97,8 +95,6 @@ var FeedServer = function()
 	 **/
 	this.getFeedTeaser = function(url, num_feed_items, callback, errback)
 	{
-		var self = this;
-		
 		Downloader.fetch(
 			url,
 			function(data) {
