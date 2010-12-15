@@ -84,9 +84,9 @@ var FeedServer = function()
 	 *		If feed is in database and is up to date, calls callback
 	 *		with it immediately.
 	 *	
-	 *		If feed is not in database or is not up to date, and
-	 *		instant is false, it retrieves and stores the feed, and
-	 *		calls callback when the feed is ready.
+	 *		If feed is not in database or is not up to date, it
+	 *		retrieves and stores the feed, and calls callback when
+	 *		the feed is ready.
 	 *	
 	 *		Arguments: url of feed
 	 *		           number of feed items to return
