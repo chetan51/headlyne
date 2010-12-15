@@ -25,14 +25,14 @@ var WebPage = function()
 	 * 	              
 	 * 	Returns:      the webpage that was saved
 	 **/
-	this.save = function(url, title, body, errback, callback)
+	this.save = function(url, title, body, callback)
 	{
 		DatabaseDriver.getCollection(
 			'webpages',
 			function(err, collection)
 			{
 				if (err) {
-					errback(err);
+					callback(err);
 				}
 				else {
 					var hasher = crypto.createHash('sha256');
@@ -52,10 +52,10 @@ var WebPage = function()
 						function(err, feed)
 						{
 							if (err) {
-								errback(err);
+								callback(err);
 							}
 							else {
-								callback(feed);
+								callback(null, feed);
 							}
 						}
 					);
@@ -77,7 +77,7 @@ var WebPage = function()
 	 * 	                  body
 	 * 	              }
 	 **/
-	this.get = function(page_url, errback, callback)
+	this.get = function(page_url, callback)
 	{
 		var hasher = crypto.createHash('sha256');
 		hasher.update(page_url);
@@ -88,7 +88,7 @@ var WebPage = function()
 			function(err, collection)
 			{
 				if (err) {
-					errback(err);
+					callback(err);
 				}
 				else {
 					collection.findOne(
@@ -96,12 +96,12 @@ var WebPage = function()
 						function(err, doc)
 						{
 							if(err != null)
-								errback(new Error('Database Search Error'));
+								callback(new Error('Database Search Error'));
 							else {
 								if(typeof(doc) == 'undefined') {
-									errback(new Error('No such WebPage'));
+									callback(new Error('No such WebPage'));
 								} else {
-									callback(doc);
+									callback(null, doc);
 								}
 							}
 						}

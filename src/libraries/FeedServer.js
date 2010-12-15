@@ -186,12 +186,7 @@ var FeedServer = function()
 							item.url,
 							"Webpage 1 Title",
 							"eanrst",
-							function(err) {
-								group()(err);
-							},
-							function(saved_page) {
-								group()(null, saved_page);
-							}
+							group()
 						);
 					}
 				);

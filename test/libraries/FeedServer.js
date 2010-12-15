@@ -107,12 +107,14 @@ exports['get feed teaser'] = nodeunit.testCase(
 						// Make sure the first feed item's web page is in the database
 						WebPageModel.get(
 							feed.items[0].url,
-							function(err) {
-								test.done();
-							},
-							function(webpage) {
-								test.equal(webpage.title,
-								           basic_feed_webpage1_title);
+							function(err, webpage) {
+								if (err) {
+									console.log(err.message);
+								}
+								else {
+									test.equal(webpage.title,
+										   basic_feed_webpage1_title);
+								}
 								test.done();
 							}
 						);
