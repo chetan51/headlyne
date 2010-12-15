@@ -5,8 +5,9 @@ var http            = require('http'),
     nodeunit        = require('nodeunit'),
     Step            = require('step'),
     ServerGenerator = require('../mocks/ServerGenerator.js'),
-    DatabaseFaker  = require('../mocks/DatabaseFaker.js'),
+    DatabaseFaker   = require('../mocks/DatabaseFaker.js'),
     FeedModel       = require('../../src/models/Feed.js'),
+    WebPageModel    = require('../../src/models/WebPage.js'),
     FeedServer      = require('../../src/libraries/FeedServer.js');
 
 /**
@@ -16,9 +17,11 @@ var mock_server      = null;
     mock_server_host = "localhost",
     mock_server_port = 7500;
 
-var basic_feed_url   = "http://" + mock_server_host + ":" + mock_server_port
-                     + "/basic_feed",
-    basic_feed_title = "RSS Title";
+var basic_feed_url            = "http://" + mock_server_host + ":" + mock_server_port
+                                + "/basic_feed",
+    basic_feed_title          = "RSS Title";
+    basic_feed_item1_title    = "Item 1 Title";
+    basic_feed_webpage1_title = "Webpage 1 Title";
 
 /**
  *	Tests
@@ -43,13 +46,33 @@ exports['get feed teaser'] = nodeunit.testCase(
 			function mockDatabase() {
 				DatabaseFaker.setUp(
 					function() {
-						DatabaseFaker.clear(
-							'feeds',
-							function() {
-								callback();
+						Step(
+							function clearFeeds() {
+								var step = this;
+								DatabaseFaker.clear(
+									'feeds',
+									function() {
+										step();
+									},
+									function(err) {
+										console.log(err);
+									}
+								);
 							},
-							function(err) {
-								console.log(err);
+							function clearWebPages(err) {
+								var step = this;
+								DatabaseFaker.clear(
+									'webpages',
+									function() {
+										step();
+									},
+									function(err) {
+										console.log(err);
+									}
+								);
+							},
+							function done(err) {
+								callback();
 							}
 						);
 					},
@@ -74,14 +97,34 @@ exports['get feed teaser'] = nodeunit.testCase(
 				);
 			},
 			function closeDatabase() {
-				DatabaseFaker.clear(
-					'feeds',
-					function() {
+				Step(
+					function clearFeeds() {
+						var step = this;
+						DatabaseFaker.clear(
+							'feeds',
+							function() {
+								step();
+							},
+							function(err) {
+								console.log(err);
+							}
+						);
+					},
+					function clearWebPages(err) {
+						var step = this;
+						DatabaseFaker.clear(
+							'webpages',
+							function() {
+								step();
+							},
+							function(err) {
+								console.log(err);
+							}
+						);
+					},
+					function closeConnection(err) {
 						DatabaseFaker.tearDown();
 						callback();
-					},
-					function(err) {
-						console.log(err);
 					}
 				);
 			}
@@ -89,19 +132,34 @@ exports['get feed teaser'] = nodeunit.testCase(
 	},
 
 	'feed not in database': function(test) {
-		test.expect(2);
+		test.expect(4);
 		
 		FeedServer.getFeedTeaser(
 			basic_feed_url,
 			10,
 			function(feed) {
 				test.equal(feed.title, basic_feed_title);
+				
+				// Make sure feed is in the database
 				FeedModel.get(
 					basic_feed_url,
 					function(err) {},
 					function(feed) {
 						test.equal(feed.title, basic_feed_title);
-						test.done();
+						test.equal(feed.items[0].title, basic_feed_item1_title);
+						
+						// Make sure the first feed item's web page is in the database
+						WebPageModel.get(
+							feed.items[0].url,
+							function(err) {
+								test.done();
+							},
+							function(webpage) {
+								test.equal(webpage.title,
+								           basic_feed_webpage1_title);
+								test.done();
+							}
+						);
 					}
 				);
 			},
