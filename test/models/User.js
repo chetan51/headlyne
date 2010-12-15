@@ -15,36 +15,32 @@ exports['save'] = nodeunit.testCase(
 
 	setUp: function (callback) {
 		DatabaseFaker.setUp(
-			function() {
-				DatabaseFaker.clear(
-					'users',
-					function() {
-						callback();
-					},
-					function(err) {
-						console.log(err);
-					}
-				);
-			},
+			['users'],
 			function(err) {
-				console.log(err);
+				if (err) {
+					throw err;
+				}
+				else {
+					callback();
+				}
 			}
 		);
 	},
 	 
 	tearDown: function (callback) {
-		DatabaseFaker.clear(
-			'users',
-			function() {
-				DatabaseFaker.tearDown();
-				callback();
-			},
+		DatabaseFaker.tearDown(
+			['users'],
 			function(err) {
-				console.log(err);
+				if (err) {
+					throw err;
+				}
+				else {
+					callback();
+				}
 			}
 		);
 	},
-	
+
 	'basic': function(test)
 	{
 		test.expect(1);
@@ -107,34 +103,31 @@ exports['save'] = nodeunit.testCase(
 
 exports['get'] = nodeunit.testCase(
 {
+
 	setUp: function (callback) {
 		DatabaseFaker.setUp(
-			function() {
-				DatabaseFaker.clear(
-					'users',
-					function() {
-						callback();
-					},
-					function(err) {
-						console.log(err);
-					}
-				);
-			},
+			['users'],
 			function(err) {
-				console.log(err);
+				if (err) {
+					throw err;
+				}
+				else {
+					callback();
+				}
 			}
 		);
 	},
 	 
 	tearDown: function (callback) {
-		DatabaseFaker.clear(
-			'users',
-			function() {
-				DatabaseFaker.tearDown();
-				callback();
-			},
+		DatabaseFaker.tearDown(
+			['users'],
 			function(err) {
-				console.log(err);
+				if (err) {
+					throw err;
+				}
+				else {
+					callback();
+				}
 			}
 		);
 	},

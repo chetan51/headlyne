@@ -14,32 +14,28 @@ exports['save'] = nodeunit.testCase(
 {
 	setUp: function (callback) {
 		DatabaseFaker.setUp(
-			function() {
-				DatabaseFaker.clear(
-					'feeds',
-					function() {
-						callback();
-					},
-					function(err) {
-						console.log(err);
-					}
-				);
-			},
+			['feeds'],
 			function(err) {
-				console.log(err);
+				if (err) {
+					throw err;
+				}
+				else {
+					callback();
+				}
 			}
 		);
 	},
 	 
 	tearDown: function (callback) {
-		DatabaseFaker.clear(
-			'feeds',
-			function() {
-				DatabaseFaker.tearDown();
-				callback();
-			},
+		DatabaseFaker.tearDown(
+			['feeds'],
 			function(err) {
-				console.log(err);
+				if (err) {
+					throw err;
+				}
+				else {
+					callback();
+				}
 			}
 		);
 	},
@@ -106,32 +102,28 @@ exports['get'] = nodeunit.testCase(
 {
 	setUp: function (callback) {
 		DatabaseFaker.setUp(
-			function() {
-				DatabaseFaker.clear(
-					'feeds',
-					function() {
-						callback();
-					},
-					function(err) {
-						console.log(err);
-					}
-				);
-			},
+			['feeds'],
 			function(err) {
-				console.log(err);
+				if (err) {
+					throw err;
+				}
+				else {
+					callback();
+				}
 			}
 		);
 	},
 	 
 	tearDown: function (callback) {
-		DatabaseFaker.clear(
-			'feeds',
-			function() {
-				DatabaseFaker.tearDown();
-				callback();
-			},
+		DatabaseFaker.tearDown(
+			['feeds'],
 			function(err) {
-				console.log(err);
+				if (err) {
+					throw err;
+				}
+				else {
+					callback();
+				}
 			}
 		);
 	},
@@ -191,32 +183,28 @@ exports['isUpToDate'] = nodeunit.testCase(
 {
 	setUp: function (callback) {
 		DatabaseFaker.setUp(
-			function() {
-				DatabaseFaker.clear(
-					'feeds',
-					function() {
-						callback();
-					},
-					function(err) {
-						console.log(err);
-					}
-				);
-			},
+			['feeds'],
 			function(err) {
-				console.log(err);
+				if (err) {
+					throw err;
+				}
+				else {
+					callback();
+				}
 			}
 		);
 	},
 	 
 	tearDown: function (callback) {
-		DatabaseFaker.clear(
-			'feeds',
-			function() {
-				DatabaseFaker.tearDown();
-				callback();
-			},
+		DatabaseFaker.tearDown(
+			['feeds'],
 			function(err) {
-				console.log(err);
+				if (err) {
+					throw err;
+				}
+				else {
+					callback();
+				}
 			}
 		);
 	},
@@ -292,32 +280,28 @@ exports['delete'] = nodeunit.testCase(
 {
 	setUp: function (callback) {
 		DatabaseFaker.setUp(
-			function() {
-				DatabaseFaker.clear(
-					'feeds',
-					function() {
-						callback();
-					},
-					function(err) {
-						console.log(err);
-					}
-				);
-			},
+			['feeds'],
 			function(err) {
-				console.log(err);
+				if (err) {
+					throw err;
+				}
+				else {
+					callback();
+				}
 			}
 		);
 	},
 	 
 	tearDown: function (callback) {
-		DatabaseFaker.clear(
-			'feeds',
-			function() {
-				DatabaseFaker.tearDown();
-				callback();
-			},
+		DatabaseFaker.tearDown(
+			['feeds'],
 			function(err) {
-				console.log(err);
+				if (err) {
+					throw err;
+				}
+				else {
+					callback();
+				}
 			}
 		);
 	},
@@ -386,32 +370,28 @@ exports['push/pop'] = nodeunit.testCase(
 {
 	setUp: function (callback) {
 		DatabaseFaker.setUp(
-			function() {
-				DatabaseFaker.clear(
-					'feeds',
-					function() {
-						callback();
-					},
-					function(err) {
-						console.log(err);
-					}
-				);
-			},
+			['feeds'],
 			function(err) {
-				console.log(err);
+				if (err) {
+					throw err;
+				}
+				else {
+					callback();
+				}
 			}
 		);
 	},
 	 
 	tearDown: function (callback) {
-		DatabaseFaker.clear(
-			'feeds',
-			function() {
-				DatabaseFaker.tearDown();
-				callback();
-			},
+		DatabaseFaker.tearDown(
+			['feeds'],
 			function(err) {
-				console.log(err);
+				if (err) {
+					throw err;
+				}
+				else {
+					callback();
+				}
 			}
 		);
 	},

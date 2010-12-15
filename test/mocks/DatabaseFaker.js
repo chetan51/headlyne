@@ -6,7 +6,8 @@
 /*
  * Module dependencies
  */
-var DatabaseDriver = require('../../src/libraries/DatabaseDriver.js');
+var DatabaseDriver = require('../../src/libraries/DatabaseDriver.js'),
+    Step           = require('step');
 
 /**
  * Constants
@@ -22,8 +23,10 @@ var db_name = 'headlyne',
  */
 var DatabaseFaker = function() {
 
-	this.setUp = function(callback, errback)
+	this.setUp = function(clear_collections, callback)
 	{
+		var self = this;
+		
 		DatabaseDriver.init(
 			db_name,
 			db_addr,
@@ -33,32 +36,48 @@ var DatabaseFaker = function() {
 			function(err)
 			{
 				if (err) {
-					errback(err);
+					callback(err);
 				}
 				else {
-					callback();
+					Step(
+						function clearCollections() {
+							var step = this;
+							
+							clear_collections.forEach(
+								function (collection) {
+									self.clear(
+										collection,
+										step.parallel()
+									);
+								}
+							);
+						},
+						function done(err) {
+							callback(err);
+						}
+					);
 				}
 			}
 		);
 	}
 	
-	this.clear = function(collection, callback, errback)
+	this.clear = function(collection, callback)
 	{
 		DatabaseDriver.getCollection(
 			collection,
 			function(err, collection)
 			{
 				if (err) {
-					errback(err);
+					callback(err);
 				}
 				else {
 					collection.remove(
 						function(err, doc)
 						{
 							if(err != null)
-								errback(err);
+								callback(err);
 							else {
-								callback();
+								callback(null);
 							}
 						}
 					);
@@ -67,9 +86,28 @@ var DatabaseFaker = function() {
 		);
 	}
 	
-	this.tearDown = function()
+	this.tearDown = function(clear_collections, callback)
 	{
-		DatabaseDriver.close();
+		var self = this;
+		
+		Step(
+			function clearCollections() {
+				var step = this;
+				
+				clear_collections.forEach(
+					function (collection) {
+						self.clear(
+							collection,
+							step.parallel()
+						);
+					}
+				);
+			},
+			function done(err) {
+				DatabaseDriver.close();
+				callback(err);
+			}
+		);
 	}
 };
 

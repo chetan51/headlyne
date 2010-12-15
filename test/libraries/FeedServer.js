@@ -45,39 +45,14 @@ exports['get feed teaser'] = nodeunit.testCase(
 			},
 			function mockDatabase() {
 				DatabaseFaker.setUp(
-					function() {
-						Step(
-							function clearFeeds() {
-								var step = this;
-								DatabaseFaker.clear(
-									'feeds',
-									function() {
-										step();
-									},
-									function(err) {
-										console.log(err);
-									}
-								);
-							},
-							function clearWebPages(err) {
-								var step = this;
-								DatabaseFaker.clear(
-									'webpages',
-									function() {
-										step();
-									},
-									function(err) {
-										console.log(err);
-									}
-								);
-							},
-							function done(err) {
-								callback();
-							}
-						);
-					},
+					['feeds', 'webpages'],
 					function(err) {
-						console.log(err);
+						if (err) {
+							throw err;
+						}
+						else {
+							callback();
+						}
 					}
 				);
 			}
@@ -97,34 +72,15 @@ exports['get feed teaser'] = nodeunit.testCase(
 				);
 			},
 			function closeDatabase() {
-				Step(
-					function clearFeeds() {
-						var step = this;
-						DatabaseFaker.clear(
-							'feeds',
-							function() {
-								step();
-							},
-							function(err) {
-								console.log(err);
-							}
-						);
-					},
-					function clearWebPages(err) {
-						var step = this;
-						DatabaseFaker.clear(
-							'webpages',
-							function() {
-								step();
-							},
-							function(err) {
-								console.log(err);
-							}
-						);
-					},
-					function closeConnection(err) {
-						DatabaseFaker.tearDown();
-						callback();
+				DatabaseFaker.tearDown(
+					['feeds', 'webpages'],
+					function(err) {
+						if (err) {
+							throw err;
+						}
+						else {
+							callback();
+						}
 					}
 				);
 			}
@@ -230,19 +186,14 @@ exports['get feed teaser urgently'] = nodeunit.testCase(
 			},
 			function mockDatabase() {
 				DatabaseFaker.setUp(
-					function() {
-						DatabaseFaker.clear(
-							'feeds',
-							function() {
-								callback();
-							},
-							function(err) {
-								console.log(err);
-							}
-						);
-					},
+					['feeds'],
 					function(err) {
-						console.log(err);
+						if (err) {
+							throw err;
+						}
+						else {
+							callback();
+						}
 					}
 				);
 			}
@@ -262,14 +213,15 @@ exports['get feed teaser urgently'] = nodeunit.testCase(
 				);
 			},
 			function closeDatabase() {
-				DatabaseFaker.clear(
-					'feeds',
-					function() {
-						DatabaseFaker.tearDown();
-						callback();
-					},
+				DatabaseFaker.tearDown(
+					['feeds'],
 					function(err) {
-						console.log(err);
+						if (err) {
+							throw err;
+						}
+						else {
+							callback();
+						}
 					}
 				);
 			}
