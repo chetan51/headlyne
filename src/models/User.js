@@ -56,14 +56,15 @@ var User = function()
 						 'feeds': [],
 						 'session':{}
 						},
-						function(err)
+						function(err, user)
 						{
-							errback(err);
-						},
-						function(user)
-						{
-							//delete user['password_hash'];
-							callback(user);
+							if (err) {
+								errback(err);
+							}
+							else {
+								//delete user['password_hash'];
+								callback(user);
+							}
 						}
 					);
 				}
@@ -171,13 +172,14 @@ var User = function()
 								collection,
 								{'username_hash': user.username_hash},
 								user,
-								function(err)
+								function(err, user)
 								{
-									errback(err);
-								},
-								function(user)
-								{
-									callback(user);
+									if (err) {
+										errback(err);
+									}
+									else {
+										callback(user);
+									}
 								}
 							);
 						}
@@ -219,13 +221,14 @@ var User = function()
 								collection,
 								{'username_hash': user.username_hash},
 								user,
-								function(err)
+								function(err, user)
 								{
-									errback(err);
-								},
-								function(user)
-								{
-									callback(user.session);
+									if (err) {
+										errback(err);
+									}
+									else {
+										callback(user.session);
+									}
 								}
 							);
 						}
@@ -267,13 +270,14 @@ var User = function()
 								collection,
 								{'url_hash': feed.url_hash},
 								feed,
-								function(err)
+								function(err, feed)
 								{
-									errback(err);
-								},
-								function(feed)
-								{
-									callback(feed);
+									if (err) {
+										errback(err);
+									}
+									else {
+										callback(feed);
+									}
 								}
 							);
 						}
@@ -321,13 +325,14 @@ var User = function()
 								collection,
 								{'url_hash':feed.url_hash},
 								feed,
-								function(err)
+								function(err, new_feed)
 								{
-									errback(err);
-								},
-								function(new_feed)
-								{
-									callback(new_feed, feed_items);
+									if (err) {
+										errback(err);
+									}
+									else {
+										callback(new_feed, feed_items);
+									}
 								}
 							);
 						}

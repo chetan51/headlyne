@@ -84,14 +84,14 @@ var DatabaseDriver = function()
 	 *	key. If it doesn't exist, it inserts the given object at
 	 *	the given key location. Otherwise, it returns an error.
 	 **/
-	this.ensureInsert = function(collection, key, obj, errback, callback)
+	this.ensureInsert = function(collection, key, obj, callback)
 	{
 		collection.findOne(
 			key,
 			function(err, doc)
 			{
 				if(err != null)
-					errback(new Error('Database Search Error'));
+					callback(new Error('Database Search Error'));
 				else {
 					if(typeof(doc) == 'undefined') {
 						collection.insert(
@@ -99,13 +99,13 @@ var DatabaseDriver = function()
 							function(err, inserted_docs)
 							{
 								if(err != null)
-									errback(new Error('Database Insertion Error'));
+									callback(new Error('Database Insertion Error'));
 								else
-									callback(inserted_docs[0]);
+									callback(null, inserted_docs[0]);
 							}
 						);
 					} else {
-						errback(new Error('Database match exists'));
+						callback(new Error('Database match exists'));
 					}
 				}
 			}
@@ -117,14 +117,14 @@ var DatabaseDriver = function()
 	 *	key. If it doesn't exist, it inserts the given object at
 	 *	the given key location.
 	 **/
-	this.ensureExists = function(collection, key, obj, errback, callback)
+	this.ensureExists = function(collection, key, obj, callback)
 	{
 		collection.findOne(
 			key,
 			function(err, doc)
 			{
 				if(err != null)
-					errback(new Error('Database Search Error'));
+					callback(new Error('Database Search Error'));
 				else {
 					if(typeof(doc) == 'undefined') {
 						collection.insert(
@@ -132,13 +132,13 @@ var DatabaseDriver = function()
 							function(err, inserted_docs)
 							{
 								if(err != null)
-									errback(new Error('Database Insertion Error'));
+									callback(new Error('Database Insertion Error'));
 								else
-									callback(inserted_docs[0]);
+									callback(null, inserted_docs[0]);
 							}
 						);
 					} else {
-						callback(doc);
+						callback(null, doc);
 					}
 				}
 			}
@@ -148,7 +148,7 @@ var DatabaseDriver = function()
 	/**
 	 * 	Updates all objects matching the key with the given obj_part
 	 **/
-	this.update = function(collection, key, obj_part, errback, callback)
+	this.update = function(collection, key, obj_part, callback)
 	{
 		collection.update(
 			key,
@@ -156,9 +156,9 @@ var DatabaseDriver = function()
 			function(err, doc)
 			{
 				if(err != null)
-					errback(new Error('Database Update Error:'+ err.message));
+					callback(new Error('Database Update Error:'+ err.message));
 				else {
-					callback(doc);
+					callback(null, doc);
 				}
 			}
 		);

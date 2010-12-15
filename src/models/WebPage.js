@@ -49,13 +49,14 @@ var WebPage = function()
 						 'snippet': snippet,
 						 'body': body,
 						},
-						function(err)
+						function(err, feed)
 						{
-							errback(err);
-						},
-						function(feed)
-						{
-							callback(feed);
+							if (err) {
+								errback(err);
+							}
+							else {
+								callback(feed);
+							}
 						}
 					);
 				}

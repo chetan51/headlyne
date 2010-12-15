@@ -52,13 +52,14 @@ var Feed = function()
 						 'time_modified': new Date().getTime(),
 						 'items': []
 						},
-						function(err)
+						function(err, feed)
 						{
-							errback(err);
-						},
-						function(feed)
-						{
-							callback(feed);
+							if (err) {
+								errback(err);
+							}
+							else {
+								callback(feed);
+							}
 						}
 					);
 				}
@@ -216,13 +217,14 @@ var Feed = function()
 								collection,
 								{'url_hash': feed.url_hash},
 								feed,
-								function(err)
+								function(err, feed)
 								{
-									errback(err);
-								},
-								function(feed)
-								{
-									callback(feed);
+									if (err) {
+										errback(err);
+									}
+									else {
+										callback(feed);
+									}
 								}
 							);
 						}
@@ -270,13 +272,14 @@ var Feed = function()
 								collection,
 								{'url_hash':feed.url_hash},
 								feed,
-								function(err)
+								function(err, new_feed)
 								{
-									errback(err);
-								},
-								function(new_feed)
-								{
-									callback(new_feed, feed_items);
+									if (err) {
+										errback(err);
+									}
+									else {
+										callback(new_feed, feed_items);
+									}
 								}
 							);
 						}
