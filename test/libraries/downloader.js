@@ -6,14 +6,15 @@ var ServerGenerator = require('../../test/mocks/ServerGenerator.js');
 var Downloader = require('../../src/libraries/Downloader.js');
 
 /*
- *  Constants
+ *  Constants and mocks
  */
 var okContent = "<html><head></head><body>ok</body></html>";
 
-/*
- *  Run mock server for tests
- */
-ServerGenerator.createServer('localhost', 7000, function() {});
+var mock_server      = null;
+    mock_server_host = "localhost",
+    mock_server_port = 7500;
+
+var base_url = "http://" + mock_server_host + ":" + mock_server_port;
 
 /*
  *  Tests
@@ -22,37 +23,44 @@ exports['fetch URLs'] = nodeunit.testCase(
 {
 	
 	setUp: function (callback) {
-		callback();
+		ServerGenerator.createServer(
+			mock_server_host,
+			mock_server_port,
+			function(server) {
+				mock_server = server;
+				callback();
+			}
+		);
 	},
 
 	tearDown: function (callback) {
-		callback();
+		ServerGenerator.closeServer(
+			mock_server,
+			function() {
+				callback();
+			}
+		);
 	},
 
 	'ok': function(test) {
 		
 		test.expect(1);
 		
-		// First test using a mock must have a timeout.
-		// Otherwise, it makes the request before the server is ready.
-		
-		setTimeout(function(){
-			Downloader.fetch('http://localhost:7000/ok',
-				function(str) {
-					test.equal(str, okContent);
-					test.done();
-				},
-				function(str) {
-					test.done();
-				}
-			);
-		}, 1000);
+		Downloader.fetch(base_url + '/ok',
+			function(str) {
+				test.equal(str, okContent);
+				test.done();
+			},
+			function(str) {
+				test.done();
+			}
+		);
 	},
 
 	'redirect': function(test) {
 		test.expect(1);
 		
-		Downloader.fetch('http://localhost:7000/redirect', function(str) {
+		Downloader.fetch(base_url + '/redirect', function(str) {
 			test.equal(str, okContent);
 			test.done();   
 		}, function(str) {
@@ -83,7 +91,7 @@ exports['fetch URLs'] = nodeunit.testCase(
 	'404 (and other http invalid codes)': function(test) {
 		test.expect(1);
 		
-		Downloader.fetch('http://localhost:7000/doesntexist',
+		Downloader.fetch(base_url + '/doesntexist',
 			function(str) { test.done(); },
 			
 			function(err) {
@@ -113,21 +121,21 @@ exports['fetch URLs'] = nodeunit.testCase(
 	'timeout': function(test) {
 		test.expect(1);
 		
-		Downloader.fetch('http://localhost:7000/timeout',
+		Downloader.fetch(base_url + '/timeout',
 			function(str) { test.done(); },
 			
 			function(err) {
 				test.equal(err.message, 'Request timed out.');
 				test.done();
 			}
-		,0);
+		,10);
 	},
 
 	'endless redirects': function(test) {
 		
 		test.expect(1);
 		
-		Downloader.fetch('http://localhost:7000/endlessredirect',
+		Downloader.fetch(base_url + '/endlessredirect',
 			function(str) { test.done(); },
 			
 			function(err) {
