@@ -23,14 +23,7 @@ var DatabaseDriver = function()
 	 *	Initializes the Database Driver with what database
 	 *	connection to use.
 	 **/
-	this.init = function(
-		name,
-		address,
-		port,
-		username,
-		password,
-		errback,
-		callback    )
+	this.init = function(name, address, port, username, password, callback)
 	{
 		self.database.name     = name;
 		self.database.address  = address;
@@ -51,10 +44,10 @@ var DatabaseDriver = function()
 			function(err, db2)
 			{
 				if(err != null)
-					errback(new Error('Database Connection Error: '+err.message));
+					callback(new Error('Database Connection Error: '+err.message));
 				else {
 					self.database.db = db2;
-					callback();
+					callback(null);
 				}
 			}
 		);
@@ -71,16 +64,16 @@ var DatabaseDriver = function()
 	/**
 	 *	Gets a specified collection from the database.
 	 **/
-	this.getCollection = function(collection_name, errback, callback)
+	this.getCollection = function(collection_name, callback)
 	{
 		self.database.db.collection(
 			collection_name,
 			function(err, collection)
 			{
 				if(err != null) {
-					errback(new Error('Database Access Error: '+err.message));
+					callback(new Error('Database Access Error: '+err.message));
 				} else {
-					callback(collection);
+					callback(null, collection);
 				}
 			}
 		);

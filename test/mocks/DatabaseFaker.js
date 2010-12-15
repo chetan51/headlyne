@@ -25,19 +25,20 @@ var DatabaseFaker = function() {
 	this.setUp = function(callback, errback)
 	{
 		DatabaseDriver.init(
-		    db_name,
-		    db_addr,
-		    db_port,
-		    db_user,
-		    db_pass,
-		    function(err)
-		    {
-			    errback(err);
-		    },
-		    function()
-		    {
-			callback();
-		    }
+			db_name,
+			db_addr,
+			db_port,
+			db_user,
+			db_pass,
+			function(err)
+			{
+				if (err) {
+					errback(err);
+				}
+				else {
+					callback();
+				}
+			}
 		);
 	}
 	
@@ -45,22 +46,23 @@ var DatabaseFaker = function() {
 	{
 		DatabaseDriver.getCollection(
 			collection,
-			function(err)
+			function(err, collection)
 			{
-				errback(err);
-			},
-			function(collection)
-			{
-				collection.remove(
-					function(err, doc)
-					{
-						if(err != null)
-							errback(err);
-						else {
-							callback();
+				if (err) {
+					errback(err);
+				}
+				else {
+					collection.remove(
+						function(err, doc)
+						{
+							if(err != null)
+								errback(err);
+							else {
+								callback();
+							}
 						}
-					}
-				);
+					);
+				}
 			}
 		);
 	}

@@ -29,35 +29,36 @@ var WebPage = function()
 	{
 		DatabaseDriver.getCollection(
 			'webpages',
-			function(err)
+			function(err, collection)
 			{
-				errback(err);
-			},
-			function(collection)
-			{
-				var hasher = crypto.createHash('sha256');
-				hasher.update(url);
-				var url_hash = hasher.digest('hex');
-				var snippet = ContentGrabber.snip(body);
+				if (err) {
+					errback(err);
+				}
+				else {
+					var hasher = crypto.createHash('sha256');
+					hasher.update(url);
+					var url_hash = hasher.digest('hex');
+					var snippet = ContentGrabber.snip(body);
 
-				DatabaseDriver.ensureExists(
-					collection,
-					{'url_hash': url_hash},
-					{'url': url,
-					 'url_hash': url_hash,
-					 'title': title,
-					 'snippet': snippet,
-					 'body': body,
-					},
-					function(err)
-					{
-						errback(err);
-					},
-					function(feed)
-					{
-						callback(feed);
-					}
-				);
+					DatabaseDriver.ensureExists(
+						collection,
+						{'url_hash': url_hash},
+						{'url': url,
+						 'url_hash': url_hash,
+						 'title': title,
+						 'snippet': snippet,
+						 'body': body,
+						},
+						function(err)
+						{
+							errback(err);
+						},
+						function(feed)
+						{
+							callback(feed);
+						}
+					);
+				}
 			}
 		);
 	}
@@ -83,27 +84,28 @@ var WebPage = function()
 
 		DatabaseDriver.getCollection(
 			'webpages',
-			function(err)
+			function(err, collection)
 			{
-				errback(err);
-			},
-			function(collection)
-			{
-				collection.findOne(
-					{'url_hash': page_id},
-					function(err, doc)
-					{
-						if(err != null)
-							errback(new Error('Database Search Error'));
-						else {
-							if(typeof(doc) == 'undefined') {
-								errback(new Error('No such WebPage'));
-							} else {
-								callback(doc);
+				if (err) {
+					errback(err);
+				}
+				else {
+					collection.findOne(
+						{'url_hash': page_id},
+						function(err, doc)
+						{
+							if(err != null)
+								errback(new Error('Database Search Error'));
+							else {
+								if(typeof(doc) == 'undefined') {
+									errback(new Error('No such WebPage'));
+								} else {
+									callback(doc);
+								}
 							}
 						}
-					}
-				);
+					);
+				}
 			}
 		);
 	}

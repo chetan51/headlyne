@@ -105,52 +105,33 @@ exports['save'] = nodeunit.testCase(
 exports['get'] = nodeunit.testCase(
 {
 	setUp: function (callback) {
-		/**
-		 * DB Access Parameters
-		 **/
-		var db_name = 'headlyne',
-		    db_addr = '127.0.0.1',
-		    db_port = 27017,
-		    db_user = 'username',
-		    db_pass = 'password';
-
-		DatabaseDriver.init(
-		    db_name,
-		    db_addr,
-		    db_port,
-		    db_user,
-		    db_pass,
-		    function(err)
-		    {
-			    console.log('Suite-setup: '+err.message);
-		    },
-		    function()
-		    {
-			callback();
-		    }
+		DatabaseFaker.setUp(
+			function() {
+				DatabaseFaker.clear(
+					'feeds',
+					function() {
+						callback();
+					},
+					function(err) {
+						console.log(err);
+					}
+				);
+			},
+			function(err) {
+				console.log(err);
+			}
 		);
 	},
 	 
 	tearDown: function (callback) {
-		DatabaseDriver.getCollection(
+		DatabaseFaker.clear(
 			'feeds',
-			function(err)
-			{
-				console.log('Suite-teardown: '+err.message);
+			function() {
+				DatabaseFaker.tearDown();
+				callback();
 			},
-			function(collection)
-			{
-				collection.remove(
-					function(err, doc)
-					{
-						if(err != null)
-							console.log('Test-suite cannot terminate.');
-						else {
-							DatabaseDriver.close();
-							callback();
-						}
-					}
-				);
+			function(err) {
+				console.log(err);
 			}
 		);
 	},
@@ -209,52 +190,33 @@ exports['get'] = nodeunit.testCase(
 exports['isUpToDate'] = nodeunit.testCase(
 {
 	setUp: function (callback) {
-		/**
-		 * DB Access Parameters
-		 **/
-		var db_name = 'headlyne',
-		    db_addr = '127.0.0.1',
-		    db_port = 27017,
-		    db_user = 'username',
-		    db_pass = 'password';
-
-		DatabaseDriver.init(
-		    db_name,
-		    db_addr,
-		    db_port,
-		    db_user,
-		    db_pass,
-		    function(err)
-		    {
-			    console.log('Suite-setup: '+err.message);
-		    },
-		    function()
-		    {
-			callback();
-		    }
+		DatabaseFaker.setUp(
+			function() {
+				DatabaseFaker.clear(
+					'feeds',
+					function() {
+						callback();
+					},
+					function(err) {
+						console.log(err);
+					}
+				);
+			},
+			function(err) {
+				console.log(err);
+			}
 		);
 	},
 	 
 	tearDown: function (callback) {
-		DatabaseDriver.getCollection(
+		DatabaseFaker.clear(
 			'feeds',
-			function(err)
-			{
-				console.log('Suite-teardown: '+err);
+			function() {
+				DatabaseFaker.tearDown();
+				callback();
 			},
-			function(collection)
-			{
-				collection.remove(
-					function(err, doc)
-					{
-						if(err != null)
-							console.log('Test-suite cannot terminate.');
-						else {
-							DatabaseDriver.close();
-							callback();
-						}
-					}
-				);
+			function(err) {
+				console.log(err);
 			}
 		);
 	},
@@ -329,52 +291,33 @@ exports['isUpToDate'] = nodeunit.testCase(
 exports['delete'] = nodeunit.testCase(
 {
 	setUp: function (callback) {
-		/**
-		 * DB Access Parameters
-		 **/
-		var db_name = 'headlyne',
-		    db_addr = '127.0.0.1',
-		    db_port = 27017,
-		    db_user = 'username',
-		    db_pass = 'password';
-
-		DatabaseDriver.init(
-		    db_name,
-		    db_addr,
-		    db_port,
-		    db_user,
-		    db_pass,
-		    function(err)
-		    {
-			    console.log('Suite-setup: '+err.message);
-		    },
-		    function()
-		    {
-			callback();
-		    }
+		DatabaseFaker.setUp(
+			function() {
+				DatabaseFaker.clear(
+					'feeds',
+					function() {
+						callback();
+					},
+					function(err) {
+						console.log(err);
+					}
+				);
+			},
+			function(err) {
+				console.log(err);
+			}
 		);
 	},
 	 
 	tearDown: function (callback) {
-		DatabaseDriver.getCollection(
+		DatabaseFaker.clear(
 			'feeds',
-			function(err)
-			{
-				console.log('Suite-teardown: '+err);
+			function() {
+				DatabaseFaker.tearDown();
+				callback();
 			},
-			function(collection)
-			{
-				collection.remove(
-					function(err, doc)
-					{
-						if(err != null)
-							console.log('Test-suite cannot terminate.');
-						else {
-							DatabaseDriver.close();
-							callback();
-						}
-					}
-				);
+			function(err) {
+				console.log(err);
 			}
 		);
 	},
@@ -442,52 +385,33 @@ exports['delete'] = nodeunit.testCase(
 exports['push/pop'] = nodeunit.testCase(
 {
 	setUp: function (callback) {
-		/**
-		 * DB Access Parameters
-		 **/
-		var db_name = 'headlyne',
-		    db_addr = '127.0.0.1',
-		    db_port = 27017,
-		    db_user = 'username',
-		    db_pass = 'password';
-
-		DatabaseDriver.init(
-		    db_name,
-		    db_addr,
-		    db_port,
-		    db_user,
-		    db_pass,
-		    function(err)
-		    {
-			    console.log('Suite-setup: '+err.message);
-		    },
-		    function()
-		    {
-			callback();
-		    }
+		DatabaseFaker.setUp(
+			function() {
+				DatabaseFaker.clear(
+					'feeds',
+					function() {
+						callback();
+					},
+					function(err) {
+						console.log(err);
+					}
+				);
+			},
+			function(err) {
+				console.log(err);
+			}
 		);
 	},
 	 
 	tearDown: function (callback) {
-		DatabaseDriver.getCollection(
+		DatabaseFaker.clear(
 			'feeds',
-			function(err)
-			{
-				console.log('Suite-teardown: '+err);
+			function() {
+				DatabaseFaker.tearDown();
+				callback();
 			},
-			function(collection)
-			{
-				collection.remove(
-					function(err, doc)
-					{
-						if(err != null)
-							console.log('Test-suite cannot terminate.');
-						else {
-							DatabaseDriver.close();
-							callback();
-						}
-					}
-				);
+			function(err) {
+				console.log(err);
 			}
 		);
 	},

@@ -30,42 +30,43 @@ var User = function()
 	{
 		DatabaseDriver.getCollection(
 			'users',
-			function(err)
+			function(err, collection)
 			{
-				errback(err);
-			},
-			function(collection)
-			{
-				var hasher = crypto.createHash('sha256');
-				hasher.update(password);
-				var key = hasher.digest('hex');
+				if (err) {
+					errback(err);
+				}
+				else {
+					var hasher = crypto.createHash('sha256');
+					hasher.update(password);
+					var key = hasher.digest('hex');
 
-				var hasher = crypto.createHash('sha256');
-				hasher.update(username);
-				var usn = hasher.digest('hex');
+					var hasher = crypto.createHash('sha256');
+					hasher.update(username);
+					var usn = hasher.digest('hex');
 
-				DatabaseDriver.ensureInsert(
-					collection,
-					{'username_hash': usn},
-					{'username_hash': usn,
-					 'username': username,
-					 'password_hash': key,
-					 'first_name': first_name,
-					 'last_name': last_name,
-					 'email_id': email_id,
-					 'feeds': [],
-					 'session':{}
-					},
-					function(err)
-					{
-						errback(err);
-					},
-					function(user)
-					{
-						//delete user['password_hash'];
-						callback(user);
-					}
-				);
+					DatabaseDriver.ensureInsert(
+						collection,
+						{'username_hash': usn},
+						{'username_hash': usn,
+						 'username': username,
+						 'password_hash': key,
+						 'first_name': first_name,
+						 'last_name': last_name,
+						 'email_id': email_id,
+						 'feeds': [],
+						 'session':{}
+						},
+						function(err)
+						{
+							errback(err);
+						},
+						function(user)
+						{
+							//delete user['password_hash'];
+							callback(user);
+						}
+					);
+				}
 			}
 		);
 	}
@@ -92,28 +93,29 @@ var User = function()
 		
 		DatabaseDriver.getCollection(
 			'users',
-			function(err)
+			function(err, collection)
 			{
-				errback(err);
-			},
-			function(collection)
-			{
-				collection.findOne(
-					{'username_hash': key},
-					function(err, doc)
-					{
-						if(err != null)
-							errback(new Error('Database Search Error'));
-						else {
-							if(typeof(doc) == 'undefined') {
-								errback(new Error('No such User'));
-							} else {
-								//delete doc['password_hash'];
-								callback(doc);
+				if (err) {
+					errback(err);
+				}	
+				else {
+					collection.findOne(
+						{'username_hash': key},
+						function(err, doc)
+						{
+							if(err != null)
+								errback(new Error('Database Search Error'));
+							else {
+								if(typeof(doc) == 'undefined') {
+									errback(new Error('No such User'));
+								} else {
+									//delete doc['password_hash'];
+									callback(doc);
+								}
 							}
 						}
-					}
-				);
+					);
+				}
 			}
 		);
 	}
@@ -159,25 +161,26 @@ var User = function()
 
 				DatabaseDriver.getCollection(
 					'users',
-					function(err)
+					function(err, collection)
 					{
-						errback(err);
-					},
-					function(collection)
-					{
-						DatabaseDriver.update(
-							collection,
-							{'username_hash': user.username_hash},
-							user,
-							function(err)
-							{
-								errback(err);
-							},
-							function(user)
-							{
-								callback(user);
-							}
-						);
+						if (err) {
+							errback(err);
+						}
+						else {
+							DatabaseDriver.update(
+								collection,
+								{'username_hash': user.username_hash},
+								user,
+								function(err)
+								{
+									errback(err);
+								},
+								function(user)
+								{
+									callback(user);
+								}
+							);
+						}
 					}
 				);
 			}
@@ -206,25 +209,26 @@ var User = function()
 
 				DatabaseDriver.getCollection(
 					'users',
-					function(err)
+					function(err, collection)
 					{
-						errback(err);
-					},
-					function(collection)
-					{
-						DatabaseDriver.update(
-							collection,
-							{'username_hash': user.username_hash},
-							user,
-							function(err)
-							{
-								errback(err);
-							},
-							function(user)
-							{
-								callback(user.session);
-							}
-						);
+						if (err) {
+							errback(err);
+						}
+						else {
+							DatabaseDriver.update(
+								collection,
+								{'username_hash': user.username_hash},
+								user,
+								function(err)
+								{
+									errback(err);
+								},
+								function(user)
+								{
+									callback(user.session);
+								}
+							);
+						}
 					}
 				);
 			}
@@ -253,25 +257,26 @@ var User = function()
 				feed.time_modified = new Date().getTime();
 				DatabaseDriver.getCollection(
 					'feeds',
-					function(err)
+					function(err, collection)
 					{
-						errback(err);
-					},
-					function(collection)
-					{
-					DatabaseDriver.update(
-						collection,
-						{'url_hash': feed.url_hash},
-						feed,
-						function(err)
-						{
+						if (err) {
 							errback(err);
-						},
-						function(feed)
-						{
-							callback(feed);
 						}
-					);
+						else {
+							DatabaseDriver.update(
+								collection,
+								{'url_hash': feed.url_hash},
+								feed,
+								function(err)
+								{
+									errback(err);
+								},
+								function(feed)
+								{
+									callback(feed);
+								}
+							);
+						}
 					}
 				);
 			}
@@ -306,25 +311,26 @@ var User = function()
 				
 				DatabaseDriver.getCollection(
 					'feeds',
-					function(err)
+					function(err, collection)
 					{
-						errback(err);
-					},
-					function(collection)
-					{
-						DatabaseDriver.update(
-							collection,
-							{'url_hash':feed.url_hash},
-							feed,
-							function(err)
-							{
-								errback(err);
-							},
-							function(new_feed)
-							{
-								callback(new_feed, feed_items);
-							}
-						);
+						if (err) {
+							errback(err);
+						}
+						else {
+							DatabaseDriver.update(
+								collection,
+								{'url_hash':feed.url_hash},
+								feed,
+								function(err)
+								{
+									errback(err);
+								},
+								function(new_feed)
+								{
+									callback(new_feed, feed_items);
+								}
+							);
+						}
 					}
 				);
 			}
