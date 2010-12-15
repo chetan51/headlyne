@@ -29,13 +29,13 @@ var UserAuth = function()
 			'user': username
 		};
 
-		var session = {
+		var session_cookie = {
 			'id'        : id,
 			'data'      : data,
 			'persistent': true,
 			'lifetime'  : lifetime
 		};
-		return session;
+		return session_cookie;
 	}
 
 	// passed a session object (as in the database).
@@ -46,7 +46,7 @@ var UserAuth = function()
 		
 		// if still valid, pass the same session object.
 		if(	session_object.created +
-			session_object.lifetime
+			session_object.cookie.lifetime
 			> now )
 			return false;
 		else	return true;
@@ -105,13 +105,15 @@ var UserAuth = function()
 				}
 
 				// if the session has NOT expired..
-				if( !self.checkExpired(user.session))
+				if(	user.session != null &&
+					!self.checkExpired(user.session)
+				)
 					callback(false, user.session.cookie);
 				else {
 					// generate a new session
-					var new_sesh;
+					var new_sesh={};
 					new_sesh.cookie = self.session_gen( username, lifetime );
-					new_sesh.created = now;
+					new_sesh.created = new Date().getTime();
 					
 					User.setSession(
 						username,
@@ -152,7 +154,9 @@ var UserAuth = function()
 			function(user)
 			{
 				// if user's cookie has expired...
-				if (self.checkExpired(user.session)) {
+				if (	user.session == null ||
+					user.session.cookie == null ||
+					self.checkExpired(user.session)) {
 					// erase the session.
 					User.setSession(
 						username,
@@ -183,6 +187,26 @@ var UserAuth = function()
 					// session objects match, and not expired.
 					callback(true);
 				}
+			}
+		);
+	}
+
+	/**
+	 * Removes the session object from the user.
+	 * Returns err=null if successful.
+	 **/
+	this.invalidate = function(username, callback)
+	{
+		User.setSession(
+			username,
+			null,
+			function(err)
+			{
+				callback(err, null);
+			},
+			function(s)
+			{
+				callback(null);
 			}
 		);
 	}
