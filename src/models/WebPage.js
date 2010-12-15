@@ -25,39 +25,41 @@ var WebPage = function()
 	 * 	              
 	 * 	Returns:      the webpage that was saved
 	 **/
-	this.save = function(url, title, body, errback, callback)
+	this.save = function(url, title, body, callback)
 	{
 		DatabaseDriver.getCollection(
 			'webpages',
-			function(err)
+			function(err, collection)
 			{
-				errback(err);
-			},
-			function(collection)
-			{
-				var hasher = crypto.createHash('sha256');
-				hasher.update(url);
-				var url_hash = hasher.digest('hex');
-				var snippet = ContentGrabber.snip(body);
+				if (err) {
+					callback(err);
+				}
+				else {
+					var hasher = crypto.createHash('sha256');
+					hasher.update(url);
+					var url_hash = hasher.digest('hex');
+					var snippet = ContentGrabber.snip(body);
 
-				DatabaseDriver.ensureExists(
-					collection,
-					{'url_hash': url_hash},
-					{'url': url,
-					 'url_hash': url_hash,
-					 'title': title,
-					 'snippet': snippet,
-					 'body': body,
-					},
-					function(err)
-					{
-						errback(err);
-					},
-					function(feed)
-					{
-						callback(feed);
-					}
-				);
+					DatabaseDriver.ensureExists(
+						collection,
+						{'url_hash': url_hash},
+						{'url': url,
+						 'url_hash': url_hash,
+						 'title': title,
+						 'snippet': snippet,
+						 'body': body,
+						},
+						function(err, feed)
+						{
+							if (err) {
+								callback(err);
+							}
+							else {
+								callback(null, feed);
+							}
+						}
+					);
+				}
 			}
 		);
 	}
@@ -75,7 +77,7 @@ var WebPage = function()
 	 * 	                  body
 	 * 	              }
 	 **/
-	this.get = function(page_url, errback, callback)
+	this.get = function(page_url, callback)
 	{
 		var hasher = crypto.createHash('sha256');
 		hasher.update(page_url);
@@ -83,27 +85,28 @@ var WebPage = function()
 
 		DatabaseDriver.getCollection(
 			'webpages',
-			function(err)
+			function(err, collection)
 			{
-				errback(err);
-			},
-			function(collection)
-			{
-				collection.findOne(
-					{'url_hash': page_id},
-					function(err, doc)
-					{
-						if(err != null)
-							errback(new Error('Database Search Error'));
-						else {
-							if(typeof(doc) == 'undefined') {
-								errback(new Error('No such WebPage'));
-							} else {
-								callback(doc);
+				if (err) {
+					callback(err);
+				}
+				else {
+					collection.findOne(
+						{'url_hash': page_id},
+						function(err, doc)
+						{
+							if(err != null)
+								callback(new Error('Database Search Error'));
+							else {
+								if(typeof(doc) == 'undefined') {
+									callback(new Error('No such WebPage'));
+								} else {
+									callback(null, doc);
+								}
 							}
 						}
-					}
-				);
+					);
+				}
 			}
 		);
 	}

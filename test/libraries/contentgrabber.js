@@ -39,13 +39,16 @@ exports['grab content from page'] = nodeunit.testCase(
 		
 		ContentGrabber.readable(
 			html,
-			function(readableHTML) {
-				test.notEqual(readableHTML.search(sampleHTMLFirstLine), -1);
-				test.notEqual(readableHTML.search(sampleHTMLLastLine), -1);
-				test.done();
-			},
-			function(error) {
-				test.done();
+			function(err, readableHTML) {
+				if (err) {
+					test.ifError(err);
+					test.done();
+				}
+				else {
+					test.notEqual(readableHTML.search(sampleHTMLFirstLine), -1);
+					test.notEqual(readableHTML.search(sampleHTMLLastLine), -1);
+					test.done();
+				}
 			}
 		);
 	}

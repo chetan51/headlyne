@@ -30,37 +30,39 @@ var Feed = function()
 	{
 		DatabaseDriver.getCollection(
 			'feeds',
-			function(err)
+			function(err, collection)
 			{
-				errback(err);
-			},
-			function(collection)
-			{
-				var hasher = crypto.createHash('sha256');
-				hasher.update(url);
-				var url_hash = hasher.digest('hex');
-				
-				DatabaseDriver.ensureExists(
-					collection,
-					{'url_hash': url_hash},
-					{'url': url,
-					 'url_hash': url_hash,
-					 'update_lock': false,
-					 'title': title,
-					 'author': author,
-					 'description': description,
-					 'time_modified': new Date().getTime(),
-					 'items': []
-					},
-					function(err)
-					{
-						errback(err);
-					},
-					function(feed)
-					{
-						callback(feed);
-					}
-				);
+				if (err) {
+					errback(err);
+				}
+				else {
+					var hasher = crypto.createHash('sha256');
+					hasher.update(url);
+					var url_hash = hasher.digest('hex');
+					
+					DatabaseDriver.ensureExists(
+						collection,
+						{'url_hash': url_hash},
+						{'url': url,
+						 'url_hash': url_hash,
+						 'update_lock': false,
+						 'title': title,
+						 'author': author,
+						 'description': description,
+						 'time_modified': new Date().getTime(),
+						 'items': []
+						},
+						function(err, feed)
+						{
+							if (err) {
+								errback(err);
+							}
+							else {
+								callback(feed);
+							}
+						}
+					);
+				}
 			}
 		);
 	}
@@ -87,27 +89,28 @@ var Feed = function()
 
 		DatabaseDriver.getCollection(
 			'feeds',
-			function(err)
+			function(err, collection)
 			{
-				errback(err);
-			},
-			function(collection)
-			{
-				collection.findOne(
-					{'url_hash': feed_id},
-					function(err, doc)
-					{
-						if(err != null)
-							errback(new Error('Database Search Error'));
-						else {
-							if(typeof(doc) == 'undefined') {
-								errback(new Error('No such feed'));
-							} else {
-								callback(doc);
+				if (err) {
+					errback(err);
+				}
+				else {
+					collection.findOne(
+						{'url_hash': feed_id},
+						function(err, doc)
+						{
+							if(err != null)
+								errback(new Error('Database Search Error'));
+							else {
+								if(typeof(doc) == 'undefined') {
+									errback(new Error('No such feed'));
+								} else {
+									callback(doc);
+								}
 							}
 						}
-					}
-				);
+					);
+				}
 			}
 		);
 	}
@@ -160,23 +163,24 @@ var Feed = function()
 		var feed_id = hasher.digest('hex');
 		DatabaseDriver.getCollection(
 			'feeds',
-			function(err)
+			function(err, collection)
 			{
-				errback(err);
-			},
-			function(collection)
-			{
-				collection.remove(
-					{'url_hash':feed_id},
-					function(err, doc)
-					{
-						if(err != null)
-							errback(new Error('Database Deletion Error'));
-						else {
-							callback();
+				if (err) {
+					errback(err);
+				}
+				else {
+					collection.remove(
+						{'url_hash':feed_id},
+						function(err, doc)
+						{
+							if(err != null)
+								errback(new Error('Database Deletion Error'));
+							else {
+								callback();
+							}
 						}
-					}
-				);
+					);
+				}
 			}
 		);
 	}
@@ -203,25 +207,27 @@ var Feed = function()
 				feed.time_modified = new Date().getTime();
 				DatabaseDriver.getCollection(
 					'feeds',
-					function(err)
+					function(err, collection)
 					{
-						errback(err);
-					},
-					function(collection)
-					{
-					DatabaseDriver.update(
-						collection,
-						{'url_hash': feed.url_hash},
-						feed,
-						function(err)
-						{
+						if (err) {
 							errback(err);
-						},
-						function(feed)
-						{
-							callback(feed);
 						}
-					);
+						else {
+							DatabaseDriver.update(
+								collection,
+								{'url_hash': feed.url_hash},
+								feed,
+								function(err, feed)
+								{
+									if (err) {
+										errback(err);
+									}
+									else {
+										callback(feed);
+									}
+								}
+							);
+						}
 					}
 				);
 			}
@@ -256,25 +262,27 @@ var Feed = function()
 				
 				DatabaseDriver.getCollection(
 					'feeds',
-					function(err)
+					function(err, collection)
 					{
-						errback(err);
-					},
-					function(collection)
-					{
-						DatabaseDriver.update(
-							collection,
-							{'url_hash':feed.url_hash},
-							feed,
-							function(err)
-							{
-								errback(err);
-							},
-							function(new_feed)
-							{
-								callback(new_feed, feed_items);
-							}
-						);
+						if (err) {
+							errback(err);
+						}
+						else {
+							DatabaseDriver.update(
+								collection,
+								{'url_hash':feed.url_hash},
+								feed,
+								function(err, new_feed)
+								{
+									if (err) {
+										errback(err);
+									}
+									else {
+										callback(new_feed, feed_items);
+									}
+								}
+							);
+						}
 					}
 				);
 			}

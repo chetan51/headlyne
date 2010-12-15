@@ -15,36 +15,32 @@ exports['save'] = nodeunit.testCase(
 
 	setUp: function (callback) {
 		DatabaseFaker.setUp(
-			function() {
-				DatabaseFaker.clear(
-					'users',
-					function() {
-						callback();
-					},
-					function(err) {
-						console.log(err);
-					}
-				);
-			},
+			['users'],
 			function(err) {
-				console.log(err);
+				if (err) {
+					throw err;
+				}
+				else {
+					callback();
+				}
 			}
 		);
 	},
 	 
 	tearDown: function (callback) {
-		DatabaseFaker.clear(
-			'users',
-			function() {
-				DatabaseFaker.tearDown();
-				callback();
-			},
+		DatabaseFaker.tearDown(
+			['users'],
 			function(err) {
-				console.log(err);
+				if (err) {
+					throw err;
+				}
+				else {
+					callback();
+				}
 			}
 		);
 	},
-	
+
 	'basic': function(test)
 	{
 		test.expect(1);
@@ -54,15 +50,15 @@ exports['save'] = nodeunit.testCase(
 			'FirstName',
 			'LastName',
 			'email@id',
-			function(err)
+			function(err, user)
 			{
-				console.log(err.message);
-				test.done();
-			},
-			function(user)
-			{
-				console.log(user);
-				test.ok(1);
+				if (err) {
+					console.log(err.message);
+				}
+				else {
+					console.log(user);
+					test.ok(1);
+				}
 				test.done();
 			}
 		);
@@ -77,29 +73,30 @@ exports['save'] = nodeunit.testCase(
 			'FirstName',
 			'LastName',
 			'email@id',
-			function(err)
+			function(err, user)
 			{
-				console.log(err.message);
-				test.done();
-			},
-			function(user)
-			{
-				UserModel.save(
-					'my_user',
-					'my_pass',
-					'FirstName',
-					'LastName',
-					'email@id',
-					function(err)
-					{
-						test.equal(err.message, 'Database match exists');
-						test.done();
-					},
-					function(user2)
-					{
-						test.done();
-					}
-				);
+				if (err) {
+					console.log(err.message);
+					test.done();
+				}
+				else {
+					UserModel.save(
+						'my_user',
+						'my_pass',
+						'FirstName',
+						'LastName',
+						'email@id',
+						function(err)
+						{
+							test.equal(err.message, 'Database match exists');
+							test.done();
+						},
+						function(user2)
+						{
+							test.done();
+						}
+					);
+				}
 			}
 		);
 	}
@@ -107,53 +104,31 @@ exports['save'] = nodeunit.testCase(
 
 exports['get'] = nodeunit.testCase(
 {
-	setUp: function (callback) {
-		/**
-		 * DB Access Parameters
-		 **/
-		var db_name = 'headlyne',
-		    db_addr = '127.0.0.1',
-		    db_port = 27017,
-		    db_user = 'username',
-		    db_pass = 'password';
 
-		DatabaseDriver.init(
-		    db_name,
-		    db_addr,
-		    db_port,
-		    db_user,
-		    db_pass,
-		    function(err)
-		    {
-			    console.log('Suite-setup: '+err.message);
-		    },
-		    function()
-		    {
-			    callback();
-		    }
+	setUp: function (callback) {
+		DatabaseFaker.setUp(
+			['users'],
+			function(err) {
+				if (err) {
+					throw err;
+				}
+				else {
+					callback();
+				}
+			}
 		);
 	},
 	 
 	tearDown: function (callback) {
-		DatabaseDriver.getCollection(
-			'users',
-			function(err)
-			{
-				console.log('Suite-teardown: '+err);
-			},
-			function(collection)
-			{
-				collection.remove(
-					function(err, doc)
-					{
-						if(err != null)
-							console.log('Test-suite cannot terminate.');
-						else {
-							DatabaseDriver.close();
-							callback();
-						}
-					}
-				);
+		DatabaseFaker.tearDown(
+			['users'],
+			function(err) {
+				if (err) {
+					throw err;
+				}
+				else {
+					callback();
+				}
 			}
 		);
 	},
@@ -167,26 +142,28 @@ exports['get'] = nodeunit.testCase(
 			'FirstName',
 			'LastName',
 			'email@id',
-			function(err)
+			function(err, user1)
 			{
-				console.log(err.message);
-				test.done();
-			},
-			function(user1)
-			{
-				UserModel.get(
-					'my_user',
-					function(err){
-						console.log(err.message);
-						test.done();
-					},
-					function(recv_user)
-					{
-						test.equal(recv_user.password, null);
-						test.equal(recv_user.email_id, 'email@id');
-						test.done();
-					}
-				);
+				if (err) {
+					console.log(err.message);
+					test.done();
+				}
+				else {
+					UserModel.get(
+						'my_user',
+						function(err, recv_user)
+						{
+							if (err) {
+								console.log(err.message);
+							}
+							else {
+								test.equal(recv_user.password, null);
+								test.equal(recv_user.email_id, 'email@id');
+							}
+							test.done();
+						}
+					);
+				}
 			}
 		);
 	},
@@ -196,13 +173,11 @@ exports['get'] = nodeunit.testCase(
 		test.expect(1);
 		UserModel.get(
 			'invalid username',
-			function(err)
+			function(err, user)
 			{
-				test.equal(err.message, 'No such User');
-				test.done();
-			},
-			function(user)
-			{
+				if (test) {
+					test.equal(err.message, 'No such User');
+				}
 				test.done();
 			}
 		);

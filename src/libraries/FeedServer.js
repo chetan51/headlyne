@@ -11,14 +11,16 @@
 var Downloader     = require('./Downloader.js'),
     FeedParser     = require('./FeedParser.js'),
     ContentGrabber = require('./ContentGrabber.js'),
-    FeedModel      = require('../models/Feed.js');
+    FeedModel      = require('../models/Feed.js'),
+    WebPageModel   = require('../models/WebPage.js'),
+    Step           = require('step');
 
 /**
  *	The FeedServer library
  **/
 var FeedServer = function()
 {    
-	var thisFeedServer = this;
+	var self = this;
 	
 	/**
 	 *	Gets feed and items for feed for previewing to the user.
@@ -39,8 +41,6 @@ var FeedServer = function()
 	 **/
 	this.getFeedTeaserUrgently = function(url, num_feed_items, callback, errback)
 	{
-		var self = this;
-
 		FeedModel.isUpToDate(
 			url,
 			30,
@@ -84,9 +84,9 @@ var FeedServer = function()
 	 *		If feed is in database and is up to date, calls callback
 	 *		with it immediately.
 	 *	
-	 *		If feed is not in database or is not up to date, and
-	 *		instant is false, it retrieves and stores the feed, and
-	 *		calls callback when the feed is ready.
+	 *		If feed is not in database or is not up to date, it
+	 *		retrieves and stores the feed, and calls callback when
+	 *		the feed is ready.
 	 *	
 	 *		Arguments: url of feed
 	 *		           number of feed items to return
@@ -106,17 +106,38 @@ var FeedServer = function()
 							{
 								title: "RSS Title",
 								author: "Sample author",
-								description: "Sample RSS feed"
+								description: "Sample RSS feed",
+								items:
+									[
+										{
+											url: "http://item1url",
+											title: "Item 1 Title"
+										}
+									]
 							}
 				
-						FeedModel.save(
-							url,
-							feed.title,
-							feed.author,
-							feed.description,
-							function(err) {},
-							function(feed) {
-								callback(feed);
+						Step(
+							function saveFeedAndRetrieveItems() {
+								var step = this;
+							
+								self.saveFeedAndItems(
+									url,
+									feed,
+									step.parallel()
+								);
+								
+								self.getWebPagesForFeedItems(
+									feed.items,
+									step.parallel()
+								);
+							},
+							function done(err, saved_feed, saved_webpages) {
+								if (err) {
+									errback(err);
+								}
+								else {
+									callback(feed);
+								}
 							}
 						);
 					},
@@ -126,6 +147,54 @@ var FeedServer = function()
 			},
 			function(err) {},
 			30000
+		);
+	}
+	
+	this.saveFeedAndItems = function(url, feed, callback)
+	{
+		FeedModel.save(
+			url,
+			feed.title,
+			feed.author,
+			feed.description,
+			function(err) {},
+			function(saved_feed) {
+				FeedModel.pushFeedItems(
+					url,
+					feed.items,
+					function(err) {},
+					function(feed) {
+						callback(null, feed);
+					}
+				);
+			}
+		);
+	}
+	
+	this.getWebPagesForFeedItems = function(items, callback)
+	{
+		Step(
+			function getAndSaveWebPages() {
+				var group = this.group();
+				items.forEach(
+					function(item) {
+						WebPageModel.save(
+							item.url,
+							"Webpage 1 Title",
+							"eanrst",
+							group()
+						);
+					}
+				);
+			},
+			function done(err, saved_webpages) {
+				if (err) {
+					callback(err);
+				}
+				else {
+					callback(null, saved_webpages);
+				}
+			}
 		);
 	}
 };

@@ -26,46 +26,48 @@ var User = function()
 	 * 	Returns:      JSON object of the User that was saved
 	 * 	              (password is stripped)
 	 **/
-	this.save = function(username, password, first_name, last_name, email_id, errback, callback)
+	this.save = function(username, password, first_name, last_name, email_id, callback)
 	{
 		DatabaseDriver.getCollection(
 			'users',
-			function(err)
+			function(err, collection)
 			{
-				errback(err);
-			},
-			function(collection)
-			{
-				var hasher = crypto.createHash('sha256');
-				hasher.update(password);
-				var key = hasher.digest('hex');
+				if (err) {
+					callback(err);
+				}
+				else {
+					var hasher = crypto.createHash('sha256');
+					hasher.update(password);
+					var key = hasher.digest('hex');
 
-				var hasher = crypto.createHash('sha256');
-				hasher.update(username);
-				var usn = hasher.digest('hex');
+					var hasher = crypto.createHash('sha256');
+					hasher.update(username);
+					var usn = hasher.digest('hex');
 
-				DatabaseDriver.ensureInsert(
-					collection,
-					{'username_hash': usn},
-					{'username_hash': usn,
-					 'username': username,
-					 'password_hash': key,
-					 'first_name': first_name,
-					 'last_name': last_name,
-					 'email_id': email_id,
-					 'feeds': [],
-					 'session':{}
-					},
-					function(err)
-					{
-						errback(err);
-					},
-					function(user)
-					{
-						//delete user['password_hash'];
-						callback(user);
-					}
-				);
+					DatabaseDriver.ensureInsert(
+						collection,
+						{'username_hash': usn},
+						{'username_hash': usn,
+						 'username': username,
+						 'password_hash': key,
+						 'first_name': first_name,
+						 'last_name': last_name,
+						 'email_id': email_id,
+						 'feeds': [],
+						 'session':{}
+						},
+						function(err, user)
+						{
+							if (err) {
+								callback(err);
+							}
+							else {
+								//delete user['password_hash'];
+								callback(null, user);
+							}
+						}
+					);
+				}
 			}
 		);
 	}
@@ -84,7 +86,7 @@ var User = function()
 	 * 	                  session{}
 	 * 	              }
 	 **/
-	this.get = function(username, errback, callback)
+	this.get = function(username, callback)
 	{
 		var hasher = crypto.createHash('sha256');
 		hasher.update(username);
@@ -92,28 +94,29 @@ var User = function()
 		
 		DatabaseDriver.getCollection(
 			'users',
-			function(err)
+			function(err, collection)
 			{
-				errback(err);
-			},
-			function(collection)
-			{
-				collection.findOne(
-					{'username_hash': key},
-					function(err, doc)
-					{
-						if(err != null)
-							errback(new Error('Database Search Error'));
-						else {
-							if(typeof(doc) == 'undefined') {
-								errback(new Error('No such User'));
-							} else {
-								//delete doc['password_hash'];
-								callback(doc);
+				if (err) {
+					callback(err);
+				}	
+				else {
+					collection.findOne(
+						{'username_hash': key},
+						function(err, doc)
+						{
+							if(err != null)
+								callback(new Error('Database Search Error'));
+							else {
+								if(typeof(doc) == 'undefined') {
+									callback(new Error('No such User'));
+								} else {
+									//delete doc['password_hash'];
+									callback(null, doc);
+								}
 							}
 						}
-					}
-				);
+					);
+				}
 			}
 		);
 	}
@@ -126,60 +129,56 @@ var User = function()
 	 *
 	 * 	Returns:      updated user object.
 	 **/
-	this.update = function(
-		username,
-		new_password,
-		first_name,
-		last_name,
-		email_id,
-		errback,
-		callback )
+	this.update = function(username, new_password, first_name, last_name, email_id, callback)
 	{
 		self.get(
 			username,
-			function(err)
+			function(err, user)
 			{
-				errback(err);
-			},
-			function(user)
-			{
-				// The user exists.
-				if(new_password != null)
-				{
-					var hasher = crypto.createHash('sha256');
-					hasher.update(new_password);
-					user.password_hash = hasher.digest('hex');
+				if (err) {
+					callback(err);
 				}
-				if(first_name != null)
-					user.first_name = first_name;
-				if(last_name != null)
-					user.last_name = last_name;
-				if(email_id != null)
-					user.email_id = email_id;
-
-				DatabaseDriver.getCollection(
-					'users',
-					function(err)
+				else {
+					// The user exists.
+					if(new_password != null)
 					{
-						errback(err);
-					},
-					function(collection)
-					{
-						DatabaseDriver.update(
-							collection,
-							{'username_hash': user.username_hash},
-							user,
-							function(err)
-							{
-								errback(err);
-							},
-							function(user)
-							{
-								callback(user);
-							}
-						);
+						var hasher = crypto.createHash('sha256');
+						hasher.update(new_password);
+						user.password_hash = hasher.digest('hex');
 					}
-				);
+					if(first_name != null)
+						user.first_name = first_name;
+					if(last_name != null)
+						user.last_name = last_name;
+					if(email_id != null)
+						user.email_id = email_id;
+
+					DatabaseDriver.getCollection(
+						'users',
+						function(err, collection)
+						{
+							if (err) {
+								callback(err);
+							}
+							else {
+								DatabaseDriver.update(
+									collection,
+									{'username_hash': user.username_hash},
+									user,
+									function(err, user)
+									{
+										if (err) {
+											callback(err);
+										}
+										else {
+											callback(null, user);
+										}
+									}
+								);
+							}
+						}
+					);
+				}
 			}
 		);
 	}
@@ -191,48 +190,53 @@ var User = function()
 	 *
 	 * 	Returns:      saved session object.
 	 **/
-	this.setSession = function(username, session, errback, callback)
+	this.setSession = function(username, session, callback)
 	{
 		self.get(
 			username,
-			function(err)
+			function(err, user)
 			{
-				errback(err);
-			},
-			function(user)
-			{
-				// The user exists.
-				user.session = session;
+				if (err) {
+					callback(err);
+				}
+				else {
+					// The user exists.
+					user.session = session;
 
-				DatabaseDriver.getCollection(
-					'users',
-					function(err)
-					{
-						errback(err);
-					},
-					function(collection)
-					{
-						DatabaseDriver.update(
-							collection,
-							{'username_hash': user.username_hash},
-							user,
-							function(err)
-							{
-								errback(err);
-							},
-							function(user)
-							{
-								callback(user.session);
+					DatabaseDriver.getCollection(
+						'users',
+						function(err, collection)
+						{
+							if (err) {
+								callback(err);
 							}
-						);
-					}
-				);
+							else {
+								DatabaseDriver.update(
+									collection,
+									{'username_hash': user.username_hash},
+									user,
+									function(err, user)
+									{
+										if (err) {
+											callback(err);
+										}
+										else {
+											callback(null, user.session);
+										}
+									}
+								);
+							}
+						}
+					);
+				}
 			}
 		);
 	}
 
 	/**
 	 * Pushes a feed for a user. STUB!!!
+	 * Also, the callback format for self.get is not properly implemented, so fix that.
+	 * And fix the callback format of this function itself.
 	 *
 	 * 	Arguments:    feed_url, Feed({url, title, description, time_published})
 	 *
@@ -253,25 +257,27 @@ var User = function()
 				feed.time_modified = new Date().getTime();
 				DatabaseDriver.getCollection(
 					'feeds',
-					function(err)
+					function(err, collection)
 					{
-						errback(err);
-					},
-					function(collection)
-					{
-					DatabaseDriver.update(
-						collection,
-						{'url_hash': feed.url_hash},
-						feed,
-						function(err)
-						{
+						if (err) {
 							errback(err);
-						},
-						function(feed)
-						{
-							callback(feed);
 						}
-					);
+						else {
+							DatabaseDriver.update(
+								collection,
+								{'url_hash': feed.url_hash},
+								feed,
+								function(err, feed)
+								{
+									if (err) {
+										errback(err);
+									}
+									else {
+										callback(feed);
+									}
+								}
+							);
+						}
 					}
 				);
 			}
@@ -280,6 +286,8 @@ var User = function()
 
 	/**
 	 * Pops a feed item from a feed. STUB!
+	 * Also, the callback format for self.get is not properly implemented, so fix that.
+	 * And fix the callback format of this function itself.
 	 *
 	 * 	Arguments:    feed_url
 	 *
@@ -306,25 +314,27 @@ var User = function()
 				
 				DatabaseDriver.getCollection(
 					'feeds',
-					function(err)
+					function(err, collection)
 					{
-						errback(err);
-					},
-					function(collection)
-					{
-						DatabaseDriver.update(
-							collection,
-							{'url_hash':feed.url_hash},
-							feed,
-							function(err)
-							{
-								errback(err);
-							},
-							function(new_feed)
-							{
-								callback(new_feed, feed_items);
-							}
-						);
+						if (err) {
+							errback(err);
+						}
+						else {
+							DatabaseDriver.update(
+								collection,
+								{'url_hash':feed.url_hash},
+								feed,
+								function(err, new_feed)
+								{
+									if (err) {
+										errback(err);
+									}
+									else {
+										callback(new_feed, feed_items);
+									}
+								}
+							);
+						}
 					}
 				);
 			}

@@ -17,20 +17,20 @@ var ContentGrabber = function()
 		return jsdom.jsdom(html);
 	};
 
-	this.readable = function(html, callback, errback)
+	this.readable = function(html, callback)
 	{
 		var w = new Worker(path.join(__dirname, 'ReadabilityWorker.js'));
 
 		w.onmessage = function(message)
 		{
 			if (message.data.article != null) {
-				callback(message.data.article);
+				callback(null, message.data.article);
 			}
 			else if (message.data.error) {
-				errback(new Error("Unable to grab content from document. Error: " + message.data.error));
+				callback(new Error("Unable to grab content from document. Error: " + message.data.error));
 			}
 			else {
-				errback(new Error("Something went horribly wrong."));
+				callback(new Error("Something went horribly wrong."));
 			}
 			
 			w.terminate();
