@@ -12,10 +12,15 @@ var Downloader = function() {
 	
 	var self = this;
 	
-	this.fetch = function(url, callback, errback, max_redirect_level)
+	this.fetch = function(url, callback, errback)
+	{
+		self.fetch_helper(url, callback, errback);
+	}
+	
+	this.fetch_helper = function(url, callback, errback, max_redirect_level)
 	{
 		if(typeof(max_redirect_level) == 'undefined') {
-			max_redirect_level = 5;
+			max_redirect_level = Ni.config('max_redirect');
 		}
 		
 		if(max_redirect_level == 0) {
@@ -48,7 +53,7 @@ var Downloader = function() {
 					break;
 				case 301:
 				case 302:
-					self.fetch(resp.headers.location, callback, errback, max_redirect_level-1);
+					self.fetch_helper(resp.headers.location, callback, errback, max_redirect_level-1);
 					break;
 				default:
 					errback(new Error("Error " + resp.statusCode + ": Page not found."));

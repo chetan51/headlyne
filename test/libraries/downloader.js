@@ -34,6 +34,7 @@ exports['fetch URLs'] = nodeunit.testCase(
 		);
 		
 		Ni.config('http_timeout', 30000);
+		Ni.config('max_redirect', 5);
 	},
 
 	tearDown: function (callback) {

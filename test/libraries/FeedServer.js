@@ -61,6 +61,7 @@ exports['get feed teaser'] = nodeunit.testCase(
 		
 		Ni.config('feedparse_timeout',  5000);
 		Ni.config('feed_expiry_length', 30 * 60 * 1000);
+		Ni.config('max_redirect',       5);
 	},
 	 
 	tearDown: function(callback) {
