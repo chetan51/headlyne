@@ -15,7 +15,7 @@ exports['parse XML'] = nodeunit.testCase(
 	},
 	
 	'basic': function(test) {
-		test.expect(6);
+		test.expect(5);
 		var rss = '<?xml version="1.0" ?><rss version="2.0">  <channel><title>RSSFeed1</title> '+
 				'<description>Feed desc.</description>'+
 				'<link>feedlink.com</link>'+
@@ -36,33 +36,28 @@ exports['parse XML'] = nodeunit.testCase(
 				
 				'</channel></rss>';
 		
-		FeedParser.parse(rss,
-			function() { test.ok(1); },
-			
-			function() { test.equal('','Parse-Error'); }
-		);
-		
-		FeedParser.parse(rss,
-			function(channelinfo, items, type, version) {
-				test.equal(channelinfo.length, 3);
-				for(i in channelinfo) {
-					if(channelinfo[i][0] == 'title')
-						test.equal(channelinfo[i][1], 'RSSFeed1');
-					else if(channelinfo[i][0] == 'link')
-						test.equal(channelinfo[i][1], 'feedlink.com');
-					else if(channelinfo[i][0] == 'description')
-						test.equal(channelinfo[i][1], 'Feed desc.');
+		FeedParser.parse(
+			rss,
+			function(err, channelinfo, items, type, version) {
+				if (err) {
+					console.log(err);
 				}
+				else {
+					test.equal(channelinfo.length, 3);
+					for(i in channelinfo) {
+						if(channelinfo[i][0] == 'title')
+							test.equal(channelinfo[i][1], 'RSSFeed1');
+						else if(channelinfo[i][0] == 'link')
+							test.equal(channelinfo[i][1], 'feedlink.com');
+						else if(channelinfo[i][0] == 'description')
+							test.equal(channelinfo[i][1], 'Feed desc.');
+					}
 
-				test.equal(items.length, 3);
-				for(i in items){
-					
+					test.equal(items.length, 3);
+					for(i in items){
+						
+					}
 				}
-				test.done();
-			},
-			
-			function() {
-				test.equal('','Parse-Error');
 				test.done();
 			}
 		);
@@ -71,13 +66,12 @@ exports['parse XML'] = nodeunit.testCase(
 	'Malformed': function(test) {
 		test.expect(1);
 		str='<malformed><xml></malformed>';
-		FeedParser.parse(str,
-			function() {
-				test.equal('','Malformed');
-				test.done();
-			},
+		FeedParser.parse(
+			str,
 			function(err) {
-				test.equal(err.message, 'Element: must be nested correctly');
+				if (err) {
+					test.equal(err.message, 'Element: must be nested correctly');
+				}
 				test.done();
 			}
 		);
@@ -90,13 +84,12 @@ exports['parse XML'] = nodeunit.testCase(
 		Ni.config('feedparse_timeout', 1000); // temporarily speeds up
 		                                      // this test
 		
-		FeedParser.parse(str,
-			function() {
-				test.equal('','Incomplete');
-				test.done();
-			},
+		FeedParser.parse(
+			str,
 			function(err) {
-				test.equal(err.message, 'Parser timed out.');
+				if (err) {
+					test.equal(err.message, 'Parser timed out.');
+				}
 				test.done();
 			}
 		);
@@ -108,13 +101,12 @@ exports['parse XML'] = nodeunit.testCase(
 		
 		Ni.config('feedparse_timeout', 0);
 		
-		FeedParser.parse(str,
-			function() {
-				test.equal('','Timed Out');
-				test.done();
-			},
+		FeedParser.parse(
+			str,
 			function(err) {
-				test.equal(err.message, 'Parser timed out.');
+				if (err) {
+					test.equal(err.message, 'Parser timed out.');
+				}
 				test.done();
 			}
 		);
