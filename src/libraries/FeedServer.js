@@ -36,8 +36,7 @@ var FeedServer = function()
 	 *	
 	 *		Arguments: url of feed
 	 *		           number of feed items to return
-	 *		           callback function for success
-	 *		           callback function for error
+	 *		           callback function called when complete
 	 **/
 	this.getFeedTeaserUrgently = function(url, num_feed_items, callback)
 	{
@@ -47,7 +46,7 @@ var FeedServer = function()
 				if (err) {
 					if (err.message == "No such feed") {
 						callback(null, null);
-						self.getFeedTeaser(
+						self.updateFeedAndItems(
 							url,
 							num_feed_items,
 							function(err, feed) {}
@@ -73,7 +72,7 @@ var FeedServer = function()
 					}
 					else {
 						callback(null, null);
-						self.getFeedTeaser(
+						self.updateFeedAndItems(
 							url,
 							num_feed_items,
 							function(err, feed) {}
@@ -96,10 +95,73 @@ var FeedServer = function()
 	 *	
 	 *		Arguments: url of feed
 	 *		           number of feed items to return
-	 *		           callback function for success
-	 *		           callback function for error
+	 *		           callback function called with feed when complete
 	 **/
 	this.getFeedTeaser = function(url, num_feed_items, callback)
+	{
+		FeedModel.isUpToDate(
+			url,
+			function(err, result) {
+				if (err) {
+					if (err.message == "No such feed") {
+						self.updateFeedAndItems(
+							url,
+							num_feed_items,
+							function(err, feed) {
+								if (err) {
+									callback(err);
+								}
+								else {
+									callback(null, feed);
+								}
+							}
+						);
+					}
+					else {
+						callback(err);
+					}
+				}
+				else {
+					if (result) {
+						FeedModel.get(
+							url,
+							function(err, feed) {
+								if (err) {
+									callback(err);
+								}
+								else {
+									callback(null, feed);
+								}
+							}
+						);
+					}
+					else {
+						self.updateFeedAndItems(
+							url,
+							num_feed_items,
+							function(err, feed) {
+								if (err) {
+									callback(err);
+								}
+								else {
+									callback(null, feed);
+								}
+							}
+						);
+					}
+				}
+			}
+		);
+	}
+	
+	/**
+	 *	Updates the feed and its items in the database.
+	 *	
+	 *		Arguments: url of feed
+	 *		           number of feed items to return
+	 *		           callback function called with feed when complete
+	 **/
+	this.updateFeedAndItems = function(url, num_feed_item, callback)
 	{
 		Downloader.fetch(
 			url,
@@ -143,7 +205,7 @@ var FeedServer = function()
 											step.parallel()
 										);
 										
-										self.getWebPagesForFeedItems(
+										self.updateWebPagesForFeedItems(
 											feed.items,
 											step.parallel()
 										);
@@ -165,6 +227,13 @@ var FeedServer = function()
 		);
 	}
 	
+	/**
+	 *	Saves or overwrites feed and its feed items in database.
+	 *	
+	 *		Arguments: url of feed
+	 *		           the feed with its items embedded
+	 *		           callback function called with feed when complete
+	 **/
 	this.saveFeedAndItems = function(url, feed, callback)
 	{
 		FeedModel.save(
@@ -194,7 +263,15 @@ var FeedServer = function()
 		);
 	}
 	
-	this.getWebPagesForFeedItems = function(items, callback)
+	/**
+	 *	Retrieves and stores web pages for given feed items if they
+	 *	aren't already in the database.
+	 *	
+	 *		Arguments: the feed items
+	 *		           callback function called with saved
+	 *		               web pages when complete
+	 **/
+	this.updateWebPagesForFeedItems = function(items, callback)
 	{
 		Step(
 			function getAndSaveWebPages() {

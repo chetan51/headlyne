@@ -50,7 +50,7 @@ function ensureFeedAndItemsAreStored(test, test_feed, callback)
 				test.equal(feed.title, test_feed.title);
 				test.equal(feed.items[0].title, test_feed.items[0].title);
 				
-/*				// Make sure the first feed item's web page is in the database
+				// Make sure the first feed item's web page is in the database
 				WebPageModel.get(
 					feed.items[0].url,
 					function(err, webpage) {
@@ -64,8 +64,6 @@ function ensureFeedAndItemsAreStored(test, test_feed, callback)
 						test.done();
 					}
 				);
-				*/
-				callback(null);
 			}
 		}
 	);
@@ -129,7 +127,7 @@ exports['get feed teaser'] = nodeunit.testCase(
 	},
 
 	'feed not in database': function(test) {
-		test.expect(3);
+		test.expect(4);
 		
 		FeedServer.getFeedTeaser(
 			basic_feed.url,
@@ -157,7 +155,7 @@ exports['get feed teaser'] = nodeunit.testCase(
 	},
 	
 	'feed in database and not up to date': function(test) {
-		test.expect(3);
+		test.expect(4);
 		
 		// First, we make sure the feed is in the database
 		FeedServer.getFeedTeaser(
