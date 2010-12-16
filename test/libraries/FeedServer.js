@@ -18,11 +18,58 @@ var mock_server      = null;
     mock_server_host = "localhost",
     mock_server_port = 7500;
 
-var basic_feed_url            = "http://" + mock_server_host + ":" + mock_server_port
-                                + "/basic_feed",
-    basic_feed_title          = "RSS Title";
-    basic_feed_item1_title    = "Item 1 Title";
-    basic_feed_webpage1_title = "Webpage 1 Title";
+var basic_feed = {
+	url     : "http://" + mock_server_host + ":" + mock_server_port + "/basic_feed",
+	title   : "RSS Title",
+	items	: [
+		{
+			title   : "Item 1 Title",
+			webpage : {
+				title: "Webpage 1 Title"
+			}
+		}
+	]
+}
+
+/**
+ *	Helper functions
+ **/
+function ensureFeedIsCorrect(test, test_feed, feed)
+{
+	test.equal(feed.title, test_feed.title);
+}
+function ensureFeedAndItemsAreStored(test, test_feed, callback)
+{
+	FeedModel.get(
+		test_feed.url,
+		function(err, feed) {
+			if (err) {
+				callback(err);
+			}
+			else {
+				test.equal(feed.title, test_feed.title);
+				test.equal(feed.items[0].title, test_feed.items[0].title);
+				
+/*				// Make sure the first feed item's web page is in the database
+				WebPageModel.get(
+					feed.items[0].url,
+					function(err, webpage) {
+						if (err) {
+							console.log(err.message);
+						}
+						else {
+							test.equal(webpage.title,
+								   test_feed.items[0].webpage.title);
+						}
+						test.done();
+					}
+				);
+				*/
+				callback(null);
+			}
+		}
+	);
+}
 
 /**
  *	Tests
@@ -82,10 +129,10 @@ exports['get feed teaser'] = nodeunit.testCase(
 	},
 
 	'feed not in database': function(test) {
-		test.expect(4);
+		test.expect(3);
 		
 		FeedServer.getFeedTeaser(
-			basic_feed_url,
+			basic_feed.url,
 			10,
 			function(err, feed) {
 				if (err) {
@@ -93,35 +140,15 @@ exports['get feed teaser'] = nodeunit.testCase(
 					test.done();
 				}
 				else {
-					test.equal(feed.title, basic_feed_title);
-					
-					// Make sure feed is in the database
-					FeedModel.get(
-						basic_feed_url,
-						function(err, feed) {
+					ensureFeedIsCorrect(test, basic_feed, feed);
+					ensureFeedAndItemsAreStored(
+						test,
+						basic_feed,
+						function(err) {
 							if (err) {
 								console.log(err.message);
-								test.done();
 							}
-							else {
-								test.equal(feed.title, basic_feed_title);
-								test.equal(feed.items[0].title, basic_feed_item1_title);
-								
-								// Make sure the first feed item's web page is in the database
-								WebPageModel.get(
-									feed.items[0].url,
-									function(err, webpage) {
-										if (err) {
-											console.log(err.message);
-										}
-										else {
-											test.equal(webpage.title,
-												   basic_feed_webpage1_title);
-										}
-										test.done();
-									}
-								);
-							}
+							test.done();
 						}
 					);
 				}
@@ -130,11 +157,11 @@ exports['get feed teaser'] = nodeunit.testCase(
 	},
 	
 	'feed in database and not up to date': function(test) {
-		test.expect(1);
+		test.expect(3);
 		
 		// First, we make sure the feed is in the database
 		FeedServer.getFeedTeaser(
-			basic_feed_url,
+			basic_feed.url,
 			10,
 			function(err, feed) {
 				if (err) {
@@ -150,19 +177,30 @@ exports['get feed teaser'] = nodeunit.testCase(
 
 					// Now we try to retrieve it
 					FeedServer.getFeedTeaser(
-						basic_feed_url,
+						basic_feed.url,
 						10,
 						function(err, feed) {
 							if (err) {
 								console.log(err.message);
+								test.done();
 							}
 							else {
-								test.equal(feed.title, basic_feed_title);
+								ensureFeedIsCorrect(test, basic_feed, feed);
+								ensureFeedAndItemsAreStored(
+									test,
+									basic_feed,
+									function(err) {
+										if (err) {
+											console.log(err.message);
+											test.done();
+										}
+										test.done();
+									}
+								);
 								
 								// Restore FeedModel.isUpToDate
 								FeedModel.isUpToDate = isUpToDate_backup;
 							}
-							test.done();
 						},
 						function(err) {
 							test.done();
@@ -233,7 +271,7 @@ exports['get feed teaser urgently'] = nodeunit.testCase(
 		test.expect(1);
 		
 		FeedServer.getFeedTeaserUrgently(
-			basic_feed_url,
+			basic_feed.url,
 			10,
 			function(err, feed) {
 				if (err) {
@@ -248,11 +286,11 @@ exports['get feed teaser urgently'] = nodeunit.testCase(
 	},
 
 	'feed in database and up to date': function(test) {
-		test.expect(2);
+		test.expect(1);
 		
 		// First, we make sure the feed is in the database and up to date
 		FeedServer.getFeedTeaser(
-			basic_feed_url,
+			basic_feed.url,
 			10,
 			function(err, feed) {
 				if (err) {
@@ -262,28 +300,16 @@ exports['get feed teaser urgently'] = nodeunit.testCase(
 				else {
 					// Now we try to retrieve it
 					FeedServer.getFeedTeaserUrgently(
-						basic_feed_url,
+						basic_feed.url,
 						10,
 						function(err, feed) {
 							if (err) {
 								console.log(err.message);
-								test.done();
 							}
 							else {
-								test.equal(feed.title, basic_feed_title);
-								FeedModel.get(
-									basic_feed_url,
-									function(err, feed) {
-										if (err) {
-											console.log(err.message);
-										}
-										else {
-											test.equal(feed.title, basic_feed_title);
-										}
-										test.done();
-									}
-								);
+								ensureFeedIsCorrect(test, basic_feed, feed);
 							}
+							test.done();
 						}
 					);
 				}
@@ -299,7 +325,7 @@ exports['get feed teaser urgently'] = nodeunit.testCase(
 		
 		// First, we make sure the feed is in the database
 		FeedServer.getFeedTeaser(
-			basic_feed_url,
+			basic_feed.url,
 			10,
 			function(err, feed) {
 				if (err) {
@@ -315,7 +341,7 @@ exports['get feed teaser urgently'] = nodeunit.testCase(
 
 					// Now we try to retrieve it
 					FeedServer.getFeedTeaserUrgently(
-						basic_feed_url,
+						basic_feed.url,
 						10,
 						function(err, feed) {
 							if (err) {
