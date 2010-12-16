@@ -2,6 +2,7 @@
  *  Module dependencies
  */
 var nodeunit = require('nodeunit');
+var Ni = require('ni');
 var ServerGenerator = require('../../test/mocks/ServerGenerator.js');
 var Downloader = require('../../src/libraries/Downloader.js');
 
@@ -31,6 +32,8 @@ exports['fetch URLs'] = nodeunit.testCase(
 				callback();
 			}
 		);
+		
+		Ni.config('timeout', 30000);
 	},
 
 	tearDown: function (callback) {
@@ -121,6 +124,8 @@ exports['fetch URLs'] = nodeunit.testCase(
 	'timeout': function(test) {
 		test.expect(1);
 		
+		Ni.config('timeout', 10);
+		
 		Downloader.fetch(base_url + '/timeout',
 			function(str) { test.done(); },
 			
@@ -128,7 +133,7 @@ exports['fetch URLs'] = nodeunit.testCase(
 				test.equal(err.message, 'Request timed out.');
 				test.done();
 			}
-		,10);
+		);
 	},
 
 	'endless redirects': function(test) {
