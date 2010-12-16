@@ -46,7 +46,7 @@ var FeedServer = function()
 				if (err) {
 					if (err.message == "No such feed") {
 						callback(null, null);
-						self.updateFeedAndItems(
+						self.updateFeedAndItemsAndWebpages(
 							url,
 							num_feed_items,
 							function(err, feed) {}
@@ -65,14 +65,25 @@ var FeedServer = function()
 									callback(err);
 								}
 								else {
-									callback(null, feed);
+									self.updateWebPagesForFeedItems(
+										feed.items,
+										function(err, webpages) {
+											if (err) {
+												callback(err);
+											}
+											else {
+												var teaser = self.generateFeedTeaser(feed, feed.items, webpages);
+												callback(null, teaser);
+											}
+										}
+									);
 								}
 							}
 						);
 					}
 					else {
 						callback(null, null);
-						self.updateFeedAndItems(
+						self.updateFeedAndItemsAndWebpages(
 							url,
 							num_feed_items,
 							function(err, feed) {}
@@ -104,7 +115,7 @@ var FeedServer = function()
 			function(err, result) {
 				if (err) {
 					if (err.message == "No such feed") {
-						self.updateFeedAndItems(
+						self.updateFeedAndItemsAndWebpages(
 							url,
 							num_feed_items,
 							function(err, feed) {
@@ -136,7 +147,7 @@ var FeedServer = function()
 						);
 					}
 					else {
-						self.updateFeedAndItems(
+						self.updateFeedAndItemsAndWebpages(
 							url,
 							num_feed_items,
 							function(err, feed) {
@@ -158,10 +169,11 @@ var FeedServer = function()
 	 *	Updates the feed and its items in the database.
 	 *	
 	 *		Arguments: url of feed
-	 *		           number of feed items to return
-	 *		           callback function called with feed when complete
+	 *		           number of feed items to get
+	 *		           callback function called with feed, items
+	 *		               and webpages when complete
 	 **/
-	this.updateFeedAndItems = function(url, num_feed_item, callback)
+	this.updateFeedAndItemsAndWebpages = function(url, num_feed_items, callback)
 	{
 		Downloader.fetch(
 			url,
@@ -196,12 +208,13 @@ var FeedServer = function()
 									}
 						
 								Step(
-									function saveFeedAndRetrieveItems() {
+									function processFeed() {
 										var step = this;
 									
 										self.saveFeedAndItems(
 											url,
 											feed,
+											feed.items,
 											step.parallel()
 										);
 										
@@ -210,12 +223,19 @@ var FeedServer = function()
 											step.parallel()
 										);
 									},
-									function done(err, saved_feed, saved_webpages) {
+									function done(
+										err,
+										saved_feed,
+										saved_webpages
+									)
+									{
+										var teaser = self.generateFeedTeaser(saved_feed, saved_feed.items, saved_webpages);
+											
 										if (err) {
 											callback(err);
 										}
 										else {
-											callback(null, feed);
+											callback(null, teaser);
 										}
 									}
 								);
@@ -231,10 +251,11 @@ var FeedServer = function()
 	 *	Saves or overwrites feed and its feed items in database.
 	 *	
 	 *		Arguments: url of feed
-	 *		           the feed with its items embedded
+	 *		           the feed
+	 *		           the feed's items
 	 *		           callback function called with feed when complete
 	 **/
-	this.saveFeedAndItems = function(url, feed, callback)
+	this.saveFeedAndItems = function(url, feed, items, callback)
 	{
 		FeedModel.save(
 			url,
@@ -248,12 +269,18 @@ var FeedServer = function()
 				else {
 					FeedModel.pushFeedItems(
 						url,
-						feed.items,
+						items,
 						function(err, feed) {
 							if (err) {
 								callback(err);
 							}
 							else {
+								/* Ideally, this should return feed
+								 * items separately, but it's not
+								 * working with Step so we can deal
+								 * with it later when we need to
+								 * separate feed and feed items.
+								 */
 								callback(null, feed);
 							}
 						}
@@ -296,6 +323,20 @@ var FeedServer = function()
 				}
 			}
 		);
+	}
+	
+	/**
+	 *	Combines feed, items and webpages into one feed teaser object.
+	 *	
+	 *		Arguments: the feed
+	 *		           the feed items
+	 *		           webpages for each feed item
+	 **/
+	this.generateFeedTeaser = function(feed, items, webpages)
+	{
+		feed.items = items;
+		feed.items[0].webpage = webpages[0];
+		return feed;
 	}
 };
 
