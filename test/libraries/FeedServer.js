@@ -25,14 +25,6 @@ var basic_feed_url            = "http://" + mock_server_host + ":" + mock_server
     basic_feed_webpage1_title = "Webpage 1 Title";
 
 /**
- *	Configurations
- */
-Ni.config('http_timeout',       30000);
-Ni.config('feedparse_timeout',  5000);
-Ni.config('feed_expiry_length', 30 * 60 * 1000);
-Ni.config('max_redirect',       5);
-
-/**
  *	Tests
  **/
 exports['get feed teaser'] = nodeunit.testCase(
@@ -67,6 +59,10 @@ exports['get feed teaser'] = nodeunit.testCase(
 			}
 		);
 		
+		Ni.config('http_timeout',       30000);
+		Ni.config('feedparse_timeout',  5000);
+		Ni.config('feed_expiry_length', 30 * 60 * 1000);
+		Ni.config('max_redirect',       5);
 	},
 	 
 	tearDown: function(callback) {
