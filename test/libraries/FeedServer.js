@@ -109,25 +109,30 @@ exports['get feed teaser'] = nodeunit.testCase(
 				// Make sure feed is in the database
 				FeedModel.get(
 					basic_feed_url,
-					function(err) {},
-					function(feed) {
-						test.equal(feed.title, basic_feed_title);
-						test.equal(feed.items[0].title, basic_feed_item1_title);
-						
-						// Make sure the first feed item's web page is in the database
-						WebPageModel.get(
-							feed.items[0].url,
-							function(err, webpage) {
-								if (err) {
-									console.log(err.message);
+					function(err, feed) {
+						if (err) {
+							console.log(err.message);
+							test.done();
+						}
+						else {
+							test.equal(feed.title, basic_feed_title);
+							test.equal(feed.items[0].title, basic_feed_item1_title);
+							
+							// Make sure the first feed item's web page is in the database
+							WebPageModel.get(
+								feed.items[0].url,
+								function(err, webpage) {
+									if (err) {
+										console.log(err.message);
+									}
+									else {
+										test.equal(webpage.title,
+											   basic_feed_webpage1_title);
+									}
+									test.done();
 								}
-								else {
-									test.equal(webpage.title,
-										   basic_feed_webpage1_title);
-								}
-								test.done();
-							}
-						);
+							);
+						}
 					}
 				);
 			},
@@ -148,7 +153,7 @@ exports['get feed teaser'] = nodeunit.testCase(
 			function(feed) {
 				// Then we make FeedServer think the feed expired
 				var isUpToDate_backup = FeedModel.isUpToDate;
-				FeedModel.isUpToDate = function(feed_url, errback, callback) {
+				FeedModel.isUpToDate = function(feed_url, callback) {
 					callback(false);
 				}
 
@@ -272,9 +277,13 @@ exports['get feed teaser urgently'] = nodeunit.testCase(
 						test.equal(feed.title, basic_feed_title);
 						FeedModel.get(
 							basic_feed_url,
-							function(err) {},
-							function(feed) {
-								test.equal(feed.title, basic_feed_title);
+							function(err, feed) {
+								if (err) {
+									console.log(err.message);
+								}
+								else {
+									test.equal(feed.title, basic_feed_title);
+								}
 								test.done();
 							}
 						);
@@ -302,7 +311,7 @@ exports['get feed teaser urgently'] = nodeunit.testCase(
 			function(feed) {
 				// Then we make FeedServer think the feed expired
 				var isUpToDate_backup = FeedModel.isUpToDate;
-				FeedModel.isUpToDate = function(feed_url, errback, callback) {
+				FeedModel.isUpToDate = function(feed_url, callback) {
 					callback(false);
 				}
 

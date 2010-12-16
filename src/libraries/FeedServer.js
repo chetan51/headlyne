@@ -43,35 +43,44 @@ var FeedServer = function()
 	{
 		FeedModel.isUpToDate(
 			url,
-			function(err) {
-				if (err.message == "No such feed") {
-					callback(null);
-					self.getFeedTeaser(
-						url,
-						num_feed_items,
-						function(feed) {},
-						function(err) {}
-					);
-				}
-			},
-			function(result) {
-				if (result) {
-					FeedModel.get(
-						url,
-						function(err) {},
-						function(feed) {
-							callback(feed);
-						}
-					);
+			function(err, result) {
+				if (err) {
+					if (err.message == "No such feed") {
+						callback(null);
+						self.getFeedTeaser(
+							url,
+							num_feed_items,
+							function(feed) {},
+							function(err) {}
+						);
+					}
+					else {
+						errback(err);
+					}
 				}
 				else {
-					callback(null);
-					self.getFeedTeaser(
-						url,
-						num_feed_items,
-						function(feed) {},
-						function(err) {}
-					);
+					if (result) {
+						FeedModel.get(
+							url,
+							function(err, feed) {
+								if (err) {
+									errback(err);
+								}
+								else {
+									callback(feed);
+								}
+							}
+						);
+					}
+					else {
+						callback(null);
+						self.getFeedTeaser(
+							url,
+							num_feed_items,
+							function(feed) {},
+							function(err) {}
+						);
+					}
 				}
 			}
 		);
@@ -165,16 +174,24 @@ var FeedServer = function()
 			feed.title,
 			feed.author,
 			feed.description,
-			function(err) {},
-			function(saved_feed) {
-				FeedModel.pushFeedItems(
-					url,
-					feed.items,
-					function(err) {},
-					function(feed) {
-						callback(null, feed);
-					}
-				);
+			function(err, saved_feed) {
+				if (err) {
+					callback(err);
+				}
+				else {
+					FeedModel.pushFeedItems(
+						url,
+						feed.items,
+						function(err, feed) {
+							if (err) {
+								callback(err);
+							}
+							else {
+								callback(null, feed);
+							}
+						}
+					);
+				}
 			}
 		);
 	}
