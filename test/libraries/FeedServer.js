@@ -47,13 +47,9 @@ exports['get feed teaser'] = nodeunit.testCase(
 				);
 			},
 			function done(err, server) {
-				if (err) {
-					throw err;
-				}
-				else {
-					mock_server = server;
-					callback();
-				}
+				if (err) throw err;
+				mock_server = server;
+				callback();
 			}
 		);
 		
@@ -79,12 +75,8 @@ exports['get feed teaser'] = nodeunit.testCase(
 				);
 			},
 			function done(err) {
-				if (err) {
-					throw err;
-				}
-				else {
-					callback();
-				}
+				if (err) throw err;
+				callback();
 			}
 		);
 	},
