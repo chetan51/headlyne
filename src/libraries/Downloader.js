@@ -12,14 +12,15 @@ var Downloader = function() {
 	
 	var self = this;
 	
-	this.fetch = function(url, callback, errback, max_redirect_level)
+	this.fetch = function(url, callback)
 	{
-		if(typeof(max_redirect_level) == 'undefined') {
-			max_redirect_level = 5;
-		}
-		
+		self.fetch_helper(url, Ni.config('max_redirect'), callback);
+	}
+	
+	this.fetch_helper = function(url, max_redirect_level, callback)
+	{
 		if(max_redirect_level == 0) {
-			errback(new Error('Endless redirection.'));
+			callback(new Error('Endless redirection.'));
 			return;
 		}
 		
@@ -35,7 +36,7 @@ var Downloader = function() {
 		var client = http.createClient(urlObj.port, urlObj.hostname);
 		
 		client.on('error', function(e) {
-			errback(new Error("Cannot connect to server."));
+			callback(new Error("Cannot connect to server."));
 		});
 		
 		var req = client.request('GET', urlObj.href);
@@ -44,14 +45,18 @@ var Downloader = function() {
 			switch(resp.statusCode) {
 				case 200:
 					resp.on('data', function(data){ str += data; });
-					resp.on('end', function(){ callback(str); });
+					resp.on('end', function(){ callback(null, str); });
 					break;
 				case 301:
 				case 302:
-					self.fetch(resp.headers.location, callback, errback, max_redirect_level-1);
+					self.fetch_helper(
+						resp.headers.location,
+						max_redirect_level-1,
+						callback
+					);
 					break;
 				default:
-					errback(new Error("Error " + resp.statusCode + ": Page not found."));
+					callback(new Error("Error " + resp.statusCode + ": Page not found."));
 					break;
 			}
 		});
@@ -60,7 +65,7 @@ var Downloader = function() {
 		// console.log('requested');
 		
 		setTimeout(function() {
-			errback(new Error('Request timed out.'));
+			callback(new Error('Request timed out.'));
 		}, Ni.config('http_timeout'));
 	}
 };
