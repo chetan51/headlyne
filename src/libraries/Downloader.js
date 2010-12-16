@@ -61,7 +61,7 @@ var Downloader = function() {
 		
 		setTimeout(function() {
 			errback(new Error('Request timed out.'));
-		}, Ni.config('timeout'));
+		}, Ni.config('http_timeout'));
 	}
 };
 

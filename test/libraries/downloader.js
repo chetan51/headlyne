@@ -33,7 +33,7 @@ exports['fetch URLs'] = nodeunit.testCase(
 			}
 		);
 		
-		Ni.config('timeout', 30000);
+		Ni.config('http_timeout', 30000);
 	},
 
 	tearDown: function (callback) {
@@ -124,7 +124,7 @@ exports['fetch URLs'] = nodeunit.testCase(
 	'timeout': function(test) {
 		test.expect(1);
 		
-		Ni.config('timeout', 10);
+		Ni.config('http_timeout', 10);
 		
 		Downloader.fetch(base_url + '/timeout',
 			function(str) { test.done(); },
