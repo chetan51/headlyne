@@ -180,58 +180,51 @@ exports['get feed teaser urgently'] = nodeunit.testCase(
 	
 	setUp: function(callback) {
 		Step(
-			function mockServer() {
-				var done = this;
+			function mockServerAndDatabase() {
+				var step = this;
 				
 				ServerGenerator.createServer(
 					mock_server_host,
 					mock_server_port,
-					function(err, server) {
-						mock_server = server;
-						done();
-					}
+					step.parallel()
+				);
+				
+				DatabaseFaker.setUp(
+					['feeds', 'webpages'],
+					step.parallel()
 				);
 			},
-			function mockDatabase() {
-				DatabaseFaker.setUp(
-					['feeds'],
-					function(err) {
-						if (err) {
-							throw err;
-						}
-						else {
-							callback();
-						}
-					}
-				);
+			function done(err, server) {
+				if (err) throw err;
+				mock_server = server;
+				callback();
 			}
 		);
+		
+		Ni.config('http_timeout',       30000);
+		Ni.config('feedparse_timeout',  5000);
+		Ni.config('feed_expiry_length', 30 * 60 * 1000);
+		Ni.config('max_redirect',       5);
 	},
 	 
 	tearDown: function(callback) {
 		Step(
-			function closeServer() {
-				var done = this;
+			function closeServerAndDatabase() {
+				var step = this;
 				
 				ServerGenerator.closeServer(
 					mock_server,
-					function(err) {
-						done();
-					}
+					step.parallel()
+				);
+				
+				DatabaseFaker.tearDown(
+					['feeds', 'webpages'],
+					step.parallel()
 				);
 			},
-			function closeDatabase() {
-				DatabaseFaker.tearDown(
-					['feeds'],
-					function(err) {
-						if (err) {
-							throw err;
-						}
-						else {
-							callback();
-						}
-					}
-				);
+			function done(err) {
+				if (err) throw err;
+				callback();
 			}
 		);
 	},
