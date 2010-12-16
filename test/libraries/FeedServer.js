@@ -32,30 +32,28 @@ exports['get feed teaser'] = nodeunit.testCase(
 	
 	setUp: function(callback) {
 		Step(
-			function mockServer() {
-				var done = this;
+			function mockServerAndDatabase() {
+				var step = this;
 				
 				ServerGenerator.createServer(
 					mock_server_host,
 					mock_server_port,
-					function(err, server) {
-						mock_server = server;
-						done();
-					}
+					step.parallel()
 				);
-			},
-			function mockDatabase() {
+				
 				DatabaseFaker.setUp(
 					['feeds', 'webpages'],
-					function(err) {
-						if (err) {
-							throw err;
-						}
-						else {
-							callback();
-						}
-					}
+					step.parallel()
 				);
+			},
+			function done(err, server) {
+				if (err) {
+					throw err;
+				}
+				else {
+					mock_server = server;
+					callback();
+				}
 			}
 		);
 		
@@ -67,28 +65,26 @@ exports['get feed teaser'] = nodeunit.testCase(
 	 
 	tearDown: function(callback) {
 		Step(
-			function closeServer() {
-				var done = this;
+			function closeServerAndDatabase() {
+				var step = this;
 				
 				ServerGenerator.closeServer(
 					mock_server,
-					function() {
-						done();
-					}
+					step.parallel()
 				);
-			},
-			function closeDatabase() {
+				
 				DatabaseFaker.tearDown(
 					['feeds', 'webpages'],
-					function(err) {
-						if (err) {
-							throw err;
-						}
-						else {
-							callback();
-						}
-					}
+					step.parallel()
 				);
+			},
+			function done(err) {
+				if (err) {
+					throw err;
+				}
+				else {
+					callback();
+				}
 			}
 		);
 	},
