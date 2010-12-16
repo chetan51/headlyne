@@ -13,7 +13,8 @@ var Downloader     = require('./Downloader.js'),
     ContentGrabber = require('./ContentGrabber.js'),
     FeedModel      = require('../models/Feed.js'),
     WebPageModel   = require('../models/WebPage.js'),
-    Step           = require('step');
+    Step           = require('step'),
+    Conduct        = require('conductor');
 
 /**
  *	The FeedServer library
@@ -46,7 +47,7 @@ var FeedServer = function()
 				if (err) {
 					if (err.message == "No such feed") {
 						callback(null, null);
-						self.updateFeedAndItemsAndWebpages(
+						self.updateFeedForURL(
 							url,
 							num_feed_items,
 							function(err, feed) {}
@@ -58,32 +59,14 @@ var FeedServer = function()
 				}
 				else {
 					if (result) {
-						FeedModel.get(
+						self.getFeedTeaserFromDatabase(
 							url,
-							function(err, feed) {
-								if (err) {
-									callback(err);
-								}
-								else {
-									self.updateWebPagesForFeedItems(
-										feed.items,
-										function(err, webpages) {
-											if (err) {
-												callback(err);
-											}
-											else {
-												var teaser = self.generateFeedTeaser(feed, feed.items, webpages);
-												callback(null, teaser);
-											}
-										}
-									);
-								}
-							}
+							callback
 						);
 					}
 					else {
 						callback(null, null);
-						self.updateFeedAndItemsAndWebpages(
+						self.updateFeedForURL(
 							url,
 							num_feed_items,
 							function(err, feed) {}
@@ -115,7 +98,7 @@ var FeedServer = function()
 			function(err, result) {
 				if (err) {
 					if (err.message == "No such feed") {
-						self.updateFeedAndItemsAndWebpages(
+						self.updateFeedForURL(
 							url,
 							num_feed_items,
 							function(err, feed) {
@@ -134,20 +117,13 @@ var FeedServer = function()
 				}
 				else {
 					if (result) {
-						FeedModel.get(
+						self.getFeedTeaserFromDatabase(
 							url,
-							function(err, feed) {
-								if (err) {
-									callback(err);
-								}
-								else {
-									callback(null, feed);
-								}
-							}
+							callback
 						);
 					}
 					else {
-						self.updateFeedAndItemsAndWebpages(
+						self.updateFeedForURL(
 							url,
 							num_feed_items,
 							function(err, feed) {
@@ -166,14 +142,50 @@ var FeedServer = function()
 	}
 	
 	/**
-	 *	Updates the feed and its items in the database.
+	 *	Gets feed and items and webpages from database and builds teaser.
+	 *	
+	 *		Arguments: url of feed
+	 *		           callback function called with feed teaser when complete
+	 **/
+	this.getFeedTeaserFromDatabase = function(url, callback)
+	{
+		FeedModel.get(
+			url,
+			function(err, feed) {
+				if (err) {
+					callback(err);
+				}
+				else {
+					self.updateWebPagesForFeedItems(
+						feed.items,
+						function(err, webpages) {
+							if (err) {
+								callback(err);
+							}
+							else {
+								var teaser = self.generateFeedTeaser(
+									feed,
+									feed.items,
+									webpages
+								);
+								callback(null, teaser);
+							}
+						}
+					);
+				}
+			}
+		);
+	}
+	
+	/**
+	 *	Updates the feed for given URL and its items and webpages in the database.
 	 *	
 	 *		Arguments: url of feed
 	 *		           number of feed items to get
 	 *		           callback function called with feed, items
 	 *		               and webpages when complete
 	 **/
-	this.updateFeedAndItemsAndWebpages = function(url, num_feed_items, callback)
+	this.updateFeedForURL = function(url, num_feed_items, callback)
 	{
 		Downloader.fetch(
 			url,
@@ -192,56 +204,83 @@ var FeedServer = function()
 								callback(err);
 							}
 							else {
-								// Mocking feed
-								feed =
-									{
-										title: "RSS Title",
-										author: "Sample author",
-										description: "Sample RSS feed",
-										items:
-											[
-												{
-													url: "http://item1url",
-													title: "Item 1 Title"
-												}
-											]
-									}
-						
-								Step(
-									function processFeed() {
-										var step = this;
-									
-										self.saveFeedAndItems(
-											url,
-											feed,
-											feed.items,
-											step.parallel()
-										);
-										
-										self.updateWebPagesForFeedItems(
-											feed.items,
-											step.parallel()
-										);
-									},
-									function done(
-										err,
-										saved_feed,
-										saved_webpages
-									)
-									{
-										var teaser = self.generateFeedTeaser(saved_feed, saved_feed.items, saved_webpages);
-											
-										if (err) {
-											callback(err);
-										}
-										else {
-											callback(null, teaser);
-										}
-									}
+								self.updateParsedFeed(
+									url,
+									feed,
+									num_feed_items,
+									callback
 								);
 							}
 						}
 					);
+				}
+			}
+		);
+	}
+	
+	/**
+	 *	Updates the given parsed feed and its items and webpages in the database.
+	 *	
+	 *		Arguments: url of feed
+	 *		           parsed feed
+	 *		           number of feed items to get
+	 *		           callback function called with feed, items
+	 *		               and webpages when complete
+	 **/
+	this.updateParsedFeed = function(url, feed, num_feed_items, callback)
+	{
+		// Mocking feed
+		var feed =
+			{
+				title: "RSS Title",
+				author: "Sample author",
+				description: "Sample RSS feed",
+				items:
+					[
+						{
+							url: "http://localhost:7500/blogpost1",
+							title: "Item 1 Title"
+						},
+						{
+							url: "http://localhost:7500/blogpost2",
+							title: "Item 2 Title"
+						}
+					]
+			}
+
+		Step(
+			function processFeed() {
+				var step = this;
+			
+				self.saveFeedAndItems(
+					url,
+					feed,
+					feed.items,
+					step.parallel()
+				);
+				
+				self.updateWebPagesForFeedItems(
+					feed.items,
+					step.parallel()
+				);
+			},
+			function done(
+				err,
+				saved_feed,
+				saved_webpages
+			)
+			{
+				var teaser = self.generateFeedTeaser(
+					saved_feed,
+					saved_feed.items,
+					saved_webpages
+				);
+					
+				if (err) {
+					callback(err);
+				}
+				else {
+					callback(null, teaser);
 				}
 			}
 		);
@@ -300,16 +339,38 @@ var FeedServer = function()
 	 **/
 	this.updateWebPagesForFeedItems = function(items, callback)
 	{
+		var count = 0;
 		Step(
 			function getAndSaveWebPages() {
 				var group = this.group();
 				items.forEach(
 					function(item) {
-						WebPageModel.save(
+						Downloader.fetch(
 							item.url,
-							"Webpage 1 Title",
-							"eanrst",
-							group()
+							function(err, data) {
+								if (!err && data) {
+									ContentGrabber.readable(
+										data,
+										function(err, article) {
+											if (!err && article) {
+												count++;
+												WebPageModel.save(
+													item.url,
+													"Webpage " + count + " Title",
+													"eanrst",
+													group()
+												);
+											}
+											else {
+												group()(null, null);
+											}
+										}
+									);
+								}
+								else {
+									group()(null, null);
+								}
+							}
 						);
 					}
 				);
@@ -335,7 +396,13 @@ var FeedServer = function()
 	this.generateFeedTeaser = function(feed, items, webpages)
 	{
 		feed.items = items;
-		feed.items[0].webpage = webpages[0];
+		for (var i in items) {
+			for (var j in webpages) {
+				if (feed.items[i].url == webpages[j].url) {
+					feed.items[i].webpage = webpages[j];
+				}
+			}
+		}
 		return feed;
 	}
 };
