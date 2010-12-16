@@ -141,12 +141,10 @@ var FeedServer = function()
 							}
 						);
 					},
-					function(err) {},
-					30000
+					function(err) {}
 				);
 			},
-			function(err) {},
-			30000
+			function(err) {}
 		);
 	}
 	

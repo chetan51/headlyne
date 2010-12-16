@@ -1,7 +1,8 @@
 /**
  * Dependencies
  **/
-var xml = require('node-xml');
+var xml = require('node-xml'),
+    Ni  = require('ni');
 
 
 /**
@@ -47,7 +48,7 @@ var FeedParser = function()
 	 * );
 	 **/
 
-	this.parse = function(rss, callback, errback, timeout)
+	this.parse = function(rss, callback, errback)
 	{
 		var items=[];           // the items returned via the callback.
 		var channelinfo=[];     // the channel information returned via the callback.
@@ -354,15 +355,12 @@ var FeedParser = function()
 			
 		}); // End xml.SAXParser creation.
 		
-		if(timeout == null || typeof(timeout) == 'undefined')
-			timeout=2000;
-		
 		setTimeout(function() {
 			if(!result) {
 				errback(new Error('Parser timed out.'));
 				result=true;
 			}
-		}, timeout);
+		}, Ni.config('feedparse_timeout'));
 
 		parser.parseString(rss);
 		

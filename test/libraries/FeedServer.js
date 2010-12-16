@@ -4,6 +4,7 @@
 var http            = require('http'),
     nodeunit        = require('nodeunit'),
     Step            = require('step'),
+    Ni              = require('ni'),
     ServerGenerator = require('../mocks/ServerGenerator.js'),
     DatabaseFaker   = require('../mocks/DatabaseFaker.js'),
     FeedModel       = require('../../src/models/Feed.js'),
@@ -57,6 +58,8 @@ exports['get feed teaser'] = nodeunit.testCase(
 				);
 			}
 		);
+		
+		Ni.config('feedparse_timeout', 5000);
 	},
 	 
 	tearDown: function(callback) {
