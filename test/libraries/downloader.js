@@ -27,7 +27,7 @@ exports['fetch URLs'] = nodeunit.testCase(
 		ServerGenerator.createServer(
 			mock_server_host,
 			mock_server_port,
-			function(server) {
+			function(err, server) {
 				mock_server = server;
 				callback();
 			}
@@ -40,7 +40,7 @@ exports['fetch URLs'] = nodeunit.testCase(
 	tearDown: function (callback) {
 		ServerGenerator.closeServer(
 			mock_server,
-			function() {
+			function(err) {
 				callback();
 			}
 		);

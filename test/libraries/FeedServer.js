@@ -38,7 +38,7 @@ exports['get feed teaser'] = nodeunit.testCase(
 				ServerGenerator.createServer(
 					mock_server_host,
 					mock_server_port,
-					function(server) {
+					function(err, server) {
 						mock_server = server;
 						done();
 					}
@@ -198,7 +198,7 @@ exports['get feed teaser urgently'] = nodeunit.testCase(
 				ServerGenerator.createServer(
 					mock_server_host,
 					mock_server_port,
-					function(server) {
+					function(err, server) {
 						mock_server = server;
 						done();
 					}
@@ -227,7 +227,7 @@ exports['get feed teaser urgently'] = nodeunit.testCase(
 				
 				ServerGenerator.closeServer(
 					mock_server,
-					function() {
+					function(err) {
 						done();
 					}
 				);

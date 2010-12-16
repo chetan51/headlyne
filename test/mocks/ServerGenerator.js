@@ -65,13 +65,13 @@ var ServerGenerator = function() {
 			);
 			
 			serv.listen(port, host, function() {
-				callback(serv);   
+				callback(null, serv);   
 			});
 		});
 	}
 
 	this.closeServer = function(serv, callback) {
-		serv.on('close', function(){ callback(); });
+		serv.on('close', function(){ callback(null); });
 		serv.close();
 	}
 
