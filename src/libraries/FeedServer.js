@@ -39,23 +39,22 @@ var FeedServer = function()
 	 *		           callback function for success
 	 *		           callback function for error
 	 **/
-	this.getFeedTeaserUrgently = function(url, num_feed_items, callback, errback)
+	this.getFeedTeaserUrgently = function(url, num_feed_items, callback)
 	{
 		FeedModel.isUpToDate(
 			url,
 			function(err, result) {
 				if (err) {
 					if (err.message == "No such feed") {
-						callback(null);
+						callback(null, null);
 						self.getFeedTeaser(
 							url,
 							num_feed_items,
-							function(feed) {},
-							function(err) {}
+							function(err, feed) {}
 						);
 					}
 					else {
-						errback(err);
+						callback(err);
 					}
 				}
 				else {
@@ -64,21 +63,20 @@ var FeedServer = function()
 							url,
 							function(err, feed) {
 								if (err) {
-									errback(err);
+									callback(err);
 								}
 								else {
-									callback(feed);
+									callback(null, feed);
 								}
 							}
 						);
 					}
 					else {
-						callback(null);
+						callback(null, null);
 						self.getFeedTeaser(
 							url,
 							num_feed_items,
-							function(feed) {},
-							function(err) {}
+							function(err, feed) {}
 						);
 					}
 				}
@@ -101,23 +99,23 @@ var FeedServer = function()
 	 *		           callback function for success
 	 *		           callback function for error
 	 **/
-	this.getFeedTeaser = function(url, num_feed_items, callback, errback)
+	this.getFeedTeaser = function(url, num_feed_items, callback)
 	{
 		Downloader.fetch(
 			url,
 			function(err, data) {
 				if (err) {
-					errback(err);
+					callback(err);
 				}
 				else if (!data) {
-					errback(new Error("Feed could not be downloaded"));
+					callback(new Error("Feed could not be downloaded"));
 				}
 				else {
 					FeedParser.parse(
 						data,
 						function(err, feed) {
 							if (err) {
-								errback(err);
+								callback(err);
 							}
 							else {
 								// Mocking feed
@@ -152,10 +150,10 @@ var FeedServer = function()
 									},
 									function done(err, saved_feed, saved_webpages) {
 										if (err) {
-											errback(err);
+											callback(err);
 										}
 										else {
-											callback(feed);
+											callback(null, feed);
 										}
 									}
 								);
