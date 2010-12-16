@@ -96,54 +96,61 @@ var FeedServer = function()
 	{
 		Downloader.fetch(
 			url,
-			function(data) {
-				FeedParser.parse(
-					data,
-					function(feed) {
-						// Mocking feed
-						feed =
-							{
-								title: "RSS Title",
-								author: "Sample author",
-								description: "Sample RSS feed",
-								items:
-									[
-										{
-											url: "http://item1url",
-											title: "Item 1 Title"
-										}
-									]
-							}
-				
-						Step(
-							function saveFeedAndRetrieveItems() {
-								var step = this;
-							
-								self.saveFeedAndItems(
-									url,
-									feed,
-									step.parallel()
-								);
+			function(err, data) {
+				if (err) {
+					errback(err);
+				}
+				else if (!data) {
+					errback(new Error("Feed could not be downloaded"));
+				}
+				else {
+					FeedParser.parse(
+						data,
+						function(feed) {
+							// Mocking feed
+							feed =
+								{
+									title: "RSS Title",
+									author: "Sample author",
+									description: "Sample RSS feed",
+									items:
+										[
+											{
+												url: "http://item1url",
+												title: "Item 1 Title"
+											}
+										]
+								}
+					
+							Step(
+								function saveFeedAndRetrieveItems() {
+									var step = this;
 								
-								self.getWebPagesForFeedItems(
-									feed.items,
-									step.parallel()
-								);
-							},
-							function done(err, saved_feed, saved_webpages) {
-								if (err) {
-									errback(err);
+									self.saveFeedAndItems(
+										url,
+										feed,
+										step.parallel()
+									);
+									
+									self.getWebPagesForFeedItems(
+										feed.items,
+										step.parallel()
+									);
+								},
+								function done(err, saved_feed, saved_webpages) {
+									if (err) {
+										errback(err);
+									}
+									else {
+										callback(feed);
+									}
 								}
-								else {
-									callback(feed);
-								}
-							}
-						);
-					},
-					function(err) {}
-				);
-			},
-			function(err) {}
+							);
+						},
+						function(err) {}
+					);
+				}
+			}
 		);
 	}
 	
