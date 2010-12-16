@@ -1,9 +1,19 @@
 var http = require('http')
 var nodeunit = require('nodeunit');
 var FeedParser = require('../../src/libraries/FeedParser.js');
+var Ni = require('ni');
 
 exports['parse XML'] = nodeunit.testCase(
 {
+	setUp: function (callback) {
+		Ni.config('feedparse_timeout', 5000);
+		callback();
+	},
+
+	tearDown: function (callback) {
+		callback();
+	},
+	
 	'basic': function(test) {
 		test.expect(6);
 		var rss = '<?xml version="1.0" ?><rss version="2.0">  <channel><title>RSSFeed1</title> '+
@@ -76,6 +86,10 @@ exports['parse XML'] = nodeunit.testCase(
 	'Incomplete': function(test) {
 		test.expect(1);
 		str='<malformed><xml></malfo';
+		
+		Ni.config('feedparse_timeout', 1000); // temporarily speeds up
+		                                      // this test
+		
 		FeedParser.parse(str,
 			function() {
 				test.equal('','Incomplete');
@@ -91,6 +105,9 @@ exports['parse XML'] = nodeunit.testCase(
 	'Timed Out': function(test) {
 		test.expect(1);
 		str='<xml></xml>';
+		
+		Ni.config('feedparse_timeout', 0);
+		
 		FeedParser.parse(str,
 			function() {
 				test.equal('','Timed Out');
@@ -100,7 +117,7 @@ exports['parse XML'] = nodeunit.testCase(
 				test.equal(err.message, 'Parser timed out.');
 				test.done();
 			}
-		,0);
+		);
 	}
 });
 

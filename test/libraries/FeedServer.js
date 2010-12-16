@@ -4,6 +4,7 @@
 var http            = require('http'),
     nodeunit        = require('nodeunit'),
     Step            = require('step'),
+    Ni              = require('ni'),
     ServerGenerator = require('../mocks/ServerGenerator.js'),
     DatabaseFaker   = require('../mocks/DatabaseFaker.js'),
     FeedModel       = require('../../src/models/Feed.js'),
@@ -57,6 +58,9 @@ exports['get feed teaser'] = nodeunit.testCase(
 				);
 			}
 		);
+		
+		Ni.config('feedparse_timeout',  5000);
+		Ni.config('feed_expiry_length', 30 * 60 * 1000);
 	},
 	 
 	tearDown: function(callback) {
@@ -138,7 +142,7 @@ exports['get feed teaser'] = nodeunit.testCase(
 			function(feed) {
 				// Then we make FeedServer think the feed expired
 				var isUpToDate_backup = FeedModel.isUpToDate;
-				FeedModel.isUpToDate = function(feed_url, expire_length, errback, callback) {
+				FeedModel.isUpToDate = function(feed_url, errback, callback) {
 					callback(false);
 				}
 
@@ -292,7 +296,7 @@ exports['get feed teaser urgently'] = nodeunit.testCase(
 			function(feed) {
 				// Then we make FeedServer think the feed expired
 				var isUpToDate_backup = FeedModel.isUpToDate;
-				FeedModel.isUpToDate = function(feed_url, expire_length, errback, callback) {
+				FeedModel.isUpToDate = function(feed_url, errback, callback) {
 					callback(false);
 				}
 

@@ -1,5 +1,6 @@
 var http = require('http')
 var nodeunit = require('nodeunit');
+var Ni = require('ni');
 var FeedModel = require('../../src/models/Feed.js');
 var DatabaseDriver = require('../../src/libraries/DatabaseDriver.js');
 var DatabaseFaker = require('../mocks/DatabaseFaker.js');
@@ -24,6 +25,8 @@ exports['save'] = nodeunit.testCase(
 				}
 			}
 		);
+		
+		Ni.config('feed_expiry_length', 30 * 60 * 1000);
 	},
 	 
 	tearDown: function (callback) {
@@ -226,7 +229,6 @@ exports['isUpToDate'] = nodeunit.testCase(
 			{
 				FeedModel.isUpToDate(
 					feed.url,
-					5,
 					function(err)
 					{
 						console.log(err.message);
@@ -245,6 +247,9 @@ exports['isUpToDate'] = nodeunit.testCase(
 	'expired': function(test)
 	{
 		test.expect(1);
+		
+		Ni.config('feed_expiry_length', 0);
+		
 		FeedModel.save(
 			'some url',
 			'some title',
@@ -259,7 +264,6 @@ exports['isUpToDate'] = nodeunit.testCase(
 			{
 				FeedModel.isUpToDate(
 					feed.url,
-					0,
 					function(err)
 					{
 						console.log(err.message);

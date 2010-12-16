@@ -43,7 +43,6 @@ var FeedServer = function()
 	{
 		FeedModel.isUpToDate(
 			url,
-			30,
 			function(err) {
 				if (err.message == "No such feed") {
 					callback(null);
@@ -141,12 +140,10 @@ var FeedServer = function()
 							}
 						);
 					},
-					function(err) {},
-					30000
+					function(err) {}
 				);
 			},
-			function(err) {},
-			30000
+			function(err) {}
 		);
 	}
 	

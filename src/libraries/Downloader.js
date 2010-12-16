@@ -1,8 +1,18 @@
+/**
+ *	Module dependencies
+ **/
+var u    = require('url'),
+    http = require('http'),
+    Ni   = require('ni');
+
+/**
+ *	Downloader library
+ **/
 var Downloader = function() {
 	
 	var self = this;
 	
-	this.fetch = function(url, callback, errback, timeout, max_redirect_level)
+	this.fetch = function(url, callback, errback, max_redirect_level)
 	{
 		if(typeof(max_redirect_level) == 'undefined') {
 			max_redirect_level = 5;
@@ -14,7 +24,6 @@ var Downloader = function() {
 		}
 		
 		var str='';
-		var u = require('url'), http = require('http');
 		
 		var urlObj = u.parse(url);
 		
@@ -39,7 +48,7 @@ var Downloader = function() {
 					break;
 				case 301:
 				case 302:
-					self.fetch(resp.headers.location, callback, errback, timeout, max_redirect_level-1);
+					self.fetch(resp.headers.location, callback, errback, max_redirect_level-1);
 					break;
 				default:
 					errback(new Error("Error " + resp.statusCode + ": Page not found."));
@@ -50,14 +59,9 @@ var Downloader = function() {
 		req.end();
 		// console.log('requested');
 		
-		
-		if (timeout == null || typeof(timeout) == 'undefined') {
-			timeout = 30000;
-		}
-		
 		setTimeout(function() {
 			errback(new Error('Request timed out.'));
-		}, timeout);
+		}, Ni.config('http_timeout'));
 	}
 };
 

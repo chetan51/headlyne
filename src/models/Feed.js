@@ -7,6 +7,7 @@
  **/
 var crypto         = require('crypto');
 var DatabaseDriver = require('../libraries/DatabaseDriver.js');
+var Ni             = require('ni');
 
 /**
  * The Feed model
@@ -116,19 +117,16 @@ var Feed = function()
 	}
 
 	/**
-	 * Checks if a feed is up to date, relative to a given
-	 * expiry length.
+	 * Checks if a feed is up to date, relative to the feed expiry length.
 	 * 
 	 * 	Arguments:    feed_url
-	 * 	              expiry_length (in minutes)
 	 * 	              
 	 * 	Returns:      true if feed.time_modified + expiry_length
 	 * 	                  > now
 	 * 	              false otherwise
 	 **/
-	this.isUpToDate = function(feed_url, expiry_length, errback, callback)
+	this.isUpToDate = function(feed_url, errback, callback)
 	{
-		expiry_length = expiry_length*1000*60;
 		self.get(
 			feed_url,
 			function(err)
@@ -138,7 +136,7 @@ var Feed = function()
 			function(feed)
 			{
 				var now = new Date().getTime();
-				var expires = parseInt(feed.time_modified) + parseInt(expiry_length);
+				var expires = parseInt(feed.time_modified) + parseInt(Ni.config('feed_expiry_length'));
 				if( now < expires )
 					callback(true);
 				else
