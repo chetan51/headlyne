@@ -170,6 +170,21 @@ exports['get feed teaser'] = nodeunit.testCase(
 			}
 		);
 	},
+	
+	'real-life test': function(test) {
+		test.expect(1);
+		
+		FeedServer.getFeedTeaser(
+			"http://www.feedforall.com/sample.xml",
+			10,
+			function(err, feed_teaser) {
+				console.log(err);
+				console.log(feed_teaser);
+				test.ok(1);
+				test.done();
+			}
+		);
+	},
 
 	'feed not in database': function(test) {
 		test.expect(10);

@@ -47,7 +47,6 @@ exports['fetch URLs'] = nodeunit.testCase(
 	},
 
 	'ok': function(test) {
-		
 		test.expect(1);
 		
 		Downloader.fetch(base_url + '/ok',
@@ -148,7 +147,6 @@ exports['fetch URLs'] = nodeunit.testCase(
 	},
 
 	'endless redirects': function(test) {
-		
 		test.expect(1);
 		
 		Downloader.fetch(

@@ -33,13 +33,14 @@ var Downloader = function() {
 		}
 		
 		// console.log('abt to connect');
+		console.log(urlObj);
 		var client = http.createClient(urlObj.port, urlObj.hostname);
 		
 		client.on('error', function(e) {
 			callback(new Error("Cannot connect to server."));
 		});
 		
-		var req = client.request('GET', urlObj.href);
+		var req = client.request('GET', urlObj.pathname, { Host: "headlyne.com" });
 		req.on('response', function(resp) {
 			// console.log('responsed');
 			switch(resp.statusCode) {
