@@ -1,8 +1,37 @@
-var http = require('http')
+/**
+ *  Module dependencies
+ **/
+var http = require('http');
+var fs = require('fs');
 var nodeunit = require('nodeunit');
 var FeedParser = require('../../src/libraries/FeedParser.js');
 var Ni = require('ni');
 
+/**
+ *  Test Constants
+ **/
+var sampleFeed = {
+	path        : './test/mocks/mock_app/views/basic_feed.xml',
+	title       : 'RSS Title',
+	link        : 'http://www.someexamplerssdomain.com/main.html',
+	description : 'This is an example of an RSS feed',
+	items       : [
+		{
+			title       : "Item 1 Title",
+			description : "Here is some text containing an interesting description of the thing to be described.",
+			link        : "http://www.wikipedia.org/"
+		},
+		{
+			title       : "Item 2 Title",
+			description : "More description.",
+			link        : "http://google.com/"
+		}
+	]
+};
+
+/**
+ *  Tests
+ **/
 exports['parse XML'] = nodeunit.testCase(
 {
 	setUp: function (callback) {
@@ -14,48 +43,27 @@ exports['parse XML'] = nodeunit.testCase(
 		callback();
 	},
 	
-	'basic': function(test) {
-		test.expect(5);
-		var rss = '<?xml version="1.0" ?><rss version="2.0">  <channel><title>RSSFeed1</title> '+
-				'<description>Feed desc.</description>'+
-				'<link>feedlink.com</link>'+
-				
-				'<item><title>Item1</title>'+
-				'<link>link1.com</link>'+
-				'<description>Desc of Item 1</description></item>'+
-				
-				'<item><title>Item75</title>'+
-                                '<description>Desc of Item 75</description>'+
-                                '<link>link75.com</link></item>'+
-				
-				'<item>'+
-                                '<link>link2.com</link>'+
-                                '<description>Desc of Item 2</description>'+
-				'<title>Item2</title>'+
-				'</item>'+
-				
-				'</channel></rss>';
+	'basic RSS': function(test) {
+		test.expect(9);
+		
+		var rss = fs.readFileSync(sampleFeed.path, 'utf-8');
 		
 		FeedParser.parse(
 			rss,
-			function(err, channelinfo, items, type, version) {
+			function(err, feed) {
 				if (err) {
 					console.log(err);
 				}
 				else {
-					test.equal(channelinfo.length, 3);
-					for(i in channelinfo) {
-						if(channelinfo[i][0] == 'title')
-							test.equal(channelinfo[i][1], 'RSSFeed1');
-						else if(channelinfo[i][0] == 'link')
-							test.equal(channelinfo[i][1], 'feedlink.com');
-						else if(channelinfo[i][0] == 'description')
-							test.equal(channelinfo[i][1], 'Feed desc.');
-					}
-
-					test.equal(items.length, 3);
-					for(i in items){
+					test.equal(feed.title, sampleFeed.title);
+					test.equal(feed.link, sampleFeed.link);
+					test.equal(feed.description, sampleFeed.description);
+					for (var i in feed.items) {
+						item = feed.items[i];
 						
+						test.equal(item.title, sampleFeed.items[i].title);
+						test.equal(item.description, sampleFeed.items[i].description);
+						test.equal(item.link, sampleFeed.items[i].link);
 					}
 				}
 				test.done();

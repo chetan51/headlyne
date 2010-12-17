@@ -14,6 +14,14 @@
 		<guid>unique string per item</guid>
 		<pubDate>Mon, 06 Sep 2009 16:45:00 +0000 </pubDate>
 	</item>
+	
+	<item>
+		<title>Item 2 Title</title>
+		<description>More description.</description>
+		<link>http://google.com/</link>
+		<guid>another guid</guid>
+		<pubDate>Wed, 08 Sep 2009 16:45:00 +0000 </pubDate>
+	</item>
  
 </channel>
 </rss>
