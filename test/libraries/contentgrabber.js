@@ -13,10 +13,12 @@ var html='<html><head></head><body><div id="lol">hello</div></body></html>';
 /**
  *  Test Constants
  **/
-var sampleHTMLFile       = './test/mocks/mock_app/views/blogpost1.html';
-var sampleHTMLTitle      = " \n\t\t\t\n            \n                Why Node.js Is Totally Awesome \n            \n            Chetan Surpur\n\t\t\t\n\t\t"; // Fix this
-var sampleHTMLFirstLine  = "Three reasons: speed, easability, and reusability.";
-var sampleHTMLLastLine   = "Sorry about that everyone!";
+var sampleDocument = {
+	url        : './test/mocks/mock_app/views/blogpost1.html',
+	title      : " \n\t\t\t\n            \n                Why Node.js Is Totally Awesome \n            \n            Chetan Surpur\n\t\t\t\n\t\t",
+	first_line : "Three reasons: speed, easability, and reusability.",
+	last_line  : "Sorry about that everyone!"
+};
 
 /**
  *  Tests
@@ -36,7 +38,7 @@ exports['grab content from page'] = nodeunit.testCase(
 	{
 		test.expect(3);
 		
-		var html = fs.readFileSync(sampleHTMLFile, 'utf-8');
+		var html = fs.readFileSync(sampleDocument.url, 'utf-8');
 		
 		ContentGrabber.readable(
 			html,
@@ -46,9 +48,9 @@ exports['grab content from page'] = nodeunit.testCase(
 					test.done();
 				}
 				else {
-					test.equal(title, sampleHTMLTitle);
-					test.notEqual(readableHTML.search(sampleHTMLFirstLine), -1);
-					test.notEqual(readableHTML.search(sampleHTMLLastLine), -1);
+					test.equal(title, sampleDocument.title);
+					test.notEqual(readableHTML.search(sampleDocument.first_line), -1);
+					test.notEqual(readableHTML.search(sampleDocument.last_line), -1);
 					test.done();
 				}
 			}
