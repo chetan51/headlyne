@@ -54,12 +54,11 @@ exports['save'] = nodeunit.testCase(
 					console.log(err.message);
 				}
 				else {
-					console.log(webpage.url_hash);
+					test.equal(webpage.url, 'url');
 				}
+				test.done();
 			}
 		);
-		test.ok(1);
-		test.done();
 	},
 
 	'double save': function(test)

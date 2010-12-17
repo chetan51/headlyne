@@ -57,8 +57,7 @@ exports['save'] = nodeunit.testCase(
 					console.log(err.message);
 				}
 				else {
-					test.ok(1);
-					console.log(feed.url_hash);
+					test.equal(feed.url, 'url');
 				}
 				test.done();
 			}

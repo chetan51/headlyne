@@ -56,8 +56,7 @@ exports['save'] = nodeunit.testCase(
 					console.log(err.message);
 				}
 				else {
-					console.log(user);
-					test.ok(1);
+					test.equal(user.username, 'my_user');
 				}
 				test.done();
 			}
