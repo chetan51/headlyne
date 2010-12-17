@@ -344,7 +344,7 @@ var FeedServer = function()
 				var group = this.group();
 				items.forEach(
 					function(item) {
-						self.fetchWebPageForFeedItem(
+						self.getWebPageForFeedItem(
 							item,
 							group()
 						);
@@ -360,6 +360,38 @@ var FeedServer = function()
 				}
 			}
 		);
+	}
+	
+	/**
+	 *	Retrieves the web page associated with given feed item.
+	 *	Gets it from the database if it's there.
+	 *	
+	 *		Arguments: the feed item
+	 *		           callback function called with retrieved
+	 *		               web page when complete
+	 **/
+	this.getWebPageForFeedItem = function(item, callback)
+	{
+		WebPageModel.get(
+			item.url,
+			function(err, webpage) {
+				if (err) {
+					if (err.message == "No such WebPage") {
+						self.fetchWebPageForFeedItem(
+							item,
+							callback
+						);
+					}
+					else {
+						callback(err);
+					}
+				}
+				else {
+					callback(null, webpage);
+				}
+			}
+		);
+				
 	}
 	
 	/**
