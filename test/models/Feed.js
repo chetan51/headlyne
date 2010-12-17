@@ -65,9 +65,9 @@ exports['save'] = nodeunit.testCase(
 		);
 	},
 
-	'duplicate': function(test)
+	'overwrite': function(test)
 	{
-		test.expect(1);
+		test.expect(2);
 		FeedModel.save(
 			'doubled_url',
 			'titles',
@@ -92,6 +92,7 @@ exports['save'] = nodeunit.testCase(
 							}
 							else {
 								test.equal(feed.url_hash, feed2.url_hash);
+								test.equal(feed2.title, 'diff_title');
 							}
 							test.done();
 						}
