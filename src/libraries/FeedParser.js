@@ -80,7 +80,6 @@ var FeedParser = function()
 			cb.onEndDocument(
 				function() {
 					if(!result) {
-						items.pop();
 						result=true;
 						feed.items = items;
 						callback(null, feed);
@@ -323,7 +322,7 @@ var FeedParser = function()
 						// if we are closing an item/entry, increment counter.
 						if(  elem.toLowerCase() == 'item' ||
 						     elem.toLowerCase() == 'entry') {
-							cur_item++; items[cur_item]=[];
+							cur_item++;
 						}
 						content='';
 					}

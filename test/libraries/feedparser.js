@@ -19,12 +19,12 @@ var sampleFeed = {
 		{
 			title       : "Item 1 Title",
 			description : "Here is some text containing an interesting description of the thing to be described.",
-			link        : "http://www.wikipedia.org/"
+			link        : "http://localhost:7500/blogpost1"
 		},
 		{
 			title       : "Item 2 Title",
 			description : "More description.",
-			link        : "http://google.com/"
+			link        : "http://localhost:7500/blogpost2"
 		}
 	]
 };
