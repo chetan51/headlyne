@@ -23,17 +23,17 @@ var basic_feed = {
 	title   : "RSS Title",
 	items	: [
 		{
-			url     : "http://localhost:7500/blogpost1",
+			link    : "http://localhost:7500/blogpost1",
 			title   : "Item 1 Title",
 			webpage : {
-				title: " \n\t\t\t\n            \n                Why Node.js Is Totally Awesome \n            \n            Chetan Surpur\n\t\t\t\n\t\t"
+				title: "Why Node.js Is Totally Awesome \n            \n            Chetan Surpur"
 			}
 		},
 		{
-			url     : "http://localhost:7500/blogpost2",
+			link    : "http://localhost:7500/blogpost2",
 			title   : "Item 2 Title",
 			webpage : {
-				title: " \n\t\t\t\n            \n                Life Hack - The 30/30 Minute Work Cycle Feels Like Magic \n            \n            Chetan Surpur\n\t\t\t\n\t\t"
+				title: "Life Hack - The 30/30 Minute Work Cycle Feels Like Magic \n            \n            Chetan Surpur"
 			}
 		}
 	]
@@ -47,7 +47,7 @@ function ensureFeedTeaserIsCorrect(test, test_feed, feed_teaser)
 	test.equal(feed_teaser.title, test_feed.title);
 	for (var i in test_feed.items) {
 		for (var j in feed_teaser.items) {
-			if (feed_teaser.items[j].url == test_feed.items[i].url) {
+			if (feed_teaser.items[j].link == test_feed.items[i].link) {
 				test.equal(feed_teaser.items[j].title, test_feed.items[i].title);
 				test.equal(feed_teaser.items[j].webpage.title, test_feed.items[i].webpage.title);
 			}
@@ -67,7 +67,7 @@ function ensureFeedAndItemsAreStored(test, test_feed, callback)
 				
 				for (var i in test_feed.items) {
 					for (var j in feed.items) {
-						if (feed.items[j].url == test_feed.items[i].url) {
+						if (feed.items[j].link == test_feed.items[i].link) {
 							test.equal(feed.items[j].title, test_feed.items[i].title);
 						}
 					}
@@ -101,7 +101,7 @@ function ensureFeedAndItemsAreStored(test, test_feed, callback)
 }
 function ensureWebPageIsStored(test, feed_item, callback) {
 	WebPageModel.get(
-		feed_item.url,
+		feed_item.link,
 		function(err, webpage) {
 			if (err) {
 				callback(err)

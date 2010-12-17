@@ -229,25 +229,6 @@ var FeedServer = function()
 	 **/
 	this.updateParsedFeed = function(url, feed, num_feed_items, callback)
 	{
-		// Mocking feed
-		var feed =
-			{
-				title: "RSS Title",
-				author: "Sample author",
-				description: "Sample RSS feed",
-				items:
-					[
-						{
-							url: "http://localhost:7500/blogpost1",
-							title: "Item 1 Title"
-						},
-						{
-							url: "http://localhost:7500/blogpost2",
-							title: "Item 2 Title"
-						}
-					]
-			}
-
 		Step(
 			function processFeed() {
 				var step = this;
@@ -373,7 +354,7 @@ var FeedServer = function()
 	this.getWebPageForFeedItem = function(item, callback)
 	{
 		WebPageModel.get(
-			item.url,
+			item.link,
 			function(err, webpage) {
 				if (err) {
 					if (err.message == "No such WebPage") {
@@ -404,7 +385,7 @@ var FeedServer = function()
 	this.fetchWebPageForFeedItem = function(item, callback)
 	{
 		Downloader.fetch(
-			item.url,
+			item.link,
 			function(err, data) {
 				if (!err && data) {
 					ContentGrabber.readable(
@@ -412,7 +393,7 @@ var FeedServer = function()
 						function(err, title, article) {
 							if (!err && title && article) {
 								WebPageModel.save(
-									item.url,
+									item.link,
 									title,
 									article,
 									callback
@@ -443,7 +424,7 @@ var FeedServer = function()
 		feed.items = items;
 		for (var i in items) {
 			for (var j in webpages) {
-				if (feed.items[i].url == webpages[j].url) {
+				if (feed.items[i].link == webpages[j].url) {
 					feed.items[i].webpage = webpages[j];
 				}
 			}
