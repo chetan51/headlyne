@@ -1,0 +1,367 @@
+
+ 
+ 
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+	"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"> 
+ 
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" class="no-js"> 
+	<head> 
+		<meta http-equiv="content-type" content="text/html; charset=utf-8"> 
+ 
+		<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame 
+		Remove this if you use the .htaccess --> 
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
+		
+ 
+		<!--  Mobile Viewport Fix
+		j.mp/mobileviewport & davidbcalhoun.com/2010/viewport-metatag 
+		device-width : Occupy full width of the screen in its current orientation
+		initial-scale = 1.0 retains dimensions instead of zooming out if page height > device height
+		maximum-scale = 1.0 retains dimensions instead of zooming in if page width < device width
+		--> 
+		<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0;"> 
+ 
+		<!-- Place favicon.ico and apple-touch-icon.png in the root of your domain and delete these references --> 
+		<link rel="shortcut icon" href="/media/images/favicon.ico"> 
+		<link rel="apple-touch-icon" href="/media/images/apple-touch-icon.png"> 
+ 
+        <!-- Google fonts --> 
+        <link  href="//fonts.googleapis.com/css?family=Crimson+Text:regular&subset=latin" rel="stylesheet" type="text/css" > 
+ 
+		<!-- For the less-enabled mobile browsers like Opera Mini --> 
+		<link rel="stylesheet" media="handheld" href="/media/css/handheld.css?v=1"> 
+ 
+		<link rel="stylesheet" href="/media/css/typography.css" /> 
+		<link rel="stylesheet" href="/media/css/colors.css" /> 
+		<link rel="stylesheet" href="/media/css/forms.css" /> 
+		<link rel="stylesheet" href="/media/css/uielements.css" /> 
+		<link rel="stylesheet" href="/media/css/layout.css" /> 
+ 
+		<!-- All JavaScript at the bottom, except for Modernizr which enables HTML5 elements & feature detects --> 
+		<script src="js/modernizr-1.5.min.js"></script> 
+ 
+		
+ 
+        <link href="/blog/feed.xml" rel="alternate" title="The Blog of Chetan Surpur" type="application/atom+xml"/> 
+ 
+		
+ 
+		
+ 
+		
+		
+ 
+		
+		
+		
+ 
+		
+		
+ 
+		
+ 
+		<title> 
+			
+            
+                Why Node.js Is Totally Awesome | 
+            
+            Chetan Surpur
+			
+		</title> 
+ 
+        <!-- Google Analytics --> 
+ 
+        <script type="text/javascript"> 
+ 
+          var _gaq = _gaq || [];
+          _gaq.push(['_setAccount', 'UA-19071552-1']);
+          _gaq.push(['_trackPageview']);
+ 
+          (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+          })();
+ 
+        </script> 
+ 
+	</head> 
+ 
+	<body> 
+ 
+		<div id="site">	
+ 
+			<div id="header"> 
+ 
+	<div id="sitename"> 
+		<a href="/index.html"> 
+			<h3>chetan<b>surpur</b></h3> 
+		</a> 
+	</div> 
+ 
+	
+	
+ 
+	
+	
+ 
+<div id="sitenav"> 
+    <ul> 
+		<li > 
+			<a href="/">Home</a> 
+		</li> 
+ 
+        <li class="selected"> 
+            <a href="/blog">Blog</a> 
+        </li> 
+ 
+        <li > 
+            <a href="/projects">Projects</a> 
+        </li> 
+ 
+        <li > 
+            <a href="/about.html">About</a> 
+        </li> 
+ 
+        <li > 
+            <a href="http://feeds.feedburner.com/TheBlogOfChetanSurpur">Feed</a> 
+        </li> 
+    </ul> 
+</div> 
+ 
+ 
+	
+ 
+</div> 
+ 
+<hr> 
+ 
+            
+            <div id="content"> 
+ 
+                
+ 
+ 
+ 
+<div class="context-nav"> 
+    <div class="context-nav-prev"> 
+        
+    </div> 
+    <div class="context-nav-next"> 
+        
+            <a href="/blog/2010/10/breach-of-privacy.html">A Curious Breach Of Privacy &raquo;</a> 
+        
+    </div> 
+    <div class="clear"></div> 
+</div> 
+ 
+ 
+ 
+<hr> 
+ 
+ 
+ 
+                
+ 
+ 
+ 
+<div id="content-header"> 
+    <div id="post-title"> 
+        <h1>Why Node.js Is Totally Awesome</h1> 
+    </div> 
+    <div id="post-date"> 
+        Monday, October 11, 2010
+    </div> 
+</div> 
+ 
+ 
+ 
+<div id="content-body"> 
+    
+ 
+<div id="post-content"> 
+	
+ 
+	<!-- Hyde::Article::Begin --> 
+ 
+<div class="image-and-caption"> 
+    <img src="/media/images/blog/2010/10/node-logo.png" title="From http://nodejs.org/" alt="Node.js logo"> 
+</div> 
+ 
+<p>Three reasons: speed, easability, and reusability. And that&#8217;s what will drive the next generation of web apps and&nbsp;services.</p> 
+<p>In one compact list, here is everything that makes Node.js really damn&nbsp;exciting.</p> 
+<ul> 
+<li><strong>It&#8217;s a server-side JavaScript framework.</strong> That means the same type of code that powers awesome Ajax applications like Gmail will now power its servers, too. Code reuse&nbsp;<span class="caps">FTW</span>!</li> 
+<li><strong>It&#8217;s driven by asynchronous design.</strong> That means that it doesn&#8217;t have to wait for slow file I/O or database operations to continue processing, which makes it really damn fast (by that I mean faster than most other popular server languages / platforms). It also means that it can handle millions of concurrent connections at&nbsp;once.</li> 
+<li><strong>It makes real-time applications a walk in the park.</strong> No longer do you have to bother with low-level sockets and protocols. You can make a Comet-driven real-time chat application in the same time you would have made a simple blog in <span class="caps">PHP</span> or a birthday cake with a ready-made&nbsp;mix.</li> 
+</ul> 
+<h3>Coyote meets&nbsp;Roadrunner</h3> 
+<p>Okay, let&#8217;s talk speed. How fast is Node compared to the&nbsp;alternatives?</p> 
+<p>From the <a href="http://drop.io/dpqbat2/asset/talk-final-pdf">creator&#8217;s presentation</a>,</p> 
+<blockquote> 
+<p>100 concurrent clients<br /> 
+1 megabyte&nbsp;response</p> 
+<pre><code>node      822 req/sec  
+nginx     708  
+thin      85  
+mongrel   4
+</code></pre> 
+<p>(more is&nbsp;better)</p> 
+</blockquote> 
+<p>Seeing as nginx is the current heart-throb of the web developer&#8217;s server platforms (if you haven&#8217;t heard of it, just know that it blows Apache out of the water), Node claims high score by beating&nbsp;it.</p> 
+<div class="image-and-caption"> 
+    <img src="/media/images/blog/2010/10/roadrunner.jpg" title="From http://victoriasealsbaseball.blogspot.com/2010/08/st-george-roadrunners-series-preview.html" alt="Roadrunner cartoon"> 
+    <em>Beep, beep, motherfucker.</em> 
+</div> 
+ 
+<h3>JavaScript on the server? What is this&nbsp;witchcraft?</h3> 
+<p>For those of you geeks who don&#8217;t live in caves, skip to the next section. For every one else (noobs, I&#8217;m talking to you too), keep&nbsp;reading.</p> 
+<p>Okay, you know how server-side code is usually written in <span class="caps">PHP</span>, or Python, or (sigh) .<span class="caps">NET</span>? And browser-side code is usually written in JavaScript? Well, as it turns out, JavaScript is pretty awesome, and getting awesomer by the day. So some clever chap thought that it might be cool to write server-side code in JavaScript too, and that&#8217;s how server-side JavaScript was&nbsp;born.</p> 
+<p>It also turns out that the current standard JavaScript interpreter V8 (by Google, thank the Lord for them) is blazing fast, and makes JavaScript on the server around three times faster than Python 3 and around ten times faster than&nbsp;<span class="caps">PHP</span>.</p> 
+<p>But the real awesome thing about JavaScript on the server is that you can use the same code that you use in the browser (for example, form validation) in your server too. And, with a standard language like JavaScript being used in every level on the web, more libraries and plugins are being made every day so you don&#8217;t have to make your own session management system, or static file server, or user access system. You can get a solid web app ready to be deployed in half the time, and have more time for your kids, or friends, or WoW addiction, or&nbsp;whatever.</p> 
+<div class="image-and-caption"> 
+    <img src="/media/images/blog/2010/10/WoW.jpg" title="From http://boards.babyzone.com/video-games-hot-for-me-t13365648.html" alt="Hot World of Warcraft girl"> 
+    <em>She wants you to come back and play with her.</em> 
+</div> 
+ 
+<h3>Asynchronous is the new&nbsp;black</h3> 
+<p>What&#8217;s a really common thing to do in a web application? Database access, of course. Too bad database I/O is one of the slowest things a web app has to deal with. So if you&nbsp;have:</p> 
+<pre><code>data = readFromDatabase();
+printData(data);
+ 
+doSomethingUnrelated();
+</code></pre> 
+<p><code>doSomethingUnrelated</code> is gonna have to wait for the slow <code>readFromDatabase</code> to finish in a normal language like <span class="caps">PHP</span>. And that&#8217;s where asynchronous JavaScript comes&nbsp;in.</p> 
+<pre><code>readFromDatabase(function(data) {
+    printData(data);
+})
+ 
+doSomethingUnrelated();
+</code></pre> 
+<p>Now, <code>doSomethingUnrelated</code> is gonna be called immediately after <code>readFromDatabase</code> blunders off to do its work, and the function callback given to it will be executed to print the data only when it&#8217;s done reading from the&nbsp;database.</p> 
+<p>How brilliant is that? Now, there is no blocking of code, no wastage of <span class="caps">CPU</span> cycles, and everything runs in&nbsp;parallel.</p> 
+<p>Another cool consequence of everything in Node being asynchronous is that all of Node runs on just one thread, and yet can handle millions of concurrent connections. Suck on that,&nbsp;<span class="caps">PHP</span>!</p> 
+<h3>Middleware is a shitty name, but a sick&nbsp;concept</h3> 
+<p>Since JavaScript is such a pervasive language, putting it on the server has only increased the influx of modules, libraries and plugins that you can use for common functionality. That&#8217;s another great thing about Node.js - there are so many different kinds of &#8220;middleware&#8221; that you can just plug and play instead of reinventing the&nbsp;wheel.</p> 
+<p>Want to create a clone of <a href="http://www.fmylife.com/"><span class="caps">FML</span></a>, complete with user-authentication, comments, and the power to destroy any semblance of concentration among innocent college kids during midterm season? Just throw together a few Node.js modules from any of the <a href="http://github.com/ry/node/wiki/modules">hundreds</a> on its Github wiki page, and you got yourself a nice&nbsp;time-killer.</p> 
+<div class="image-and-caption"> 
+    <img src="/media/images/blog/2010/10/legos.jpg" title="From http://www.geekologie.com/2007/06/lego_sculptures.php" alt="Lego sculpture"> 
+    <em>It&#8217;s like Legos for web apps. What could be better?</em> 
+</div> 
+ 
+<h3>Forget about those goddamn&nbsp;sockets</h3> 
+<p>Node.js makes it easy to implement real-time applications and network services. It&#8217;s as easy to deal with low-level protocols that you&#8217;d normally need to fuss over sockets for as it is to work with plain <span class="caps">HTTP</span>. Focus on your data, not on how you move it&nbsp;around.</p> 
+<h3>Here&#8217;s an example of a Node.js app that will blow your&nbsp;mind</h3> 
+<p>Just to give you a demonstration of the brilliance that is Node, take a look at <a href="http://projects.nuttnet.net/hummingbird/">Hummingbird</a>.</p> 
+<p>From their&nbsp;website,</p> 
+<blockquote> 
+<p>Hummingbird lets you see how visitors are interacting with your website in real&nbsp;time.</p> 
+<p>And by “real time” we don’t mean it refreshes every 5 minutes—WebSockets enable Hummingbird to update 20 times per&nbsp;second.</p> 
+</blockquote> 
+<h3>Get your hands&nbsp;dirty</h3> 
+<p>Head on over to the <a href="http://nodejs.org/">official website</a> for Node, and get crackin&#8217;. It&#8217;s still a baby project, so it&#8217;s not ready for commercial-scale applications yet, but it would be an excellent fit for that new pet project you&#8217;re thinking of&nbsp;starting.</p> 
+<p>Welcome to the future of web&nbsp;development.</p> 
+<p><em>Edit 1: Updated post with more accurate information on speed of V8 compared to Python and&nbsp;<span class="caps">PHP</span>.</em></p> 
+<p><em>Edit 2: Thanks to all the excellent feedback that has brought to light my bad habit of making too-bold claims, I&#8217;ve corrected Node&#8217;s claim to speed to something more verifyable. Sorry about that&nbsp;everyone!</em></p> 
+<!-- Hyde::Article::End --> 
+ 
+	
+</div> 
+ 
+ 
+</div> 
+ 
+<hr> 
+ 
+ 
+    
+                
+ 
+<div id="follow-me"> 
+    <p> 
+        You should follow me on Twitter <a href="http://twitter.com/chetan51">here</a>.
+    </p> 
+</div> 
+ 
+<div id="share-the-love"> 
+    <div id="share-the-love-text"> 
+        <p> 
+            Do you like what you see? Share the love.
+        </p> 
+    </div> 
+    <div id="share-buttons"> 
+        <div id="twitter-button"> 
+            <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://chetansurpur.com/blog/2010/10/why-node-js-is-totally-awesome.html" data-count="horizontal" data-via="chetan51">Tweet</a> 
+            <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script> 
+        </div> 
+        <div id="facebook-button"> 
+            <iframe src="http://www.facebook.com/plugins/like.php?href=http://chetansurpur.com/blog/2010/10/why-node-js-is-totally-awesome.html&amp;layout=button_count&amp;show_faces=true&amp;width=90&amp;action=like&amp;colorscheme=light&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:90px; height:21px;" allowTransparency="true"></iframe> 
+        </div> 
+    </div> 
+</div> 
+ 
+<hr> 
+ 
+ 
+ 
+                
+ 
+ 
+ 
+<div class="context-nav"> 
+    <div class="context-nav-prev"> 
+        
+    </div> 
+    <div class="context-nav-next"> 
+        
+            <a href="/blog/2010/10/breach-of-privacy.html">A Curious Breach Of Privacy &raquo;</a> 
+        
+    </div> 
+    <div class="clear"></div> 
+</div> 
+ 
+ 
+ 
+<hr> 
+ 
+ 
+ 
+                
+ 
+<!-- Disqus comment count code --> 
+ 
+<div id="disqus_thread"></div> 
+<script type="text/javascript"> 
+    var disqus_identifier = "Why Node.js Is Totally Awesome";
+ 
+  (function() {
+   var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+   dsq.src = 'http://chetansurpur.disqus.com/embed.js';
+   (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script> 
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript=chetansurpur">comments powered by Disqus.</a></noscript> 
+ 
+<!-- End Disqus comment count code --> 
+ 
+<hr> 
+ 
+ 
+ 
+            </div> 
+ 
+			<div id='footer'> 
+ 
+<p>Find me on <a href="http://github.com/chetan51">GitHub</a>, <a href="http://twitter.com/chetan51">Twitter</a>, and <a href="http://www.linkedin.com/pub/chetan-surpur/16/abb/a4a">LinkedIn</a>. If you want to reach me, shoot me an <a href="http://www.google.com/recaptcha/mailhide/d?k=013uAzv_EZmxf6SVeacZkvDQ==&amp;c=WvXDn1Nv8tcgdauJbSgqivKWfg6yVTH7MsyqkIyMm54=" onclick="window.open('http://www.google.com/recaptcha/mailhide/d?k\075013uAzv_EZmxf6SVeacZkvDQ\75\75\46c\75WvXDn1Nv8tcgdauJbSgqivKWfg6yVTH7MsyqkIyMm54\075', '', 'toolbar=0,scrollbars=0,location=0,statusbar=0,menubar=0,resizable=0,width=500,height=300'); return false;" title="Reveal this e-mail address">email</a>.</p> 
+ 
+</div> 
+ 
+ 
+		</div> 
+ 
+        
+ 
+	</body> 
+ 
+</html> 

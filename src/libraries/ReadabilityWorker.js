@@ -19,8 +19,12 @@ onmessage = function(message)
 		if (message.data.html) {
 			Readability.init(message.data.html, true);
 			var article_element = Readability.grabArticle();
+			var title_element   = Readability.getArticleTitle();
 
-			postMessage({ article : article_element.innerHTML });
+			postMessage({
+				title   : title_element.innerHTML,
+				article : article_element.innerHTML
+			});
 		}
 		else {
 			postMessage({ error : "No HTML given." });
