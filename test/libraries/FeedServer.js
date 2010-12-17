@@ -171,7 +171,7 @@ exports['get feed teaser'] = nodeunit.testCase(
 		);
 	},
 	
-	'real-life test': function(test) {
+	/*'real-life test': function(test) {
 		test.expect(1);
 		
 		FeedServer.getFeedTeaser(
@@ -180,11 +180,12 @@ exports['get feed teaser'] = nodeunit.testCase(
 			function(err, feed_teaser) {
 				console.log(err);
 				console.log(feed_teaser);
+				console.log(feed_teaser.items[0].webpage);
 				test.ok(1);
 				test.done();
 			}
 		);
-	},
+	},*/
 
 	'feed not in database': function(test) {
 		test.expect(10);
