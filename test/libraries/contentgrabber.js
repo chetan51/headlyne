@@ -13,8 +13,8 @@ var html='<html><head></head><body><div id="lol">hello</div></body></html>';
 /**
  *  Test Constants
  **/
-var sampleHTMLFile       = './test/mocks/sample_page.html';
-var sampleHTMLTitle      = "\n\t\t\t\n            \n                Why Node.js Is Totally Awesome \n            \n            Chetan Surpur\n\t\t\t\n\t\t"; // Fix this
+var sampleHTMLFile       = './test/mocks/mock_app/views/blogpost1.html';
+var sampleHTMLTitle      = " \n\t\t\t\n            \n                Why Node.js Is Totally Awesome \n            \n            Chetan Surpur\n\t\t\t\n\t\t"; // Fix this
 var sampleHTMLFirstLine  = "Three reasons: speed, easability, and reusability.";
 var sampleHTMLLastLine   = "Sorry about that everyone!";
 
