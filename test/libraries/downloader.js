@@ -158,6 +158,23 @@ exports['fetch URLs'] = nodeunit.testCase(
 				test.done();
 			}
 		);
+	},
+
+	'live example': function(test) {
+		test.expect(1);
+		
+		Downloader.fetch(
+			"http://www.feedforall.com/sample.xml",
+			function(err, str) {
+				if (err) {
+					console.log(err);
+				}
+				else {
+					test.notEqual(str, null);
+				}
+				test.done();
+			}
+		);
 	}
 
 });

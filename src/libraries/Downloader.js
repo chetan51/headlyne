@@ -33,7 +33,6 @@ var Downloader = function() {
 		}
 		
 		// console.log('abt to connect');
-		console.log(urlObj);
 		var client = http.createClient(urlObj.port, urlObj.hostname);
 		
 		client.on('error', function(e) {
