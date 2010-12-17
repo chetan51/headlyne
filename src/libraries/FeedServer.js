@@ -339,38 +339,14 @@ var FeedServer = function()
 	 **/
 	this.updateWebPagesForFeedItems = function(items, callback)
 	{
-		var count = 0;
 		Step(
 			function getAndSaveWebPages() {
 				var group = this.group();
 				items.forEach(
 					function(item) {
-						Downloader.fetch(
-							item.url,
-							function(err, data) {
-								if (!err && data) {
-									ContentGrabber.readable(
-										data,
-										function(err, article) {
-											if (!err && article) {
-												count++;
-												WebPageModel.save(
-													item.url,
-													"Webpage " + count + " Title",
-													"eanrst",
-													group()
-												);
-											}
-											else {
-												group()(null, null);
-											}
-										}
-									);
-								}
-								else {
-									group()(null, null);
-								}
-							}
+						self.fetchWebPageForFeedItem(
+							item,
+							group()
 						);
 					}
 				);
@@ -381,6 +357,43 @@ var FeedServer = function()
 				}
 				else {
 					callback(null, saved_webpages);
+				}
+			}
+		);
+	}
+	
+	/**
+	 *	Retrieves the web page associated with given feed item.
+	 *	
+	 *		Arguments: the feed item
+	 *		           callback function called with retrieved
+	 *		               web page when complete
+	 **/
+	this.fetchWebPageForFeedItem = function(item, callback)
+	{
+		Downloader.fetch(
+			item.url,
+			function(err, data) {
+				if (!err && data) {
+					ContentGrabber.readable(
+						data,
+						function(err, title, article) {
+							if (!err && title && article) {
+								WebPageModel.save(
+									item.url,
+									title,
+									article,
+									callback
+								);
+							}
+							else {
+								callback(null, null);
+							}
+						}
+					);
+				}
+				else {
+					callback(null, null);
 				}
 			}
 		);

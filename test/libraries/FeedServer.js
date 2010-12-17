@@ -23,15 +23,17 @@ var basic_feed = {
 	title   : "RSS Title",
 	items	: [
 		{
+			url     : "http://localhost:7500/blogpost1",
 			title   : "Item 1 Title",
 			webpage : {
-				title: "Webpage 1 Title"
+				title: " \n\t\t\t\n            \n                Why Node.js Is Totally Awesome \n            \n            Chetan Surpur\n\t\t\t\n\t\t"
 			}
 		},
 		{
+			url     : "http://localhost:7500/blogpost2",
 			title   : "Item 2 Title",
 			webpage : {
-				title: "Webpage 2 Title"
+				title: " \n\t\t\t\n            \n                Life Hack - The 30/30 Minute Work Cycle Feels Like Magic \n            \n            Chetan Surpur\n\t\t\t\n\t\t"
 			}
 		}
 	]
@@ -43,11 +45,13 @@ var basic_feed = {
 function ensureFeedTeaserIsCorrect(test, test_feed, feed_teaser)
 {
 	test.equal(feed_teaser.title, test_feed.title);
-	for (var item_index in test_feed.items) {
-		//test.equal(feed_teaser.items[item_index].title, test_feed.items[item_index].title);
-		//test.equal(feed_teaser.items[item_index].webpage.title, test_feed.items[item_index].webpage.title);
-		test.ok(1);
-		test.ok(1);
+	for (var i in test_feed.items) {
+		for (var j in feed_teaser.items) {
+			if (feed_teaser.items[j].url == test_feed.items[i].url) {
+				test.equal(feed_teaser.items[j].title, test_feed.items[i].title);
+				test.equal(feed_teaser.items[j].webpage.title, test_feed.items[i].webpage.title);
+			}
+		}
 	}
 }
 function ensureFeedAndItemsAreStored(test, test_feed, callback)
@@ -60,22 +64,51 @@ function ensureFeedAndItemsAreStored(test, test_feed, callback)
 			}
 			else {
 				test.equal(feed.title, test_feed.title);
-				test.equal(feed.items[0].title, test_feed.items[0].title);
 				
-				// Make sure the first feed item's web page is in the database
-				WebPageModel.get(
-					feed.items[0].url,
-					function(err, webpage) {
-						if (err) {
-							console.log(err.message);
+				for (var i in test_feed.items) {
+					for (var j in feed.items) {
+						if (feed.items[j].url == test_feed.items[i].url) {
+							test.equal(feed.items[j].title, test_feed.items[i].title);
 						}
-						else {
-							test.equal(webpage.title,
-								   test_feed.items[0].webpage.title);
+					}
+					
+				}
+				
+				Step(
+					function checkWebPages() {
+						var step = this;
+						
+						test_feed.items.forEach(
+							function(item) {
+								ensureWebPageIsStored(
+									test,
+									item,
+									step.parallel()
+								);
+							}
+						);
+					},
+					function done(err) {
+						if (err) {
+							console.log(err);
 						}
 						test.done();
 					}
 				);
+			}
+		}
+	);
+}
+function ensureWebPageIsStored(test, feed_item, callback) {
+	WebPageModel.get(
+		feed_item.url,
+		function(err, webpage) {
+			if (err) {
+				callback(err)
+			}
+			else {
+				test.equal(webpage.title, feed_item.webpage.title);
+				callback(null);
 			}
 		}
 	);
@@ -139,7 +172,7 @@ exports['get feed teaser'] = nodeunit.testCase(
 	},
 
 	'feed not in database': function(test) {
-		test.expect(8);
+		test.expect(10);
 		
 		FeedServer.getFeedTeaser(
 			basic_feed.url,
@@ -167,7 +200,7 @@ exports['get feed teaser'] = nodeunit.testCase(
 	},
 	
 	'feed in database and not up to date': function(test) {
-		test.expect(8);
+		test.expect(10);
 		
 		// First, we make sure the feed is in the database
 		FeedServer.getFeedTeaser(
@@ -182,7 +215,7 @@ exports['get feed teaser'] = nodeunit.testCase(
 					// Then we make FeedServer think the feed expired
 					var isUpToDate_backup = FeedModel.isUpToDate;
 					FeedModel.isUpToDate = function(feed_url, callback) {
-						callback(false);
+						callback(null, false);
 					}
 
 					// Now we try to retrieve it
@@ -346,7 +379,7 @@ exports['get feed teaser urgently'] = nodeunit.testCase(
 					// Then we make FeedServer think the feed expired
 					var isUpToDate_backup = FeedModel.isUpToDate;
 					FeedModel.isUpToDate = function(feed_url, callback) {
-						callback(false);
+						callback(null, false);
 					}
 
 					// Now we try to retrieve it
