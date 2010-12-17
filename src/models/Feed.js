@@ -41,7 +41,7 @@ var Feed = function()
 					hasher.update(url);
 					var url_hash = hasher.digest('hex');
 					
-					DatabaseDriver.ensureExists(
+					DatabaseDriver.overwrite(
 						collection,
 						{'url_hash': url_hash},
 						{'url': url,

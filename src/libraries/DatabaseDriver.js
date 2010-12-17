@@ -144,6 +144,36 @@ var DatabaseDriver = function()
 			}
 		);
 	}
+	
+	/**
+	 *	Checks if an object exists in the collection for a given
+	 *	key. If it doesn't exist, it inserts the given object at
+	 *	the given key location. If it does exist, it overwrites
+	 *	it with the given object.
+	 **/
+	this.overwrite = function(collection, key, obj, callback)
+	{
+		collection.remove(
+			key,
+			function(err)
+			{
+				if(err != null)
+					callback(new Error('Database Delete Error'));
+				else {
+					collection.insert(
+						obj,
+						function(err, inserted_docs)
+						{
+							if(err != null)
+								callback(new Error('Database Insertion Error'));
+							else
+								callback(null, inserted_docs[0]);
+						}
+					);
+				}
+			}
+		);
+	}
 
 	/**
 	 * 	Updates all objects matching the key with the given obj_part
