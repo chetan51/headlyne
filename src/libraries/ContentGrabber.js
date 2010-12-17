@@ -23,8 +23,8 @@ var ContentGrabber = function()
 
 		w.onmessage = function(message)
 		{
-			if (message.data.title && message.data.article) {
-				callback(null, message.data.title, message.data.article);
+			if (message.data.title && message.data.content) {
+				callback(null, message.data.title, message.data.content);
 			}
 			else if (message.data.error) {
 				callback(new Error("Unable to grab content from document. Error: " + message.data.error));

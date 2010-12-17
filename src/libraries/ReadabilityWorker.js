@@ -17,13 +17,11 @@ onmessage = function(message)
 	switch (message.data.command) {
 	case "grabContent":
 		if (message.data.html) {
-			Readability.init(message.data.html, true);
-			var article_element = Readability.grabArticle();
-			var title_element   = Readability.getArticleTitle();
+			var article = Readability.parse(message.data.html, true);
 
 			postMessage({
-				title   : title_element.innerHTML,
-				article : article_element.innerHTML
+				title   : article.title.innerHTML,
+				content : article.content.innerHTML
 			});
 		}
 		else {
