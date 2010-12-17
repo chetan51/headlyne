@@ -424,7 +424,7 @@ var FeedServer = function()
 		feed.items = items;
 		for (var i in items) {
 			for (var j in webpages) {
-				if (feed.items[i].link == webpages[j].url) {
+				if (webpages[j] && feed.items[i].link == webpages[j].url) {
 					feed.items[i].webpage = webpages[j];
 				}
 			}
