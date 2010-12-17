@@ -85,6 +85,21 @@ exports['grab content from page'] = nodeunit.testCase(
 				}
 			}
 		);
+	},
+
+	'parse failure': function(test) {
+		test.expect(1);
+		
+		ContentGrabber.readable(
+			"<html></html>",
+			function(err, title, readableHTML) {
+				if (err) {
+					console.log(err.message);
+					test.ok(1);
+				}
+				test.done();
+			}
+		);
 	}
 
 });
