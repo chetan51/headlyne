@@ -82,7 +82,7 @@ var User = function()
 	 * 	                  first_name
 	 * 	                  last_name
 	 * 	                  email_id
-	 * 	                  feeds{}[]
+	 * 	                  feeds{}
 	 * 	                  session{}
 	 * 	              }
 	 **/
@@ -234,107 +234,122 @@ var User = function()
 	}
 
 	/**
-	 * Pushes a feed for a user. STUB!!!
-	 * Also, the callback format for self.get is not properly implemented, so fix that.
-	 * And fix the callback format of this function itself.
+	 * Updates feed placement for a user.
 	 *
-	 * 	Arguments:    feed_url, Feed({url, title, description, time_published})
-	 *
-	 * 	Returns:      updated feed.
+	 * **Since addFeed does this anyway, this is just an alternate
+	 * call to perform the same thing, for more understandable code.
+	 * Call this when updating, and call add when adding new entries.
 	 **/
-	this.pushFeedItems = function(feed_url, feed_items, errback, callback)
+	this.updateFeed = function(username, feed_url, placement, callback)
+	{
+		self.addFeed(username, feed_url, placement, callback);
+	}
+
+	/**
+	 * Adds a feed for a user.
+	 * 
+	 * 	Arguments:
+	 * 		username
+	 * 		feed_url
+	 * 		placement: {
+	 * 			row: ,
+	 * 			column:
+	 * 		}
+	 *
+	 * 	Returns:      list of feeds.
+	 **/
+	this.addFeed = function(username, feed_url, placement, callback)
 	{
 		self.get(
-			feed_url,
-			function(err)
+			username,
+			function(err, user)
 			{
-				errback(err);
-			},
-			function(feed)
-			{
-				// The feed exists.
-				feed.items = feed.items.concat(feed_items);
-				feed.time_modified = new Date().getTime();
+				if(err != null) {
+					callback(err);
+					return;
+				}
+
+				// The user exists, add the new entry.
+				var entry = {
+					'url': feed_url,
+					'placement': placement
+				};
+				
+				user.feeds[feed_url] = entry;
+
 				DatabaseDriver.getCollection(
-					'feeds',
+					'users',
 					function(err, collection)
 					{
 						if (err) {
-							errback(err);
+							callback(err);
+							return;
 						}
-						else {
-							DatabaseDriver.update(
-								collection,
-								{'url_hash': feed.url_hash},
-								feed,
-								function(err, feed)
-								{
-									if (err) {
-										errback(err);
-									}
-									else {
-										callback(feed);
-									}
+						
+						DatabaseDriver.update(
+							collection,
+							{'username_hash': user.username_hash},
+							user,
+							function(err, user)
+							{
+								if (err) {
+									callback(err);
+									return;
 								}
-							);
-						}
+								callback(user);
+							}
+						);
 					}
 				);
 			}
 		);
 	}
-
+	
 	/**
-	 * Pops a feed item from a feed. STUB!
-	 * Also, the callback format for self.get is not properly implemented, so fix that.
-	 * And fix the callback format of this function itself.
+	 * Remove a feed from a user.
+	 * 
+	 * 	Arguments:
+	 * 		username
+	 * 		feed_url
 	 *
-	 * 	Arguments:    feed_url
-	 *
-	 * 	Returns:      updated feed, popped items.
+	 * 	Returns: list of feeds.
 	 **/
-	this.popFeedItems = function(feed_url, errback, callback, pop_size)
+	this.removeFeed = function(username, feed_url, callback)
 	{
-		if(pop_size == null || typeof(pop_size) == 'undefined')
-		{
-			pop_size = 1;
-		}
-
 		self.get(
-			feed_url,
-			function(err)
+			username,
+			function(err, user)
 			{
-				errback(err);
-			},
-			function(feed)
-			{
-				// The feed exists.
-				var feed_items = feed.items.splice(0, pop_size);
-				feed.time_modified = new Date().getTime();
-				
+				if(err != null) {
+					callback(err);
+					return;
+				}
+
+				// The user exists, find and remove the old feed.
+				delete user.feeds[feed_url];
+
 				DatabaseDriver.getCollection(
-					'feeds',
+					'users',
 					function(err, collection)
 					{
 						if (err) {
-							errback(err);
+							callback(err);
+							return;
 						}
-						else {
-							DatabaseDriver.update(
-								collection,
-								{'url_hash':feed.url_hash},
-								feed,
-								function(err, new_feed)
-								{
-									if (err) {
-										errback(err);
-									}
-									else {
-										callback(new_feed, feed_items);
-									}
+						
+						DatabaseDriver.update(
+							collection,
+							{'username_hash': user.username_hash},
+							user,
+							function(err, user)
+							{
+								if (err) {
+									callback(err);
+									return;
 								}
-							);
-						}
+								callback(user);
+							}
+						);
 					}
 				);
 			}

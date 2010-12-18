@@ -85,13 +85,9 @@ exports['save'] = nodeunit.testCase(
 						'FirstName',
 						'LastName',
 						'email@id',
-						function(err)
+						function(err, user2)
 						{
 							test.equal(err.message, 'Database match exists');
-							test.done();
-						},
-						function(user2)
-						{
 							test.done();
 						}
 					);
