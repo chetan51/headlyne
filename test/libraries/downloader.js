@@ -159,6 +159,20 @@ exports['fetch URLs'] = nodeunit.testCase(
 			}
 		);
 	},
+	
+	'empty URL': function(test) {
+		test.expect(1);
+		
+		Downloader.fetch(
+			'',
+			function(err, str) {
+				if (err) {
+					test.equal(err.message, 'Invalid URL.');
+				}
+				test.done();
+			}
+		);
+	},
 
 	'live example': function(test) {
 		test.expect(1);
