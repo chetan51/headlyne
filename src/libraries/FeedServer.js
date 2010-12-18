@@ -242,6 +242,7 @@ var FeedServer = function()
 				
 				self.updateWebPagesForFeedItems(
 					feed.items,
+					num_feed_items,
 					step.parallel()
 				);
 			},
@@ -318,17 +319,21 @@ var FeedServer = function()
 	 *		           callback function called with saved
 	 *		               web pages when complete
 	 **/
-	this.updateWebPagesForFeedItems = function(items, callback)
+	this.updateWebPagesForFeedItems = function(items, num_items, callback)
 	{
 		Step(
 			function getAndSaveWebPages() {
 				var group = this.group();
+				var total_items = 0;
 				items.forEach(
 					function(item) {
-						self.getWebPageForFeedItem(
-							item,
-							group()
-						);
+						if (total_items < num_items) {
+							self.getWebPageForFeedItem(
+								item,
+								group()
+							);
+							total_items++;
+						}
 					}
 				);
 			},
