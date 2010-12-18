@@ -27,6 +27,13 @@ var sampleDocument2 = {
 	last_line  : "life will continue to be"
 };
 
+var sampleDocument3 = {
+	url        : './test/mocks/mock_app/views/webpage1.html',
+	title      : "A Curious Breach Of Privacy \n            \n            Chetan Surpur",
+	first_line : "I got this email",
+	last_line  : "life will continue to be"
+};
+
 /**
  *  Tests
  **/
@@ -85,7 +92,30 @@ exports['grab content from page'] = nodeunit.testCase(
 				}
 			}
 		);
-	}
+	},
+	
+	'basic 3': function(test)
+	{
+		test.expect(3);
+		
+		var html = fs.readFileSync(sampleDocument3.url, 'utf-8');
+		
+		ContentGrabber.readable(
+			html,
+			function(err, title, readableHTML) {
+				if (err) {
+					test.ifError(err);
+					test.done();
+				}
+				else {
+					test.equal(title, sampleDocument3.title);
+					test.notEqual(readableHTML.search(sampleDocument3.first_line), -1);
+					test.notEqual(readableHTML.search(sampleDocument3.last_line), -1);
+					test.done();
+				}
+			}
+		);
+	},
 
 });
 
