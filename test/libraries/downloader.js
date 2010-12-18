@@ -2,6 +2,7 @@
  *  Module dependencies
  */
 var nodeunit = require('nodeunit');
+var Ni = require('ni');
 var ServerGenerator = require('../../test/mocks/ServerGenerator.js');
 var Downloader = require('../../src/libraries/Downloader.js');
 
@@ -31,6 +32,9 @@ exports['fetch URLs'] = nodeunit.testCase(
 				callback();
 			}
 		);
+		
+		Ni.config('http_timeout', 30000);
+		Ni.config('max_redirect', 5);
 	},
 
 	tearDown: function (callback) {
@@ -47,11 +51,13 @@ exports['fetch URLs'] = nodeunit.testCase(
 		test.expect(1);
 		
 		Downloader.fetch(base_url + '/ok',
-			function(str) {
-				test.equal(str, okContent);
-				test.done();
-			},
-			function(str) {
+			function(err, str) {
+				if (err) {
+					console.log(err);
+				}
+				else {
+					test.equal(str, okContent);
+				}
 				test.done();
 			}
 		);
@@ -60,12 +66,18 @@ exports['fetch URLs'] = nodeunit.testCase(
 	'redirect': function(test) {
 		test.expect(1);
 		
-		Downloader.fetch(base_url + '/redirect', function(str) {
-			test.equal(str, okContent);
-			test.done();   
-		}, function(str) {
-			test.done();
-		});
+		Downloader.fetch(
+			base_url + '/redirect',
+			function(err, str) {
+				if (err) {
+					console.log(err);
+				}
+				else {
+					test.equal(str, okContent);
+				}
+				test.done();
+			}
+		);
 	},
 
 	/* To implement later
@@ -91,11 +103,12 @@ exports['fetch URLs'] = nodeunit.testCase(
 	'404 (and other http invalid codes)': function(test) {
 		test.expect(1);
 		
-		Downloader.fetch(base_url + '/doesntexist',
-			function(str) { test.done(); },
-			
-			function(err) {
-				test.equal(err.message, 'Error 404: Page not found.');
+		Downloader.fetch(
+			base_url + '/doesntexist',
+			function(err, str) {
+				if (err) {
+					test.equal(err.message, 'Error 404: Page not found.');
+				}
 				test.done();
 			}
 		);
@@ -121,25 +134,29 @@ exports['fetch URLs'] = nodeunit.testCase(
 	'timeout': function(test) {
 		test.expect(1);
 		
-		Downloader.fetch(base_url + '/timeout',
-			function(str) { test.done(); },
-			
-			function(err) {
-				test.equal(err.message, 'Request timed out.');
+		Ni.config('http_timeout', 10);
+		
+		Downloader.fetch(
+			base_url + '/timeout',
+			function(err, str) {
+				if (err) {
+					test.equal(err.message, 'Request timed out.');
+				}
 				test.done();
 			}
-		,10);
+		);
 	},
 
 	'endless redirects': function(test) {
 		
 		test.expect(1);
 		
-		Downloader.fetch(base_url + '/endlessredirect',
-			function(str) { test.done(); },
-			
-			function(err) {
-				test.equal(err.message, 'Endless redirection.');
+		Downloader.fetch(
+			base_url + '/endlessredirect',
+			function(err, str) {
+				if (err) {
+					test.equal(err.message, 'Endless redirection.');
+				}
 				test.done();
 			}
 		);

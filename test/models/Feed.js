@@ -1,5 +1,6 @@
 var http = require('http')
 var nodeunit = require('nodeunit');
+var Ni = require('ni');
 var FeedModel = require('../../src/models/Feed.js');
 var DatabaseDriver = require('../../src/libraries/DatabaseDriver.js');
 var DatabaseFaker = require('../mocks/DatabaseFaker.js');
@@ -24,6 +25,8 @@ exports['save'] = nodeunit.testCase(
 				}
 			}
 		);
+		
+		Ni.config('feed_expiry_length', 30 * 60 * 1000);
 	},
 	 
 	tearDown: function (callback) {
@@ -48,15 +51,15 @@ exports['save'] = nodeunit.testCase(
 			'titles',
 			'my_name',
 			'hello tester!',
-			function(err)
+			function(err, feed)
 			{
-				console.log(err.message);
-				test.done();
-			},
-			function(feed)
-			{
-				test.ok(1);
-				console.log(feed.url_hash);
+				if (err) {
+					console.log(err.message);
+				}
+				else {
+					test.ok(1);
+					console.log(feed.url_hash);
+				}
 				test.done();
 			}
 		);
@@ -70,29 +73,30 @@ exports['save'] = nodeunit.testCase(
 			'titles',
 			'feed_auth',
 			'dupplicated feed',
-			function(err)
+			function(err, feed)
 			{
-				console.log(err.message);
-				test.done();
-			},
-			function(feed)
-			{
-				FeedModel.save(
-					'doubled_url',
-					'diff_title',
-					'diff_name',
-					'diff_description',
-					function(err)
-					{
-						console.log(err.message);
-						test.done();
-					},
-					function(feed2)
-					{
-						test.equal(feed.url_hash, feed2.url_hash);
-						test.done();
-					}
-				);
+				if (err) {
+					console.log(err.message);
+					test.done();
+				}
+				else {
+					FeedModel.save(
+						'doubled_url',
+						'diff_title',
+						'diff_name',
+						'diff_description',
+						function(err, feed2)
+						{
+							if (err) {
+								console.log(err.message);
+							}
+							else {
+								test.equal(feed.url_hash, feed2.url_hash);
+							}
+							test.done();
+						}
+					);
+				}
 			}
 		);
 	}
@@ -136,27 +140,28 @@ exports['get'] = nodeunit.testCase(
 			'some_title',
 			'an author',
 			'long description',
-			function(err)
+			function(err, feed)
 			{
-				console.log(err.message);
-				test.done();
-			},
-			function(feed)
-			{
-				FeedModel.get(
-					'to_get_url',
-					function(err){
-						console.log(err.message);
-						test.done();
-					},
-					function(recv_feed)
-					{
-						test.equal(recv_feed.title, 'some_title');
-						test.equal(recv_feed.author, 'an author');
-						test.equal(recv_feed.description, 'long description');
-						test.done();
-					}
-				);
+				if (err) {
+					console.log(err.message);
+					test.done();
+				}
+				else {
+					FeedModel.get(
+						'to_get_url',
+						function(err, recv_feed) {
+							if (err) {
+								console.log(err.message);
+							}
+							else {
+								test.equal(recv_feed.title, 'some_title');
+								test.equal(recv_feed.author, 'an author');
+								test.equal(recv_feed.description, 'long description');
+							}
+							test.done();
+						}
+					);
+				}
 			}
 		);
 	},
@@ -166,13 +171,11 @@ exports['get'] = nodeunit.testCase(
 		test.expect(1);
 		FeedModel.get(
 			'invalid url',
-			function(err)
+			function(err, feed)
 			{
-				test.equal(err.message, 'No such feed');
-				test.done();
-			},
-			function(feed)
-			{
+				if (err) {
+					test.equal(err.message, 'No such feed');
+				}
 				test.done();
 			}
 		);
@@ -217,27 +220,27 @@ exports['isUpToDate'] = nodeunit.testCase(
 			'some title',
 			'some author',
 			'some description',
-			function(err)
+			function(err, feed)
 			{
-				console.log(err.message);
-				test.done();
-			},
-			function(feed)
-			{
-				FeedModel.isUpToDate(
-					feed.url,
-					5,
-					function(err)
-					{
-						console.log(err.message);
-						test.done();
-					},
-					function(check)
-					{
-						test.ok(check);
-						test.done();
-					}
-				);
+				if (err) {
+					console.log(err.message);
+					test.done();
+				}
+				else {
+					FeedModel.isUpToDate(
+						feed.url,
+						function(err, check)
+						{
+							if (err) {
+								console.log(err.message);
+							}
+							else {
+								test.ok(check);
+							}
+							test.done();
+						}
+					);
+				}
 			}
 		);
 	},
@@ -245,32 +248,35 @@ exports['isUpToDate'] = nodeunit.testCase(
 	'expired': function(test)
 	{
 		test.expect(1);
+		
+		Ni.config('feed_expiry_length', 0);
+		
 		FeedModel.save(
 			'some url',
 			'some title',
 			'some author',
 			'some description',
-			function(err)
+			function(err, feed)
 			{
-				console.log(err.message);
-				test.done();
-			},
-			function(feed)
-			{
-				FeedModel.isUpToDate(
-					feed.url,
-					0,
-					function(err)
-					{
-						console.log(err.message);
-						test.done();
-					},
-					function(check)
-					{
-						test.ok(!check);
-						test.done();
-					}
-				);
+				if (err) {
+					console.log(err.message);
+					test.done();
+				}
+				else {
+					FeedModel.isUpToDate(
+						feed.url,
+						function(err, check)
+						{
+							if (err) {
+								console.log(err.message);
+							}
+							else {
+								test.ok(!check);
+							}
+							test.done();
+						}
+					);
+				}
 			}
 		);
 	},
@@ -313,12 +319,12 @@ exports['delete'] = nodeunit.testCase(
 			'some_url',
 			function(err)
 			{
-				console.log(err.message);
-				test.done();
-			},
-			function()
-			{
-				test.ok(1);
+				if (err) {
+					console.log(err.message);
+				}
+				else {
+					test.ok(1);
+				}
 				test.done();
 			}
 		);	
@@ -332,35 +338,35 @@ exports['delete'] = nodeunit.testCase(
 			'title',
 			'author',
 			'description',
-			function(err)
+			function(err, feed)
 			{
-				console.log(err.message);
-				test.done();
-			},
-			function(feed)
-			{
-				FeedModel.remove(
-					feed.url,
-					function(err)
-					{
-						console.log(err.message);
-						test.done();
-					},
-					function()
-					{
-						FeedModel.get(
-							feed.url,
-							function(err){
-								test.equal(err.message, 'No such feed');
-								test.done();
-							},
-							function(recv_feed)
-							{
+				if (err) {
+					console.log(err.message);
+					test.done();
+				}
+				else {
+					FeedModel.remove(
+						feed.url,
+						function(err)
+						{
+							if (err) {
+								console.log(err.message);
 								test.done();
 							}
-						);
-					}
-				);
+							else {
+								FeedModel.get(
+									feed.url,
+									function(err, recv_feed) {
+										if (err) {
+											test.equal(err.message, 'No such feed');
+										}
+										test.done();
+									}
+								);
+							}
+						}
+					);
+				}
 			}
 		);	
 	}
@@ -404,35 +410,35 @@ exports['push/pop'] = nodeunit.testCase(
 			'title',
 			'author',
 			'description',
-			function(err)
+			function(err, feed)
 			{
-				console.log(err.message);
-				test.done();
-			},
-			function(feed)
-			{
-				var time = new Date().getTime();
-				time = parseInt(time) - 120000;
-				FeedModel.pushFeedItems(
-					feed.url,
-					[{
-						'url': 'page url',
-						'title': 'item title',
-						'description': 'item desc',
-						'time_published': time
-					}],
-					function(err)
-					{
-						console.log(err.message);
-						test.done();
-					},
-					function(new_feed)
-					{
-						test.equal(new_feed.items.length, 1);
-						test.equal(new_feed.items[0].url, 'page url');
-						test.done();
-					}
-				);
+				if (err) {
+					console.log(err.message);
+					test.done();
+				}
+				else {
+					var time = new Date().getTime();
+					time = parseInt(time) - 120000;
+					FeedModel.pushFeedItems(
+						feed.url,
+						[{
+							'url': 'page url',
+							'title': 'item title',
+							'description': 'item desc',
+							'time_published': time
+						}],
+						function(err, new_feed) {
+							if (err) {
+								console.log(err.message);
+							}
+							else {
+								test.equal(new_feed.items.length, 1);
+								test.equal(new_feed.items[0].url, 'page url');
+							}
+							test.done();
+						}
+					);
+				}
 			}
 		);
 	},
@@ -450,13 +456,11 @@ exports['push/pop'] = nodeunit.testCase(
 				'description': 'item desc',
 				'time_published': time
 			}],
-			function(err)
+			function(err, new_feed)
 			{
-				test.equal(err.message, 'No such feed');
-				test.done();
-			},
-			function(new_feed)
-			{
+				if (err) {
+					test.equal(err.message, 'No such feed');
+				}
 				test.done();
 			}
 		);
@@ -472,43 +476,44 @@ exports['push/pop'] = nodeunit.testCase(
 			'title',
 			'author',
 			'description',
-			function(err)
+			function(err, feed)
 			{
-				console.log(err.message);
-				test.done();
-			},
-			function(feed)
-			{
-				var time = new Date().getTime();
-				time = parseInt(time) - 120000;
-				FeedModel.pushFeedItems(
-					feed.url,
-					[	{
-						 'url': 'page url',
-						 'title': 'item title',
-						 'description': 'item desc',
-						 'time_published': time
-						},
+				if (err) {
+					console.log(err.message);
+					test.done();
+				}
+				else {
+					var time = new Date().getTime();
+					time = parseInt(time) - 120000;
+					FeedModel.pushFeedItems(
+						feed.url,
+						[	{
+							 'url': 'page url',
+							 'title': 'item title',
+							 'description': 'item desc',
+							 'time_published': time
+							},
+							{
+							 'url': 'page2 url',
+							 'title': 'item2 title',
+							 'description': 'item2 desc',
+							 'time_published': time + 15500
+							}
+						],
+						function(err, new_feed)
 						{
-						 'url': 'page2 url',
-						 'title': 'item2 title',
-						 'description': 'item2 desc',
-						 'time_published': time + 15500
+							if (err) {
+								console.log(err.message);
+							}
+							else {
+								test.equal(new_feed.items.length, 2);
+								test.equal(new_feed.items[0].url, 'page url');
+								test.equal(new_feed.items[1].url, 'page2 url');
+							}
+							test.done();
 						}
-					],
-					function(err)
-					{
-						console.log(err.message);
-						test.done();
-					},
-					function(new_feed)
-					{
-						test.equal(new_feed.items.length, 2);
-						test.equal(new_feed.items[0].url, 'page url');
-						test.equal(new_feed.items[1].url, 'page2 url');
-						test.done();
-					}
-				);
+					);
+				}
 			}
 		);
 	},
@@ -521,48 +526,50 @@ exports['push/pop'] = nodeunit.testCase(
 			'title',
 			'author',
 			'description',
-			function(err)
+			function(err, feed)
 			{
-				console.log(err.message);
-				test.done();
-			},
-			function(feed)
-			{
-				var time = new Date().getTime();
-				time = parseInt(time) - 120000;
-				FeedModel.pushFeedItems(
-					feed.url,
-					[{
-						'url': 'page url',
-						'title': 'item title',
-						'description': 'item desc',
-						'time_published': time
-					}],
-					function(err)
-					{
-						console.log(err.message);
-						test.done();
-					},
-					function(feed)
-					{
-						//One item pushed.
-						FeedModel.popFeedItems(
-							feed.url,
-							function(err)
-							{
+				if (err) {
+					console.log(err.message);
+					test.done();
+				}
+				else {
+					var time = new Date().getTime();
+					time = parseInt(time) - 120000;
+					FeedModel.pushFeedItems(
+						feed.url,
+						[{
+							'url': 'page url',
+							'title': 'item title',
+							'description': 'item desc',
+							'time_published': time
+						}],
+						function(err, feed)
+						{
+							if (err) {
 								console.log(err.message);
 								test.done();
-							},
-							function(feed, items)
-							{
-								test.equal(feed.items.length, 0);
-								test.equal(items.length, 1);
-								test.equal(items[0].url, 'page url');
-								test.done();
 							}
-						);
-					}
-				);
+							else {
+								//One item pushed.
+								FeedModel.popFeedItems(
+									feed.url,
+									function(err, feed, items)
+									{
+										if (err) {
+											console.log(err.message);
+										}
+										else {
+											test.equal(feed.items.length, 0);
+											test.equal(items.length, 1);
+											test.equal(items[0].url, 'page url');
+										}
+										test.done();
+									}
+								);
+							}
+						}
+					);
+				}
 			}
 		);
 	},
@@ -575,64 +582,66 @@ exports['push/pop'] = nodeunit.testCase(
 			'title',
 			'author',
 			'description',
-			function(err)
+			function(err, feed)
 			{
-				console.log(err.message);
-				test.done();
-			},
-			function(feed)
-			{
-				var time = new Date().getTime();
-				time = parseInt(time) - 120000;
-				FeedModel.pushFeedItems(
-					feed.url,
-					[
-						{
-						 'url': 'page url',
-						 'title': 'item title',
-						 'description': 'item desc',
-						 'time_published': time
-						},
-						{
-						 'url': 'page2 url',
-						 'title': 'item2 title',
-						 'description': 'item2 desc',
-						 'time_published': time - 15500
-						},
-						{
-						 'url': 'page3 url',
-						 'title': 'item3 title',
-						 'description': 'item3 desc',
-						 'time_published': time - 99000
-						}
-					],
-					function(err)
-					{
-						console.log(err.message);
-						test.done();
-					},
-					function(feed)
-					{
-						//One item pushed.
-						FeedModel.popFeedItems(
-							feed.url,
-							function(err)
+				if (err) {
+					console.log(err.message);
+					test.done();
+				}
+				else {
+					var time = new Date().getTime();
+					time = parseInt(time) - 120000;
+					FeedModel.pushFeedItems(
+						feed.url,
+						[
 							{
+							 'url': 'page url',
+							 'title': 'item title',
+							 'description': 'item desc',
+							 'time_published': time
+							},
+							{
+							 'url': 'page2 url',
+							 'title': 'item2 title',
+							 'description': 'item2 desc',
+							 'time_published': time - 15500
+							},
+							{
+							 'url': 'page3 url',
+							 'title': 'item3 title',
+							 'description': 'item3 desc',
+							 'time_published': time - 99000
+							}
+						],
+						function(err, feed)
+						{
+							if (err) {
 								console.log(err.message);
 								test.done();
-							},
-							function(feed, items)
-							{
-								test.equal(feed.items.length, 1);
-								test.equal(items.length, 2);
-								test.equal(items[0].url, 'page url');
-								test.equal(items[1].url, 'page2 url');
-								test.done();
-							},
-							2	// pop 2 items
-						);
-					}
-				);
+							}
+							else {
+								//One item pushed.
+								FeedModel.popFeedItems(
+									feed.url,
+									function(err, feed, items)
+									{
+										if (err) {
+											console.log(err.message);
+										}
+										else {
+											test.equal(feed.items.length, 1);
+											test.equal(items.length, 2);
+											test.equal(items[0].url, 'page url');
+											test.equal(items[1].url, 'page2 url');
+										}
+										test.done();
+									},
+									2	// pop 2 items
+								);
+							}
+						}
+					);
+				}
 			}
 		);
 	},
@@ -645,58 +654,60 @@ exports['push/pop'] = nodeunit.testCase(
 			'title',
 			'author',
 			'description',
-			function(err)
+			function(err, feed)
 			{
-				console.log(err.message);
-				test.done();
-			},
-			function(feed)
-			{
-				var time = new Date().getTime();
-				time = parseInt(time) - 120000;
-				FeedModel.pushFeedItems(
-					feed.url,
-					[
-						{
-						 'url': 'page url',
-						 'title': 'item title',
-						 'description': 'item desc',
-						 'time_published': time
-						},
-						{
-						 'url': 'page2 url',
-						 'title': 'item2 title',
-						 'description': 'item2 desc',
-						 'time_published': time - 15500
-						}
-					],
-					function(err)
-					{
-						console.log(err.message);
-						test.done();
-					},
-					function(feed)
-					{
-						//One item pushed.
-						FeedModel.popFeedItems(
-							feed.url,
-							function(err)
+				if (err) {
+					console.log(err.message);
+					test.done();
+				}
+				else {
+					var time = new Date().getTime();
+					time = parseInt(time) - 120000;
+					FeedModel.pushFeedItems(
+						feed.url,
+						[
 							{
+							 'url': 'page url',
+							 'title': 'item title',
+							 'description': 'item desc',
+							 'time_published': time
+							},
+							{
+							 'url': 'page2 url',
+							 'title': 'item2 title',
+							 'description': 'item2 desc',
+							 'time_published': time - 15500
+							}
+						],
+						function(err, feed)
+						{
+							if (err) {
 								console.log(err.message);
 								test.done();
-							},
-							function(feed, items)
-							{
-								test.equal(feed.items.length, 0);
-								test.equal(items.length, 2);
-								test.equal(items[0].url, 'page url');
-								test.equal(items[1].url, 'page2 url');
-								test.done();
-							},
-							3	// attempt to pop 3 items
-						);
-					}
-				);
+							}
+							else {
+								//One item pushed.
+								FeedModel.popFeedItems(
+									feed.url,
+									function(err, feed, items)
+									{
+										if (err) {
+											console.log(err.message);
+										}
+										else {
+											test.equal(feed.items.length, 0);
+											test.equal(items.length, 2);
+											test.equal(items[0].url, 'page url');
+											test.equal(items[1].url, 'page2 url');
+										}
+										test.done();
+									},
+									3	// attempt to pop 3 items
+								);
+							}
+						}
+					);
+				}
 			}
 		);
 	}

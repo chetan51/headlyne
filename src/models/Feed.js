@@ -7,6 +7,7 @@
  **/
 var crypto         = require('crypto');
 var DatabaseDriver = require('../libraries/DatabaseDriver.js');
+var Ni             = require('ni');
 
 /**
  * The Feed model
@@ -26,14 +27,14 @@ var Feed = function()
 	 * 	Returns:      the feed that was saved
 	 * 	              false on error
 	 **/
-	this.save = function(url, title, author, description, errback, callback)
+	this.save = function(url, title, author, description, callback)
 	{
 		DatabaseDriver.getCollection(
 			'feeds',
 			function(err, collection)
 			{
 				if (err) {
-					errback(err);
+					callback(err);
 				}
 				else {
 					var hasher = crypto.createHash('sha256');
@@ -55,10 +56,10 @@ var Feed = function()
 						function(err, feed)
 						{
 							if (err) {
-								errback(err);
+								callback(err);
 							}
 							else {
-								callback(feed);
+								callback(null, feed);
 							}
 						}
 					);
@@ -81,7 +82,7 @@ var Feed = function()
 	 * 	                  time_modified
 	 * 	              }
 	 **/
-	this.get = function(feed_url, errback, callback)
+	this.get = function(feed_url, callback)
 	{
 		var hasher = crypto.createHash('sha256');
 		hasher.update(feed_url);
@@ -92,7 +93,7 @@ var Feed = function()
 			function(err, collection)
 			{
 				if (err) {
-					errback(err);
+					callback(err);
 				}
 				else {
 					collection.findOne(
@@ -100,12 +101,12 @@ var Feed = function()
 						function(err, doc)
 						{
 							if(err != null)
-								errback(new Error('Database Search Error'));
+								callback(new Error('Database Search Error'));
 							else {
 								if(typeof(doc) == 'undefined') {
-									errback(new Error('No such feed'));
+									callback(new Error('No such feed'));
 								} else {
-									callback(doc);
+									callback(null, doc);
 								}
 							}
 						}
@@ -116,33 +117,31 @@ var Feed = function()
 	}
 
 	/**
-	 * Checks if a feed is up to date, relative to a given
-	 * expiry length.
+	 * Checks if a feed is up to date, relative to the feed expiry length.
 	 * 
 	 * 	Arguments:    feed_url
-	 * 	              expiry_length (in minutes)
 	 * 	              
 	 * 	Returns:      true if feed.time_modified + expiry_length
 	 * 	                  > now
 	 * 	              false otherwise
 	 **/
-	this.isUpToDate = function(feed_url, expiry_length, errback, callback)
+	this.isUpToDate = function(feed_url, callback)
 	{
-		expiry_length = expiry_length*1000*60;
 		self.get(
 			feed_url,
-			function(err)
+			function(err, feed)
 			{
-				errback(err);
-			},
-			function(feed)
-			{
-				var now = new Date().getTime();
-				var expires = parseInt(feed.time_modified) + parseInt(expiry_length);
-				if( now < expires )
-					callback(true);
-				else
-					callback(false);
+				if (err) {
+					callback(err);
+				}
+				else {
+					var now = new Date().getTime();
+					var expires = parseInt(feed.time_modified) + parseInt(Ni.config('feed_expiry_length'));
+					if( now < expires )
+						callback(null, true);
+					else
+						callback(null, false);
+				}
 			}
 		);
 	}
@@ -156,7 +155,7 @@ var Feed = function()
 	 * 	              if the deletion was successful.
 	 * 	              Otherwise, it calls the errback.
 	 **/
-	this.remove = function(feed_url, errback, callback)
+	this.remove = function(feed_url, callback)
 	{
 		var hasher = crypto.createHash('sha256');
 		hasher.update(feed_url);
@@ -166,7 +165,7 @@ var Feed = function()
 			function(err, collection)
 			{
 				if (err) {
-					errback(err);
+					callback(err);
 				}
 				else {
 					collection.remove(
@@ -174,9 +173,9 @@ var Feed = function()
 						function(err, doc)
 						{
 							if(err != null)
-								errback(new Error('Database Deletion Error'));
+								callback(new Error('Database Deletion Error'));
 							else {
-								callback();
+								callback(null);
 							}
 						}
 					);
@@ -192,44 +191,45 @@ var Feed = function()
 	 *
 	 * 	Returns:      updated feed.
 	 **/
-	this.pushFeedItems = function(feed_url, feed_items, errback, callback)
+	this.pushFeedItems = function(feed_url, feed_items, callback)
 	{
 		self.get(
 			feed_url,
-			function(err)
+			function(err, feed)
 			{
-				errback(err);
-			},
-			function(feed)
-			{
-				// The feed exists.
-				feed.items = feed.items.concat(feed_items);
-				feed.time_modified = new Date().getTime();
-				DatabaseDriver.getCollection(
-					'feeds',
-					function(err, collection)
-					{
-						if (err) {
-							errback(err);
-						}
-						else {
-							DatabaseDriver.update(
-								collection,
-								{'url_hash': feed.url_hash},
-								feed,
-								function(err, feed)
-								{
-									if (err) {
-										errback(err);
+				if (err) {
+					callback(err);
+				}
+				else {
+					// The feed exists.
+					feed.items = feed.items.concat(feed_items);
+					feed.time_modified = new Date().getTime();
+					DatabaseDriver.getCollection(
+						'feeds',
+						function(err, collection)
+						{
+							if (err) {
+								callback(err);
+							}
+							else {
+								DatabaseDriver.update(
+									collection,
+									{'url_hash': feed.url_hash},
+									feed,
+									function(err, feed)
+									{
+										if (err) {
+											callback(err);
+										}
+										else {
+											callback(null, feed);
+										}
 									}
-									else {
-										callback(feed);
-									}
-								}
-							);
+								);
+							}
 						}
-					}
-				);
+					);
+				}
 			}
 		);
 	}
@@ -241,7 +241,7 @@ var Feed = function()
 	 *
 	 * 	Returns:      updated feed, popped items.
 	 **/
-	this.popFeedItems = function(feed_url, errback, callback, pop_size)
+	this.popFeedItems = function(feed_url, callback, pop_size)
 	{
 		if(pop_size == null || typeof(pop_size) == 'undefined')
 		{
@@ -250,41 +250,42 @@ var Feed = function()
 
 		self.get(
 			feed_url,
-			function(err)
+			function(err, feed)
 			{
-				errback(err);
-			},
-			function(feed)
-			{
-				// The feed exists.
-				var feed_items = feed.items.splice(0, pop_size);
-				feed.time_modified = new Date().getTime();
-				
-				DatabaseDriver.getCollection(
-					'feeds',
-					function(err, collection)
-					{
-						if (err) {
-							errback(err);
-						}
-						else {
-							DatabaseDriver.update(
-								collection,
-								{'url_hash':feed.url_hash},
-								feed,
-								function(err, new_feed)
-								{
-									if (err) {
-										errback(err);
+				if (err) {
+					callback(err);
+				}
+				else {
+					// The feed exists.
+					var feed_items = feed.items.splice(0, pop_size);
+					feed.time_modified = new Date().getTime();
+					
+					DatabaseDriver.getCollection(
+						'feeds',
+						function(err, collection)
+						{
+							if (err) {
+								callback(err);
+							}
+							else {
+								DatabaseDriver.update(
+									collection,
+									{'url_hash':feed.url_hash},
+									feed,
+									function(err, new_feed)
+									{
+										if (err) {
+											callback(err);
+										}
+										else {
+											callback(null, new_feed, feed_items);
+										}
 									}
-									else {
-										callback(new_feed, feed_items);
-									}
-								}
-							);
+								);
+							}
 						}
-					}
-				);
+					);
+				}
 			}
 		);
 	}

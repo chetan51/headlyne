@@ -39,40 +39,46 @@ var FeedServer = function()
 	 *		           callback function for success
 	 *		           callback function for error
 	 **/
-	this.getFeedTeaserUrgently = function(url, num_feed_items, callback, errback)
+	this.getFeedTeaserUrgently = function(url, num_feed_items, callback)
 	{
 		FeedModel.isUpToDate(
 			url,
-			30,
-			function(err) {
-				if (err.message == "No such feed") {
-					callback(null);
-					self.getFeedTeaser(
-						url,
-						num_feed_items,
-						function(feed) {},
-						function(err) {}
-					);
-				}
-			},
-			function(result) {
-				if (result) {
-					FeedModel.get(
-						url,
-						function(err) {},
-						function(feed) {
-							callback(feed);
-						}
-					);
+			function(err, result) {
+				if (err) {
+					if (err.message == "No such feed") {
+						callback(null, null);
+						self.getFeedTeaser(
+							url,
+							num_feed_items,
+							function(err, feed) {}
+						);
+					}
+					else {
+						callback(err);
+					}
 				}
 				else {
-					callback(null);
-					self.getFeedTeaser(
-						url,
-						num_feed_items,
-						function(feed) {},
-						function(err) {}
-					);
+					if (result) {
+						FeedModel.get(
+							url,
+							function(err, feed) {
+								if (err) {
+									callback(err);
+								}
+								else {
+									callback(null, feed);
+								}
+							}
+						);
+					}
+					else {
+						callback(null, null);
+						self.getFeedTeaser(
+							url,
+							num_feed_items,
+							function(err, feed) {}
+						);
+					}
 				}
 			}
 		);
@@ -93,60 +99,69 @@ var FeedServer = function()
 	 *		           callback function for success
 	 *		           callback function for error
 	 **/
-	this.getFeedTeaser = function(url, num_feed_items, callback, errback)
+	this.getFeedTeaser = function(url, num_feed_items, callback)
 	{
 		Downloader.fetch(
 			url,
-			function(data) {
-				FeedParser.parse(
-					data,
-					function(feed) {
-						// Mocking feed
-						feed =
-							{
-								title: "RSS Title",
-								author: "Sample author",
-								description: "Sample RSS feed",
-								items:
-									[
-										{
-											url: "http://item1url",
-											title: "Item 1 Title"
+			function(err, data) {
+				if (err) {
+					callback(err);
+				}
+				else if (!data) {
+					callback(new Error("Feed could not be downloaded"));
+				}
+				else {
+					FeedParser.parse(
+						data,
+						function(err, feed) {
+							if (err) {
+								callback(err);
+							}
+							else {
+								// Mocking feed
+								feed =
+									{
+										title: "RSS Title",
+										author: "Sample author",
+										description: "Sample RSS feed",
+										items:
+											[
+												{
+													url: "http://item1url",
+													title: "Item 1 Title"
+												}
+											]
+									}
+						
+								Step(
+									function saveFeedAndRetrieveItems() {
+										var step = this;
+									
+										self.saveFeedAndItems(
+											url,
+											feed,
+											step.parallel()
+										);
+										
+										self.getWebPagesForFeedItems(
+											feed.items,
+											step.parallel()
+										);
+									},
+									function done(err, saved_feed, saved_webpages) {
+										if (err) {
+											callback(err);
 										}
-									]
-							}
-				
-						Step(
-							function saveFeedAndRetrieveItems() {
-								var step = this;
-							
-								self.saveFeedAndItems(
-									url,
-									feed,
-									step.parallel()
+										else {
+											callback(null, feed);
+										}
+									}
 								);
-								
-								self.getWebPagesForFeedItems(
-									feed.items,
-									step.parallel()
-								);
-							},
-							function done(err, saved_feed, saved_webpages) {
-								if (err) {
-									errback(err);
-								}
-								else {
-									callback(feed);
-								}
 							}
-						);
-					},
-					function(err) {},
-					30000
-				);
-			},
-			function(err) {},
-			30000
+						}
+					);
+				}
+			}
 		);
 	}
 	
@@ -157,16 +172,24 @@ var FeedServer = function()
 			feed.title,
 			feed.author,
 			feed.description,
-			function(err) {},
-			function(saved_feed) {
-				FeedModel.pushFeedItems(
-					url,
-					feed.items,
-					function(err) {},
-					function(feed) {
-						callback(null, feed);
-					}
-				);
+			function(err, saved_feed) {
+				if (err) {
+					callback(err);
+				}
+				else {
+					FeedModel.pushFeedItems(
+						url,
+						feed.items,
+						function(err, feed) {
+							if (err) {
+								callback(err);
+							}
+							else {
+								callback(null, feed);
+							}
+						}
+					);
+				}
 			}
 		);
 	}
