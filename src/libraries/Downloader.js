@@ -15,7 +15,12 @@ var Downloader = function() {
 	
 	this.fetch = function(url, callback)
 	{
-		self.fetch_helper(url, Ni.config('max_redirect'), callback);
+		if (url.length > 0) {
+			self.fetch_helper(url, Ni.config('max_redirect'), callback);
+		}
+		else {
+			callback(new Error('Invalid URL.'));
+		}
 	}
 	
 	this.fetch_helper = function(url, max_redirect_level, callback)
