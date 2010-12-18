@@ -3,6 +3,7 @@
  **/
 var u    = require('url'),
     http = require('http'),
+    rest = require('restler'),
     Ni   = require('ni');
 
 /**
@@ -24,45 +25,29 @@ var Downloader = function() {
 			return;
 		}
 		
-		var str='';
-		
-		var urlObj = u.parse(url);
-		
-		if(urlObj.port == null || typeof(urlObj.port) == 'undefined') {
-			urlObj.port = 80;
-		}
-		
-		// console.log('abt to connect');
-		var client = http.createClient(urlObj.port, urlObj.hostname);
-		
-		client.on('error', function(e) {
-			callback(new Error("Cannot connect to server."));
-		});
-		
-		var req = client.request('GET', urlObj.pathname, { Host: "headlyne.com" });
-		req.on('response', function(resp) {
-			// console.log('responsed');
-			switch(resp.statusCode) {
+		var options = {
+			followRedirects: false, // we implement our own redirection following, since
+			                        // Restler cannot handle infinite redirection
+			parser: null
+		};
+		rest.get(url, options).addListener('complete', function(data, response) {
+			switch(response.statusCode) {
 				case 200:
-					resp.on('data', function(data){ str += data; });
-					resp.on('end', function(){ callback(null, str); });
+					callback(null, data);
 					break;
 				case 301:
 				case 302:
 					self.fetch_helper(
-						resp.headers.location,
+						response.headers.location,
 						max_redirect_level-1,
 						callback
 					);
 					break;
 				default:
-					callback(new Error("Error " + resp.statusCode + ": Page not found."));
+					callback(new Error("Error " + response.statusCode + ": Page not found."));
 					break;
 			}
-		});
-		
-		req.end();
-		// console.log('requested');
+		}).addListener('error', function(data, response) {});
 		
 		setTimeout(function() {
 			callback(new Error('Request timed out.'));

@@ -164,7 +164,7 @@ exports['fetch URLs'] = nodeunit.testCase(
 		test.expect(1);
 		
 		Downloader.fetch(
-			"http://www.feedforall.com/sample.xml",
+			"http://google.com/",
 			function(err, str) {
 				if (err) {
 					console.log(err);
