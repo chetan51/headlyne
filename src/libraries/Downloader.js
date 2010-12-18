@@ -25,12 +25,18 @@ var Downloader = function() {
 			return;
 		}
 		
+		var timeout = setTimeout(function() {
+			callback(new Error('Request timed out.'));
+		}, Ni.config('http_timeout'));
+		
 		var options = {
 			followRedirects: false, // we implement our own redirection following, since
 			                        // Restler cannot handle infinite redirection
 			parser: null
 		};
 		rest.get(url, options).addListener('complete', function(data, response) {
+			clearTimeout(timeout);
+			
 			switch(response.statusCode) {
 				case 200:
 					callback(null, data);
@@ -48,10 +54,6 @@ var Downloader = function() {
 					break;
 			}
 		}).addListener('error', function(data, response) {});
-		
-		setTimeout(function() {
-			callback(new Error('Request timed out.'));
-		}, Ni.config('http_timeout'));
 	}
 };
 
