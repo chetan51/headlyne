@@ -78,11 +78,7 @@ var UserAuth = function()
 	 *			'lifetime',
 	 *		}
 	 **/
-	this.authenticate = function(
-		username,
-		password,
-		callback,
-		lifetime            )
+	this.authenticate = function( username, password, callback )
 	{
 		User.get(
 			username,
@@ -90,7 +86,7 @@ var UserAuth = function()
 			{
 				if(err != null)
 				{
-					callback(err, null, null);
+					callback(err);
 					return;
 				}
 				var hasher = crypto.createHash('sha256');
@@ -100,13 +96,14 @@ var UserAuth = function()
 				// if invalid, throw an error.
 				if(user.password_hash != pass_hash)
 				{
-					callback(new Error('Invalid Password'), null, null);
+					callback(new Error('Invalid Password'));
 					return;
 				}
 
 				// if the session has NOT expired..
 				if(	user.session != null &&
-					!self.checkExpired(user.session)
+					user.session.cookie != null &&
+					! self.checkExpired(user.session)
 				)
 					callback(null, false, user.session.cookie);
 				else {
@@ -118,13 +115,9 @@ var UserAuth = function()
 					User.setSession(
 						username,
 						new_sesh,
-						function(err)
+						function(err, sesh)
 						{
-							callback(err, null, null);
-						},
-						function(sesh)
-						{
-							callback(null, true, sesh);
+							callback(err, true, sesh);
 						}
 					);
 				}
@@ -141,7 +134,7 @@ var UserAuth = function()
 	this.checkAuth = function(session_cookie, callback)
 	{
 		if(session_cookie == null || typeof(session_cookie.data.username) != 'undefined')
-			callback(new Error('Invalid Session Cookie'), null);
+			callback(new Error('Invalid Session Cookie'));
 
 		var username = session_cookie.data.username;
 
@@ -150,7 +143,7 @@ var UserAuth = function()
 			function(err,user)
 			{
 				if(err != null) {
-					callback(err, null);
+					callback(err);
 					return;
 				}
 				// if user's cookie has expired...
@@ -179,7 +172,7 @@ var UserAuth = function()
 				var expected_hash = hasher2.digest('hex');
 
 				if( input_cookie_hash != expected_hash)
-					callback(new Error('Invalid Session Cookie'), null);
+					callback(new Error('Invalid Session Cookie'));
 				else {
 					// session objects match, and not expired.
 					callback(null, true);
@@ -197,16 +190,12 @@ var UserAuth = function()
 		User.setSession(
 			username,
 			null,
-			function(err)
+			function(err, s)
 			{
-				callback(err, null);
-			},
-			function(s)
-			{
-				callback(null);
+				callback(err, s);
 			}
 		);
 	}
-};
+});
 
 module.exports = new UserAuth();

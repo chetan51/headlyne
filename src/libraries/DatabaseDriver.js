@@ -98,10 +98,12 @@ var DatabaseDriver = function()
 							obj,
 							function(err, inserted_docs)
 							{
-								if(err != null)
+								console.log(inserted_docs);
+								callback(err, inserted_docs[0]);
+								/*if(err != null)
 									callback(new Error('Database Insertion Error'));
 								else
-									callback(null, inserted_docs[0]);
+									callback(null, inserted_docs[0]);*/
 							}
 						);
 					} else {
