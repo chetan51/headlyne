@@ -16,8 +16,7 @@
 
 var Connect = require('connect'),
     Quip = require('quip'),
-    Ni = require('ni'),
-    Mongo = require('mongodb');
+    Ni = require('ni');
 
 /*
  *  Load Ni and start the server.

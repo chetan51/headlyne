@@ -18,7 +18,14 @@ var Ni = require('ni');
 var HomeController = function() {
 
     this.index = function(req, res, next) {
-        res.ok("Hello world!");
+	Ni.library('FeedServer').getFeedTeaser(
+		'http://feeds.gawker.com/lifehacker/full',
+		function(err, feed) {
+			console.log(err);
+			console.log(feed);
+		}
+	);
+	res.ok("Hello world!");
     }
 
 };
