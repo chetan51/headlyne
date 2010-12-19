@@ -45,7 +45,9 @@ var UserAuth = function()
 		var now = new Date().getTime();
 		
 		// if still valid, pass the same session object.
-		if(	session_object.created +
+		
+
+		if(	parseInt(session_object.created) +
 			session_object.cookie.lifetime
 			> now )
 			return false;
@@ -109,6 +111,7 @@ var UserAuth = function()
 				else {
 					// generate a new session
 					var new_sesh={};
+					var lifetime = 1000*60*60*24*14;
 					new_sesh.cookie = self.session_gen( username, lifetime );
 					new_sesh.created = new Date().getTime();
 					
@@ -136,7 +139,7 @@ var UserAuth = function()
 		if(session_cookie == null || typeof(session_cookie.data.username) != 'undefined')
 			callback(new Error('Invalid Session Cookie'));
 
-		var username = session_cookie.data.username;
+		var username = session_cookie.data.user;
 
 		User.get(
 			username,
@@ -164,8 +167,8 @@ var UserAuth = function()
 				}
 
 				// otherwise, check if the objects match.
-				var hasher1 = createHash('sha256');
-				var hasher2 = createHash('sha256');
+				var hasher1 = crypto.createHash('sha256');
+				var hasher2 = crypto.createHash('sha256');
 				hasher1.update(session_cookie);
 				hasher2.update(user.session.cookie);
 				var input_cookie_hash = hasher1.digest('hex');
@@ -196,6 +199,6 @@ var UserAuth = function()
 			}
 		);
 	}
-});
+};
 
 module.exports = new UserAuth();

@@ -143,7 +143,7 @@ exports['checkauth'] = nodeunit.testCase(
 				UserModel.setSession(
 					'username',
 					test_session,
-					callback(err, session)
+					function(err, session)
 					{
 						UserAuth.checkAuth(
 							test_session.cookie,
@@ -178,7 +178,7 @@ exports['checkauth'] = nodeunit.testCase(
 					test_session.cookie,
 					function(err, is_valid)
 					{
-						if( err != null) test.equal(err.message, 'Invalid Session Cookie');
+						test.ok(!is_valid);
 						test.done();
 					}
 				);
@@ -202,7 +202,7 @@ exports['checkauth'] = nodeunit.testCase(
 				UserModel.setSession(
 					'username',
 					test_session,
-					callback(err, session)
+					function(err, session)
 					{
 						UserAuth.checkAuth(
 							test_session.cookie,
