@@ -63,7 +63,7 @@ var User = function()
 							}
 							else {
 								//delete user['password_hash'];
-								console.log(user);
+								//console.log(user);
 								callback(null, user);
 							}
 						}

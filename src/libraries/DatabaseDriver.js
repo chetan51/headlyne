@@ -98,7 +98,7 @@ var DatabaseDriver = function()
 							obj,
 							function(err, inserted_docs)
 							{
-								console.log(inserted_docs);
+								//console.log(inserted_docs);
 								callback(err, inserted_docs[0]);
 								/*if(err != null)
 									callback(new Error('Database Insertion Error'));
