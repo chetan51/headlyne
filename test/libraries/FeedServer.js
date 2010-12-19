@@ -121,6 +121,7 @@ exports['get feed teaser'] = nodeunit.testCase(
 {
 	
 	setUp: function(callback) {
+		console.log('setup called');
 		Step(
 			function mockServerAndDatabase() {
 				var step = this;
@@ -139,6 +140,7 @@ exports['get feed teaser'] = nodeunit.testCase(
 			function done(err, server) {
 				if (err) throw err;
 				mock_server = server;
+				console.log("done: "+mock_server);
 				callback();
 			}
 		);
@@ -153,7 +155,7 @@ exports['get feed teaser'] = nodeunit.testCase(
 		Step(
 			function closeServerAndDatabase() {
 				var step = this;
-				
+				console.log('teardown: '+mock_server);
 				ServerGenerator.closeServer(
 					mock_server,
 					step.parallel()
