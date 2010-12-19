@@ -3,6 +3,7 @@ var DatabaseDriver = require('../../src/libraries/DatabaseDriver');
 var DatabaseFaker = require('../mocks/DatabaseFaker');
 var UserModel = require('../../src/models/User');
 var UserAuth = require('../../src/libraries/UserAuth');
+var Ni = require('ni');
 
 /**
  * Mock Variables
@@ -36,6 +37,8 @@ exports['authenticate'] = nodeunit.testCase(
 				}
 			}
 		);
+		
+		Ni.config('session_lifetime', 1000 * 60 * 60 * 24 * 7); // 2 weeks
 	},
 	 
 	tearDown: function (callback) {
@@ -143,7 +146,7 @@ exports['checkauth'] = nodeunit.testCase(
 				UserModel.setSession(
 					'username',
 					test_session,
-					callback(err, session)
+					function(err, session)
 					{
 						UserAuth.checkAuth(
 							test_session.cookie,
@@ -202,7 +205,7 @@ exports['checkauth'] = nodeunit.testCase(
 				UserModel.setSession(
 					'username',
 					test_session,
-					callback(err, session)
+					function(err, session)
 					{
 						UserAuth.checkAuth(
 							test_session.cookie,

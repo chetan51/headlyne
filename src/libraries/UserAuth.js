@@ -2,7 +2,8 @@
  * Dependencies
  **/
 var crypto  = require('crypto'),
-    User    = require('../models/User');
+    User    = require('../models/User'),
+    Ni      = require('ni');
 
 
 /**
@@ -17,9 +18,6 @@ var UserAuth = function()
 
 	this.session_gen = function(username, lifetime)
 	{
-		if(lifetime == null)
-			lifetime = 1000 * 60 * 60 * 24 * 7; // 2 weeks
-
 		var id_gen = crypto.createHash('sha256');
 		id_gen.update(Math.random() + username);
 		var id = id_gen.digest('hex');
@@ -109,7 +107,7 @@ var UserAuth = function()
 				else {
 					// generate a new session
 					var new_sesh={};
-					new_sesh.cookie = self.session_gen( username, lifetime );
+					new_sesh.cookie = self.session_gen( username, Ni.config('session_lifetime') );
 					new_sesh.created = new Date().getTime();
 					
 					User.setSession(
@@ -196,6 +194,6 @@ var UserAuth = function()
 			}
 		);
 	}
-});
+}
 
 module.exports = new UserAuth();
