@@ -53,6 +53,7 @@ function ensureFeedTeaserIsCorrect(test, test_feed, feed_teaser)
 			}
 		}
 	}
+	console.log('ensured teaser correct');
 }
 function ensureFeedAndItemsAreStored(test, test_feed, callback)
 {
@@ -60,6 +61,7 @@ function ensureFeedAndItemsAreStored(test, test_feed, callback)
 		test_feed.url,
 		function(err, feed) {
 			if (err) {
+				console.log('error '+err.message);
 				callback(err);
 			}
 			else {
@@ -71,7 +73,6 @@ function ensureFeedAndItemsAreStored(test, test_feed, callback)
 							test.equal(feed.items[j].title, test_feed.items[i].title);
 						}
 					}
-					
 				}
 				
 				Step(
@@ -80,6 +81,7 @@ function ensureFeedAndItemsAreStored(test, test_feed, callback)
 						
 						test_feed.items.forEach(
 							function(item) {
+								console.log('ensuring page stored...');
 								ensureWebPageIsStored(
 									test,
 									item,
@@ -89,6 +91,7 @@ function ensureFeedAndItemsAreStored(test, test_feed, callback)
 						);
 					},
 					function done(err) {
+						console.log('going out of ensureFeed&Items');
 						if (err) {
 							console.log(err);
 						}
@@ -152,6 +155,7 @@ exports['get feed teaser'] = nodeunit.testCase(
 	},
 	 
 	tearDown: function(callback) {
+		console.log('start teardown');
 		Step(
 			function closeServerAndDatabase() {
 				var step = this;
@@ -196,6 +200,7 @@ exports['get feed teaser'] = nodeunit.testCase(
 			basic_feed.url,
 			10,
 			function(err, feed_teaser) {
+				console.log('got feed teaser');
 				if (err) {
 					console.log(err.message);
 					test.done();

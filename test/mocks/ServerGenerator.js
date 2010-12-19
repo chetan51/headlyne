@@ -17,13 +17,10 @@ var ServerGenerator = function() {
 	this.createServer = function(host, port, callback)
 	{
 		Ni.config('root', __dirname + "/mock_app");
-		console.log('createServer called');
 
 		Ni.boot(function() {
-			console.log('boot called');
 			var serv = http.createServer(
 				function (req, res) {
-					console.log('creating server');
 					var parsed_url = url.parse(req.url, true);
 			
 					switch(parsed_url.pathname) {
@@ -74,18 +71,17 @@ var ServerGenerator = function() {
 							res.end();
 							break;
 					}
+					console.log('served request '+req.url);
 				}
 			);
-			console.log('setting up listening');
+
 			serv.listen(port, host, function() {
-				console.log('listening');
 				callback(null, serv);   
 			});
 		});
 	}
 
 	this.closeServer = function(serv, callback) {
-		console.log('closing server');
 		serv.on('close', function(){ callback(null); });
 		serv.close();
 	}
