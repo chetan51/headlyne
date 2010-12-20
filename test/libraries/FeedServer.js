@@ -59,6 +59,7 @@ function ensureFeedTeaserIsCorrect(test, test_feed, feed_teaser)
 			}
 		}
 	}
+	console.log('ensured teaser correct');
 }
 function ensureFeedAndItemsAreStored(test, test_feed, callback)
 {
@@ -66,6 +67,7 @@ function ensureFeedAndItemsAreStored(test, test_feed, callback)
 		test_feed.url,
 		function(err, feed) {
 			if (err) {
+				console.log('error '+err.message);
 				callback(err);
 			}
 			else {
@@ -77,7 +79,6 @@ function ensureFeedAndItemsAreStored(test, test_feed, callback)
 							test.equal(feed.items[j].title, test_feed.items[i].title);
 						}
 					}
-					
 				}
 				
 				Step(
@@ -86,6 +87,7 @@ function ensureFeedAndItemsAreStored(test, test_feed, callback)
 						
 						test_feed.items.forEach(
 							function(item) {
+								console.log('ensuring page stored...');
 								ensureWebPageIsStored(
 									test,
 									item,
@@ -95,6 +97,7 @@ function ensureFeedAndItemsAreStored(test, test_feed, callback)
 						);
 					},
 					function done(err) {
+						console.log('going out of ensureFeed&Items');
 						if (err) {
 							dbg.log(err);
 						}
@@ -158,6 +161,7 @@ exports['get feed teaser'] = nodeunit.testCase(
 	},
 	 
 	tearDown: function(callback) {
+		console.log('start teardown');
 		Step(
 			function closeServerAndDatabase() {
 				var step = this;
@@ -202,6 +206,7 @@ exports['get feed teaser'] = nodeunit.testCase(
 			basic_feed.url,
 			10,
 			function(err, feed_teaser) {
+				console.log('got feed teaser');
 				if (err) {
 					dbg.log(err.message);
 					test.done();
@@ -233,6 +238,10 @@ exports['get feed teaser'] = nodeunit.testCase(
 			function(err, feed_teaser) {
 				if (err) {
 					dbg.log(err.message);
+					
+					// Restore FeedModel.isUpToDate
+					FeedModel.isUpToDate = isUpToDate_backup;
+					
 					test.done();
 				}
 				else {
@@ -264,13 +273,10 @@ exports['get feed teaser'] = nodeunit.testCase(
 										test.done();
 									}
 								);
-								
-								// Restore FeedModel.isUpToDate
-								FeedModel.isUpToDate = isUpToDate_backup;
 							}
-						},
-						function(err) {
-							test.done();
+					
+							// Restore FeedModel.isUpToDate
+							FeedModel.isUpToDate = isUpToDate_backup;
 						}
 					);
 				}
@@ -335,7 +341,7 @@ exports['get feed teaser urgently'] = nodeunit.testCase(
 	},
 	
 	'feed not in database': function(test) {
-		test.expect(1);
+		test.expect(11);
 		
 		FeedServer.getFeedTeaserUrgently(
 			basic_feed.url,
@@ -347,7 +353,28 @@ exports['get feed teaser urgently'] = nodeunit.testCase(
 				else {
 					test.equals(feed_teaser, null);
 				}
-				test.done();
+			},
+			function(err, feed_teaser_updated) {
+				if (err) {
+					console.log(err.message);
+				}
+				else {
+					ensureFeedTeaserIsCorrect(
+						test,
+						basic_feed,
+						feed_teaser_updated
+					);
+					ensureFeedAndItemsAreStored(
+						test,
+						basic_feed,
+						function(err) {
+							if (err) {
+								console.log(err.message);
+							}
+							test.done();
+						}
+					);
+				}
 			}
 		);
 	},
@@ -388,7 +415,7 @@ exports['get feed teaser urgently'] = nodeunit.testCase(
 	},
 
 	'feed in database and not up to date': function(test) {
-		test.expect(1);
+		test.expect(11);
 		
 		// First, we make sure the feed is in the database
 		FeedServer.getFeedTeaser(
@@ -397,6 +424,10 @@ exports['get feed teaser urgently'] = nodeunit.testCase(
 			function(err, feed_teaser) {
 				if (err) {
 					dbg.log(err.message);
+					
+					// Restore FeedModel.isUpToDate
+					FeedModel.isUpToDate = isUpToDate_backup;
+					
 					test.done();
 				}
 				else {
@@ -416,11 +447,32 @@ exports['get feed teaser urgently'] = nodeunit.testCase(
 							}
 							else {
 								test.equal(feed_teaser, null);
-								
-								// Restore FeedModel.isUpToDate
-								FeedModel.isUpToDate = isUpToDate_backup;
 							}
-							test.done();
+						},
+						function(err, feed_teaser_updated) {
+							if (err) {
+								console.log(err.message);
+							}
+							else {
+								ensureFeedTeaserIsCorrect(
+									test,
+									basic_feed,
+									feed_teaser_updated
+								);
+								ensureFeedAndItemsAreStored(
+									test,
+									basic_feed,
+									function(err) {
+										if (err) {
+											console.log(err.message);
+										}
+										test.done();
+									}
+								);
+							}
+							
+							// Restore FeedModel.isUpToDate
+							FeedModel.isUpToDate = isUpToDate_backup;
 						}
 					);
 				}

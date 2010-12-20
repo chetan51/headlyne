@@ -23,6 +23,7 @@ var ServerGenerator = function() {
 	this.createServer = function(host, port, callback)
 	{
 		Ni.config('root', __dirname + "/mock_app");
+		
 		dbg.log('createServer called');
 
 		Ni.boot(function() {
@@ -80,6 +81,7 @@ var ServerGenerator = function() {
 							res.end();
 							break;
 					}
+					console.log('served request '+req.url);
 				}
 			);
 			dbg.log('setting up listening');
