@@ -61,6 +61,7 @@ var FeedServer = function()
 					if (result) {
 						self.getFeedTeaserFromDatabase(
 							url,
+							num_feed_items,
 							callback
 						);
 					}
@@ -121,6 +122,7 @@ var FeedServer = function()
 					if (result) {
 						self.getFeedTeaserFromDatabase(
 							url,
+							num_feed_items,
 							callback
 						);
 					}
@@ -152,7 +154,7 @@ var FeedServer = function()
 	 *		Arguments: url of feed
 	 *		           callback function called with feed teaser when complete
 	 **/
-	this.getFeedTeaserFromDatabase = function(url, callback)
+	this.getFeedTeaserFromDatabase = function(url, num_feed_items, callback)
 	{
 		FeedModel.get(
 			url,
@@ -163,6 +165,7 @@ var FeedServer = function()
 				else {
 					self.updateWebPagesForFeedItems(
 						feed.items,
+						num_feed_items,
 						function(err, webpages) {
 							if (err) {
 								callback(err);
@@ -327,6 +330,7 @@ var FeedServer = function()
 	this.updateWebPagesForFeedItems = function(items, num_items, callback)
 	{
 		console.log('update webpages... '+num_items);
+		console.log(callback);
 		Step(
 			function getAndSaveWebPages() {
 				var group = this.group();
