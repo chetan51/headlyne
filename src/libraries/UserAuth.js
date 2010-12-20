@@ -47,9 +47,13 @@ var UserAuth = function()
 
 		if(	parseInt(session_object.created) +
 			session_object.cookie.lifetime
-			> now )
+			> now ) {
+			console.log('\tSession is valid');
 			return false;
-		else	return true;
+		} else {
+			console.log('\tSession has expired');
+			return true;
+		}
 	}
 	
 	/**
@@ -133,8 +137,10 @@ var UserAuth = function()
 	 **/
 	this.checkAuth = function(session_cookie, callback)
 	{
-		if(session_cookie == null || typeof(session_cookie.data.username) != 'undefined')
+		if(session_cookie == null || typeof(session_cookie.data.username) != 'undefined') {
 			callback(new Error('Invalid Session Cookie'));
+			return;
+		}
 
 		var username = session_cookie.data.user;
 
@@ -147,10 +153,14 @@ var UserAuth = function()
 					return;
 				}
 				// if user's cookie has expired...
-				if (	user.session == null ||
-					user.session.cookie == null ||
-					self.checkExpired(user.session)) {
-					
+				if(	user.session == null ||
+					user.session.cookie == null ) {
+
+					callback(new Error('Invalid Session Cookie'));
+					return;
+				}
+
+				if( self.checkExpired(user.session)) {	
 					// erase the session.
 					User.setSession(
 						username,
@@ -166,8 +176,8 @@ var UserAuth = function()
 				// otherwise, check if the objects match.
 				var hasher1 = crypto.createHash('sha256');
 				var hasher2 = crypto.createHash('sha256');
-				hasher1.update(session_cookie);
-				hasher2.update(user.session.cookie);
+				hasher1.update(JSON.stringify(session_cookie));
+				hasher2.update(JSON.stringify(user.session.cookie));
 				var input_cookie_hash = hasher1.digest('hex');
 				var expected_hash = hasher2.digest('hex');
 
@@ -192,7 +202,7 @@ var UserAuth = function()
 			null,
 			function(err, s)
 			{
-				callback(err, s);
+				callback(err);
 			}
 		);
 	}
