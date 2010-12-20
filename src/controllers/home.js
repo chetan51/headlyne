@@ -20,7 +20,7 @@ var HomeController = function() {
 
     this.index = function(req, res, next) {
 	Ni.library('FeedServer').getFeedTeaser(
-		'http://feeds.gawker.com/lifehacker/full',
+		'http://www.feedforall.com/sample.xml',
 		3,
 		function(err, feed) {
 			var output = "";
