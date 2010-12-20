@@ -76,6 +76,11 @@ var ServerGenerator = function() {
 							res.write(Ni.view('real_rss').template);
 							res.end();
 							break;
+						case '/lifehacker_rss':
+							res.writeHead(200, {'Content-Type': 'application/rss+xml'});
+							res.write(Ni.view('lifehacker_rss').template);
+							res.end();
+							break;
 						case '/blogpost1':
 							res.writeHead(200, {'Content-Type': 'text/html'});
 							res.write(Ni.view('blogpost1').template);
