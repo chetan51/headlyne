@@ -15,7 +15,7 @@ var http            = require('http'),
 /**
  *	Configurations
  **/
-Ni.config('log_enabled', true);
+Ni.config('log_enabled', false);
 
 /**
  *	Constants and mocks

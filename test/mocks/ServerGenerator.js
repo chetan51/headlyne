@@ -13,7 +13,7 @@ var http = require('http'),
 /**
  *	Configurations
  **/
-Ni.config('log_enabled', true);
+Ni.config('log_enabled', false);
 
 /*
  * The generator class
