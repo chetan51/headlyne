@@ -20,22 +20,22 @@ var jade = require('jade');
 
 var HomeController = function() {
 
-    this.index = function(req, res, next) {
-	Ni.library('FeedServer').getFeedTeaser(
-		'http://www.feedforall.com/sample.xml',
-		3,
-		function(err, feed) {
-			if (err) throw err;
-			
-			var html = jade.render(
-				Ni.view('feed_teaser').template,
-				{locals: feed}
-			);
-			
-			res.ok(html);
-		}
-	);
-    }
+	this.index = function(req, res, next) {
+		Ni.library('FeedServer').getFeedTeaser(
+			'http://www.feedforall.com/sample.xml',
+			3,
+			function(err, feed) {
+				if (err) throw err;
+
+				var html = jade.render(
+					Ni.view('feed_teaser').template,
+					{locals: feed}
+				);
+
+				res.ok(html);
+			}
+		);
+	}
 
 };
 
