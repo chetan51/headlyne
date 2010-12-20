@@ -12,7 +12,7 @@
 var Ni = require('ni');
 var sys = require('sys');
 var Mu = require('Mu');
-var haml = require('hamljs');
+var jade = require('jade');
 
 /*
  *  The home controller
@@ -27,7 +27,7 @@ var HomeController = function() {
 		function(err, feed) {
 			if (err) throw err;
 			
-			var html = haml.render(
+			var html = jade.render(
 				Ni.view('feed_teaser').template,
 				{locals: feed}
 			);
