@@ -61,9 +61,19 @@ var ServerGenerator = function() {
 							);
 							res.end();
 							break;
-						case '/basic_feed':
-							res.writeHead(200, {'Content-Type': 'text/html'});
+						case '/basic_xml':
+							res.writeHead(200, {'Content-Type': 'application/xml'});
 							res.write(Ni.view('basic_feed').template);
+							res.end();
+							break;
+						case '/basic_feed':
+							res.writeHead(200, {'Content-Type': 'application/rss+xml'});
+							res.write(Ni.view('basic_feed').template);
+							res.end();
+							break;
+						case '/real_rss':
+							res.writeHead(200, {'Content-Type': 'application/rss+xml'});
+							res.write(Ni.view('real_rss').template);
 							res.end();
 							break;
 						case '/blogpost1':

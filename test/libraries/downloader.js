@@ -173,6 +173,40 @@ exports['fetch URLs'] = nodeunit.testCase(
 			}
 		);
 	},
+	
+	'xml file': function(test) {
+		test.expect(1);
+		
+		Downloader.fetch(
+			base_url + "/basic_xml",
+			function(err, data) {
+				if (err) {
+					console.log(err);
+				}
+				else {
+					test.equal(typeof data, "string");
+				}
+				test.done();
+			}
+		);
+	},
+	
+	'rss feed': function(test) {
+		test.expect(1);
+		
+		Downloader.fetch(
+			base_url + "/real_rss",
+			function(err, data) {
+				if (err) {
+					console.log(err);
+				}
+				else {
+					test.equal(typeof data, "string");
+				}
+				test.done();
+			}
+		);
+	},
 
 	'live example': function(test) {
 		test.expect(1);

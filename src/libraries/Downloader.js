@@ -37,7 +37,7 @@ var Downloader = function() {
 		var options = {
 			followRedirects: false, // we implement our own redirection following, since
 			                        // Restler cannot handle infinite redirection
-			parser: null
+			parser: false
 		};
 		rest.get(url, options).addListener('complete', function(data, response) {
 			clearTimeout(timeout);
