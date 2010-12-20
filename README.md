@@ -3,7 +3,7 @@
 ## An RSS Feed 'Viewer'.
 
 ## Project Dependencies:
-*	Node.js
+*	Node.js v0.2.5
 *	Ni v0.1.0
 *	Connect
 *	Nodeunit
