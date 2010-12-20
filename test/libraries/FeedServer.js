@@ -232,6 +232,10 @@ exports['get feed teaser'] = nodeunit.testCase(
 			function(err, feed_teaser) {
 				if (err) {
 					console.log(err.message);
+					
+					// Restore FeedModel.isUpToDate
+					FeedModel.isUpToDate = isUpToDate_backup;
+					
 					test.done();
 				}
 				else {
@@ -263,13 +267,10 @@ exports['get feed teaser'] = nodeunit.testCase(
 										test.done();
 									}
 								);
-								
-								// Restore FeedModel.isUpToDate
-								FeedModel.isUpToDate = isUpToDate_backup;
 							}
-						},
-						function(err) {
-							test.done();
+					
+							// Restore FeedModel.isUpToDate
+							FeedModel.isUpToDate = isUpToDate_backup;
 						}
 					);
 				}
@@ -334,7 +335,7 @@ exports['get feed teaser urgently'] = nodeunit.testCase(
 	},
 	
 	'feed not in database': function(test) {
-		test.expect(1);
+		test.expect(11);
 		
 		FeedServer.getFeedTeaserUrgently(
 			basic_feed.url,
@@ -346,7 +347,28 @@ exports['get feed teaser urgently'] = nodeunit.testCase(
 				else {
 					test.equals(feed_teaser, null);
 				}
-				test.done();
+			},
+			function(err, feed_teaser_updated) {
+				if (err) {
+					console.log(err.message);
+				}
+				else {
+					ensureFeedTeaserIsCorrect(
+						test,
+						basic_feed,
+						feed_teaser_updated
+					);
+					ensureFeedAndItemsAreStored(
+						test,
+						basic_feed,
+						function(err) {
+							if (err) {
+								console.log(err.message);
+							}
+							test.done();
+						}
+					);
+				}
 			}
 		);
 	},
@@ -387,7 +409,7 @@ exports['get feed teaser urgently'] = nodeunit.testCase(
 	},
 
 	'feed in database and not up to date': function(test) {
-		test.expect(1);
+		test.expect(11);
 		
 		// First, we make sure the feed is in the database
 		FeedServer.getFeedTeaser(
@@ -396,6 +418,10 @@ exports['get feed teaser urgently'] = nodeunit.testCase(
 			function(err, feed_teaser) {
 				if (err) {
 					console.log(err.message);
+					
+					// Restore FeedModel.isUpToDate
+					FeedModel.isUpToDate = isUpToDate_backup;
+					
 					test.done();
 				}
 				else {
@@ -415,11 +441,32 @@ exports['get feed teaser urgently'] = nodeunit.testCase(
 							}
 							else {
 								test.equal(feed_teaser, null);
-								
-								// Restore FeedModel.isUpToDate
-								FeedModel.isUpToDate = isUpToDate_backup;
 							}
-							test.done();
+						},
+						function(err, feed_teaser_updated) {
+							if (err) {
+								console.log(err.message);
+							}
+							else {
+								ensureFeedTeaserIsCorrect(
+									test,
+									basic_feed,
+									feed_teaser_updated
+								);
+								ensureFeedAndItemsAreStored(
+									test,
+									basic_feed,
+									function(err) {
+										if (err) {
+											console.log(err.message);
+										}
+										test.done();
+									}
+								);
+							}
+							
+							// Restore FeedModel.isUpToDate
+							FeedModel.isUpToDate = isUpToDate_backup;
 						}
 					);
 				}

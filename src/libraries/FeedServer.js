@@ -37,9 +37,12 @@ var FeedServer = function()
 	 *	
 	 *		Arguments: url of feed
 	 *		           number of feed items to return
-	 *		           callback function called when complete
+	 *		           callback function called with whatever data
+	 *		           	is available
+	 *		           callback function called when completely up
+	 *		           	to date
 	 **/
-	this.getFeedTeaserUrgently = function(url, num_feed_items, callback)
+	this.getFeedTeaserUrgently = function(url, num_feed_items, callback, callback_updated)
 	{
 		FeedModel.isUpToDate(
 			url,
@@ -50,7 +53,9 @@ var FeedServer = function()
 						self.updateFeedForURL(
 							url,
 							num_feed_items,
-							function(err, feed) {}
+							function(err, feed) {
+								callback_updated(err, feed);
+							}
 						);
 					}
 					else {
@@ -70,7 +75,9 @@ var FeedServer = function()
 						self.updateFeedForURL(
 							url,
 							num_feed_items,
-							function(err, feed) {}
+							function(err, feed) {
+								callback_updated(err, feed);
+							}
 						);
 					}
 				}
