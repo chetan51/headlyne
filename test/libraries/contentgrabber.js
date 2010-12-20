@@ -15,23 +15,23 @@ var html='<html><head></head><body><div id="lol">hello</div></body></html>';
  **/
 var sampleDocument = {
 	url        : './test/mocks/mock_app/views/blogpost1.html',
-	title      : "Why Node.js Is Totally Awesome \n            \n            Chetan Surpur",
+	title      : " \n\t\t\t\n            \n                Why Node.js Is Totally Awesome | \n            \n            Chetan Surpur\n\t\t\t\n\t\t",
 	first_line : "Three reasons: speed, easability, and reusability.",
 	last_line  : "Sorry about that everyone!"
 };
 
 var sampleDocument2 = {
 	url        : './test/mocks/mock_app/views/blogpost3.html',
-	title      : "A Curious Breach Of Privacy \n            \n            Chetan Surpur",
+	title      : " \n\t\t\t\n            \n                A Curious Breach Of Privacy | \n            \n            Chetan Surpur\n\t\t\t\n\t\t",
 	first_line : "I got this email",
 	last_line  : "life will continue to be"
 };
 
 var sampleDocument3 = {
 	url        : './test/mocks/mock_app/views/webpage1.html',
-	title      : "A Curious Breach Of Privacy \n            \n            Chetan Surpur",
-	first_line : "I got this email",
-	last_line  : "life will continue to be"
+	title      : "Your Website",
+	first_line : "Create and publish your own website quickly",
+	last_line  : "For more information about the Apache web server"
 };
 
 /**

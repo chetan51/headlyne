@@ -2,6 +2,7 @@
 var jsdom       = require('jsdom');
 var path        = require('path');
 var Worker      = require('webworker').Worker;
+var Readability = require('readability');
 
 /**
  * ContentGrabber: given a URL, fetch *only* the text
@@ -19,27 +20,18 @@ var ContentGrabber = function()
 
 	this.readable = function(html, callback)
 	{
-		var w = new Worker(path.join(__dirname, 'ReadabilityWorker.js'));
-
-		w.onmessage = function(message)
-		{
-			if (message.data.title && message.data.content) {
-				callback(null, message.data.title, message.data.content);
+		Readability.parse(
+			html,
+			"",
+			function (result) {
+				if (result.err) {
+					callback(result.err);
+				}
+				else {
+					callback(null, result.title, result.content);
+				}
 			}
-			else if (message.data.error) {
-				callback(new Error("Unable to grab content from document. Error: " + message.data.error));
-			}
-			else {
-				callback(new Error("Something went horribly wrong."));
-			}
-			
-			w.terminate();
-		};
-
-		w.postMessage({
-			command : 'grabContent',
-			html    : html
-		});
+		);
 	};
 
 	this.snip = function(fulltext)
