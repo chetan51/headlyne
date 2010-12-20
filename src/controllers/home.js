@@ -25,12 +25,9 @@ var HomeController = function() {
 		function(err, feed) {
 			var output = "";
 			
-			output += "<h1>" + feed.title + "</h1>";
-		
 			for (var i in feed.items) {
 				var item = feed.items[i];
 				
-				output += "<h2>" + item.title + "</h2>";
 				if (item.webpage) {
 					output += "<div>" + item.webpage.body + "</div>";
 				}
