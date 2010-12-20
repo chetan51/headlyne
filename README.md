@@ -16,7 +16,7 @@
 *	conductor v0.2.0
 *	mongodb v0.8.0
 *	restler v1.0.0
-*	webworker v0.8.2
+*	[htmlparser](https://github.com/tautologistics/node-htmlparser) v1.7.3
 
 ## Infrastructure:
 *	app.js                : The driver for the webserver.
