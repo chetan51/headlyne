@@ -19,36 +19,44 @@ var SignupController = function()
 	this.index = function(req, res, next)
 	{
 		var params = url.parse(req.url, true).query;
-		if(params.username == null || params.password == null) {
-			res.error('You must provide both a Username and Password');
+		if(	typeof(params) == 'undefined' ||
+			params['username'] == 'undefined' ||
+			params['password'] == 'undefined' ) {
+			
+			var signup_form = Ni.view('signup').template;
+			res.ok(signup_form);
 		} else {
+			var	username = params.username,
+				password = params.password,
+				fname    = 'anonymous',
+				lname    = 'entity',
+				email_id = 'addressless';
+
+			if( params['first_name'] != 'undefined') fname = params.first_name;
+			if( params['last_name' ] != 'undefined') lname = params.last_name;
+			if( params['email_id'  ] != 'undefined') email_id = params.email_id;
+
 			Ni.model('User').save(
-				params.username,
-				params.password,
-				'fname',
-				'lname',
-				'eid',
+				username,
+				password,
+				fname,
+				lname,
+				email_id,
 				function(err, user)
 				{
 					if(err != null) {
-						if( err.message == 'No such User' ||
-						    err.message == 'Invalid Password' )
-						{
-							res.error('Invalid Username or Password');
-							return;
-						} else {
-							res.error('Uh oh, something went wrong. '+
-								'Please try again later');
-						}
+						res.error('Uh oh, something went wrong: '+err.message);
 					} else {
-						// no errors -- attach the cookie, direct to
-						// home page, and get moving.
+						// new user created. redirect to login.
 
 						res.writeHead( 302, [
-							['Location', '/login'],
+							['Location', 
+								'/login?'+
+								'username='+username+
+								'password='+password
+							],
 						]);
 						res.end();
-
 					}
 				}
 			);
