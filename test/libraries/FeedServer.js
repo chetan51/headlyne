@@ -32,14 +32,14 @@ var basic_feed = {
 			link    : "http://localhost:7500/blogpost1",
 			title   : "Item 1 Title",
 			webpage : {
-				title: " \n\t\t\t\n            \n                Why Node.js Is Totally Awesome | \n            \n            Chetan Surpur\n\t\t\t\n\t\t"
+				title: "Why Node.js Is Totally Awesome \n            \n            Chetan Surpur"
 			}
 		},
 		{
 			link    : "http://localhost:7500/blogpost2",
 			title   : "Item 2 Title",
 			webpage : {
-				title: " \n\t\t\t\n            \n                Life Hack - The 30/30 Minute Work Cycle Feels Like Magic | \n            \n            Chetan Surpur\n\t\t\t\n\t\t"
+				title: "Life Hack - The 30/30 Minute Work Cycle Feels Like Magic \n            \n            Chetan Surpur"
 			}
 		}
 	]
