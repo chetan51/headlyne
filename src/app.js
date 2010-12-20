@@ -18,34 +18,91 @@ var Connect = require('connect'),
     Quip = require('quip'),
     Ni = require('ni');
 
+/**
+ * Constants
+ **/
+var db_name = 'headlyne',
+    db_addr = '127.0.0.1',
+    db_port = 27017,
+    db_user = 'username',
+    db_pass = 'password';
+
 /*
  *  Load Ni and start the server.
  */
 
-Ni.config('root', __dirname);   // Tells Ni where to look for the folders
+Ni.config('root', __dirname);
 
-Ni.boot(function() {                // Boots Ni and loads everything
-    
-    var app = Connect.createServer(     // Create server when Ni is finished
-                                        // booting
-                                         
-        Quip(),                             // Helps in sending HTTP responses
-        
-        Ni.router,                          // The Ni router automatically
-                                            // directs requests based on URL
-                                            // segments to the appropriate
-                                            // controller functions
-                                             
-        function (req, res, next) {         // Called if no controller /
-                                            // function for the URL given is
-                                            // found
-            res.notFound('Page not found.');
+Ni.config('http_timeout',       30000);
+Ni.config('feedparse_timeout',  5000);
+Ni.config('feed_expiry_length', 30 * 60 * 1000);
+Ni.config('max_redirect',       5);
 
-        }
-    );
-    
-    app.listen(3000);
+Ni.boot(function() {
+	Ni.library('DatabaseDriver').init(
+		db_name,
+		db_addr,
+		db_port,
+		db_user,
+		db_pass,
+		function(err) {
 
-    console.log('Application server started on port 3000');
+			/*
+			Ni.library('DatabaseDriver').getCollection(
+				'feeds',
+				function(err, collection)
+				{
+					if (err) {
+						throw err;
+					}
+					else {
+						collection.remove(
+							function(err, doc)
+							{
+								if(err != null)
+									throw err;
+								else {
+								}
+							}
+						);
+					}
+				}
+			);
+			
+			Ni.library('DatabaseDriver').getCollection(
+				'webpages',
+				function(err, collection)
+				{
+					if (err) {
+						throw err;
+					}
+					else {
+						collection.remove(
+							function(err, doc)
+							{
+								if(err != null)
+									throw err;
+								else {
+								}
+							}
+						);
+					}
+				}
+			);
+			*/
+			
+			if (err) throw err;
+			
+			var app = Connect.createServer(
+				Quip(),               
+				Ni.router,
+				function (req, res, next) {
+					res.notFound('Page not found.');
+				}
+			);
 
+			app.listen(3000);
+			console.log('Application server started on port 3000');
+		}
+	);
 });

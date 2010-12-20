@@ -10,6 +10,7 @@
  */
 
 var Ni = require('ni');
+var sys = require('sys');
 
 /*
  *  The home controller
@@ -19,13 +20,12 @@ var HomeController = function() {
 
     this.index = function(req, res, next) {
 	Ni.library('FeedServer').getFeedTeaser(
-		'http://feeds.gawker.com/lifehacker/full',
+		'http://lifehacker.com/index.xml',
+		3,
 		function(err, feed) {
-			console.log(err);
-			console.log(feed);
+			res.ok("Feed:\n\n" + sys.inspect(feed));
 		}
 	);
-	res.ok("Hello world!");
     }
 
 };
