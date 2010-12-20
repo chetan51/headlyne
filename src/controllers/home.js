@@ -20,10 +20,23 @@ var HomeController = function() {
 
     this.index = function(req, res, next) {
 	Ni.library('FeedServer').getFeedTeaser(
-		'http://lifehacker.com/index.xml',
+		'http://feeds.gawker.com/lifehacker/full',
 		3,
 		function(err, feed) {
-			res.ok("Feed:\n\n" + sys.inspect(feed));
+			var output = "";
+			
+			output += "<h1>" + feed.title + "</h1>";
+		
+			for (var i in feed.items) {
+				var item = feed.items[i];
+				
+				output += "<h2>" + item.title + "</h2>";
+				if (item.webpage) {
+					output += "<div>" + item.webpage.body + "</div>";
+				}
+			}
+			
+			res.ok(output);
 		}
 	);
     }
