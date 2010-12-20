@@ -14,7 +14,14 @@ var Downloader     = require('./Downloader.js'),
     FeedModel      = require('../models/Feed.js'),
     WebPageModel   = require('../models/WebPage.js'),
     Step           = require('step'),
-    Conduct        = require('conductor');
+    Conduct        = require('conductor'),
+    Ni             = require('ni'),
+    dbg            = require('../../src/libraries/Debugger.js');
+
+/**
+ *	Configurations
+ **/
+Ni.config('log_enabled', false);
 
 /**
  *	The FeedServer library
@@ -37,9 +44,12 @@ var FeedServer = function()
 	 *	
 	 *		Arguments: url of feed
 	 *		           number of feed items to return
-	 *		           callback function called when complete
+	 *		           callback function called with whatever data
+	 *		           	is available
+	 *		           callback function called when completely up
+	 *		           	to date
 	 **/
-	this.getFeedTeaserUrgently = function(url, num_feed_items, callback)
+	this.getFeedTeaserUrgently = function(url, num_feed_items, callback, callback_updated)
 	{
 		FeedModel.isUpToDate(
 			url,
@@ -50,7 +60,9 @@ var FeedServer = function()
 						self.updateFeedForURL(
 							url,
 							num_feed_items,
-							function(err, feed) {}
+							function(err, feed) {
+								callback_updated(err, feed);
+							}
 						);
 					}
 					else {
@@ -61,6 +73,7 @@ var FeedServer = function()
 					if (result) {
 						self.getFeedTeaserFromDatabase(
 							url,
+							num_feed_items,
 							callback
 						);
 					}
@@ -69,7 +82,9 @@ var FeedServer = function()
 						self.updateFeedForURL(
 							url,
 							num_feed_items,
-							function(err, feed) {}
+							function(err, feed) {
+								callback_updated(err, feed);
+							}
 						);
 					}
 				}
@@ -96,6 +111,7 @@ var FeedServer = function()
 		FeedModel.isUpToDate(
 			url,
 			function(err, result) {
+				dbg.log('feed model responded');
 				if (err) {
 					if (err.message == "No such feed") {
 						self.updateFeedForURL(
@@ -116,21 +132,26 @@ var FeedServer = function()
 					}
 				}
 				else {
+					dbg.log('feed up to date');
 					if (result) {
 						self.getFeedTeaserFromDatabase(
 							url,
+							num_feed_items,
 							callback
 						);
 					}
 					else {
+						dbg.log('updating feed for URL');
 						self.updateFeedForURL(
 							url,
 							num_feed_items,
 							function(err, feed) {
 								if (err) {
+									dbg.log('callback err');
 									callback(err);
 								}
 								else {
+									dbg.log('callback feed');
 									callback(null, feed);
 								}
 							}
@@ -147,7 +168,7 @@ var FeedServer = function()
 	 *		Arguments: url of feed
 	 *		           callback function called with feed teaser when complete
 	 **/
-	this.getFeedTeaserFromDatabase = function(url, callback)
+	this.getFeedTeaserFromDatabase = function(url, num_feed_items, callback)
 	{
 		FeedModel.get(
 			url,
@@ -158,6 +179,7 @@ var FeedServer = function()
 				else {
 					self.updateWebPagesForFeedItems(
 						feed.items,
+						num_feed_items,
 						function(err, webpages) {
 							if (err) {
 								callback(err);
@@ -242,6 +264,7 @@ var FeedServer = function()
 				
 				self.updateWebPagesForFeedItems(
 					feed.items,
+					num_feed_items,
 					step.parallel()
 				);
 			},
@@ -318,21 +341,29 @@ var FeedServer = function()
 	 *		           callback function called with saved
 	 *		               web pages when complete
 	 **/
-	this.updateWebPagesForFeedItems = function(items, callback)
+	this.updateWebPagesForFeedItems = function(items, num_items, callback)
 	{
+		dbg.log('update webpages... '+num_items);
+		dbg.log(callback);
 		Step(
 			function getAndSaveWebPages() {
 				var group = this.group();
+				var total_items = 0;
 				items.forEach(
 					function(item) {
-						self.getWebPageForFeedItem(
-							item,
-							group()
-						);
+						if (total_items < num_items) {
+							dbg.log('updating '+item);
+							self.getWebPageForFeedItem(
+								item,
+								group()
+							);
+							total_items++;
+						}
 					}
 				);
 			},
 			function done(err, saved_webpages) {
+				dbg.log('saved pages'+err+'|'+saved_webpages);
 				if (err) {
 					callback(err);
 				}
@@ -358,16 +389,19 @@ var FeedServer = function()
 			function(err, webpage) {
 				if (err) {
 					if (err.message == "No such WebPage") {
+						dbg.log('retrying...');
 						self.fetchWebPageForFeedItem(
 							item,
 							callback
 						);
 					}
 					else {
+						dbg.log('error: '+err.message);
 						callback(err);
 					}
 				}
 				else {
+					dbg.log('got page');
 					callback(null, webpage);
 				}
 			}
@@ -424,7 +458,7 @@ var FeedServer = function()
 		feed.items = items;
 		for (var i in items) {
 			for (var j in webpages) {
-				if (feed.items[i].link == webpages[j].url) {
+				if (webpages[j] && feed.items[i].link == webpages[j].url) {
 					feed.items[i].webpage = webpages[j];
 				}
 			}

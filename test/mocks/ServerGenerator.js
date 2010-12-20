@@ -6,8 +6,14 @@
  * Module dependencies
  */
 var http = require('http'),
-    url = require('url'),
-    Ni = require('ni');
+    url  = require('url'),
+    Ni   = require('ni'),
+    dbg  = require('../../src/libraries/Debugger.js');
+
+/**
+ *	Configurations
+ **/
+Ni.config('log_enabled', false);
 
 /*
  * The generator class
@@ -17,10 +23,14 @@ var ServerGenerator = function() {
 	this.createServer = function(host, port, callback)
 	{
 		Ni.config('root', __dirname + "/mock_app");
+		
+		dbg.log('createServer called');
 
 		Ni.boot(function() {
+			dbg.log('boot called');
 			var serv = http.createServer(
 				function (req, res) {
+					dbg.log('creating server');
 					var parsed_url = url.parse(req.url, true);
 			
 					switch(parsed_url.pathname) {
@@ -71,16 +81,19 @@ var ServerGenerator = function() {
 							res.end();
 							break;
 					}
+					dbg.log('served request '+req.url);
 				}
 			);
-			
+			dbg.log('setting up listening');
 			serv.listen(port, host, function() {
+				dbg.log('listening');
 				callback(null, serv);   
 			});
 		});
 	}
 
 	this.closeServer = function(serv, callback) {
+		dbg.log('closing server');
 		serv.on('close', function(){ callback(null); });
 		serv.close();
 	}
