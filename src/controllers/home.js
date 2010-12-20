@@ -32,6 +32,7 @@ var HomeController = function() {
 				
 				output += "<h2>" + item.title + "</h2>";
 				if (item.webpage) {
+					output += "<h3>" + item.webpage.title + "</h3>";
 					output += "<div>" + item.webpage.body + "</div>";
 				}
 			}
