@@ -12,7 +12,9 @@ var Debugger = function() {
 	
 	this.log = function log(message)
 	{
-		console.log(message);
+		if (Ni.config('log_enabled')) {
+			console.log(message);
+		}
 	}
 };
 
