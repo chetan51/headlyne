@@ -11,6 +11,8 @@
 
 var Ni = require('ni');
 var sys = require('sys');
+var Mu = require('Mu');
+var haml = require('hamljs');
 
 /*
  *  The home controller
@@ -25,22 +27,13 @@ var HomeController = function()
 			3,
 			function(err, feed)
 			{
-				var output = "";
+				if (err) throw err;
+				var html = haml.render(
+					Ni.view('feed_teaser').template,
+					{locals: feed}
+				);
 				
-				output += "<h1>" + feed.title + "</h1>";
-			
-				for (var i in feed.items)
-				{
-					var item = feed.items[i];
-					
-					output += "<h2>" + item.title + "</h2>";
-					if (item.webpage) {
-						output += "<h3>" + item.webpage.title + "</h3>";
-						output += "<div>" + item.webpage.body + "</div>";
-					}
-				}
-				
-				res.ok(output);
+				res.ok(html);
 			}
 		);
 	}
