@@ -173,6 +173,23 @@ exports['fetch URLs'] = nodeunit.testCase(
 			}
 		);
 	},
+	
+	'rss feed': function(test) {
+		test.expect(1);
+		
+		Downloader.fetch(
+			base_url + "/basic_feed",
+			function(err, data) {
+				if (err) {
+					console.log(err);
+				}
+				else {
+					test.equal(typeof data, "string");
+				}
+				test.done();
+			}
+		);
+	},
 
 	'live example': function(test) {
 		test.expect(1);
