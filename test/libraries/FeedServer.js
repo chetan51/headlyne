@@ -59,7 +59,7 @@ function ensureFeedTeaserIsCorrect(test, test_feed, feed_teaser)
 			}
 		}
 	}
-	console.log('ensured teaser correct');
+	dbg.log('ensured teaser correct');
 }
 function ensureFeedAndItemsAreStored(test, test_feed, callback)
 {
@@ -67,7 +67,7 @@ function ensureFeedAndItemsAreStored(test, test_feed, callback)
 		test_feed.url,
 		function(err, feed) {
 			if (err) {
-				console.log('error '+err.message);
+				dbg.log('error '+err.message);
 				callback(err);
 			}
 			else {
@@ -87,7 +87,7 @@ function ensureFeedAndItemsAreStored(test, test_feed, callback)
 						
 						test_feed.items.forEach(
 							function(item) {
-								console.log('ensuring page stored...');
+								dbg.log('ensuring page stored...');
 								ensureWebPageIsStored(
 									test,
 									item,
@@ -97,7 +97,7 @@ function ensureFeedAndItemsAreStored(test, test_feed, callback)
 						);
 					},
 					function done(err) {
-						console.log('going out of ensureFeed&Items');
+						dbg.log('going out of ensureFeed&Items');
 						if (err) {
 							dbg.log(err);
 						}
@@ -161,7 +161,7 @@ exports['get feed teaser'] = nodeunit.testCase(
 	},
 	 
 	tearDown: function(callback) {
-		console.log('start teardown');
+		dbg.log('start teardown');
 		Step(
 			function closeServerAndDatabase() {
 				var step = this;
@@ -206,7 +206,7 @@ exports['get feed teaser'] = nodeunit.testCase(
 			basic_feed.url,
 			10,
 			function(err, feed_teaser) {
-				console.log('got feed teaser');
+				dbg.log('got feed teaser');
 				if (err) {
 					dbg.log(err.message);
 					test.done();
@@ -356,7 +356,7 @@ exports['get feed teaser urgently'] = nodeunit.testCase(
 			},
 			function(err, feed_teaser_updated) {
 				if (err) {
-					console.log(err.message);
+					dbg.log(err.message);
 				}
 				else {
 					ensureFeedTeaserIsCorrect(
@@ -369,7 +369,7 @@ exports['get feed teaser urgently'] = nodeunit.testCase(
 						basic_feed,
 						function(err) {
 							if (err) {
-								console.log(err.message);
+								dbg.log(err.message);
 							}
 							test.done();
 						}
@@ -451,7 +451,7 @@ exports['get feed teaser urgently'] = nodeunit.testCase(
 						},
 						function(err, feed_teaser_updated) {
 							if (err) {
-								console.log(err.message);
+								dbg.log(err.message);
 							}
 							else {
 								ensureFeedTeaserIsCorrect(
@@ -464,7 +464,7 @@ exports['get feed teaser urgently'] = nodeunit.testCase(
 									basic_feed,
 									function(err) {
 										if (err) {
-											console.log(err.message);
+											dbg.log(err.message);
 										}
 										test.done();
 									}

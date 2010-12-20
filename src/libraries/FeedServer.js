@@ -14,7 +14,14 @@ var Downloader     = require('./Downloader.js'),
     FeedModel      = require('../models/Feed.js'),
     WebPageModel   = require('../models/WebPage.js'),
     Step           = require('step'),
-    Conduct        = require('conductor');
+    Conduct        = require('conductor'),
+    Ni             = require('ni'),
+    dbg            = require('../../src/libraries/Debugger.js');
+
+/**
+ *	Configurations
+ **/
+Ni.config('log_enabled', false);
 
 /**
  *	The FeedServer library
@@ -104,7 +111,7 @@ var FeedServer = function()
 		FeedModel.isUpToDate(
 			url,
 			function(err, result) {
-				console.log('feed model responded');
+				dbg.log('feed model responded');
 				if (err) {
 					if (err.message == "No such feed") {
 						self.updateFeedForURL(
@@ -125,7 +132,7 @@ var FeedServer = function()
 					}
 				}
 				else {
-					console.log('feed up to date');
+					dbg.log('feed up to date');
 					if (result) {
 						self.getFeedTeaserFromDatabase(
 							url,
@@ -134,17 +141,17 @@ var FeedServer = function()
 						);
 					}
 					else {
-						console.log('updating feed for URL');
+						dbg.log('updating feed for URL');
 						self.updateFeedForURL(
 							url,
 							num_feed_items,
 							function(err, feed) {
 								if (err) {
-									console.log('callback err');
+									dbg.log('callback err');
 									callback(err);
 								}
 								else {
-									console.log('callback feed');
+									dbg.log('callback feed');
 									callback(null, feed);
 								}
 							}
@@ -336,8 +343,8 @@ var FeedServer = function()
 	 **/
 	this.updateWebPagesForFeedItems = function(items, num_items, callback)
 	{
-		console.log('update webpages... '+num_items);
-		console.log(callback);
+		dbg.log('update webpages... '+num_items);
+		dbg.log(callback);
 		Step(
 			function getAndSaveWebPages() {
 				var group = this.group();
@@ -345,7 +352,7 @@ var FeedServer = function()
 				items.forEach(
 					function(item) {
 						if (total_items < num_items) {
-							console.log('updating '+item);
+							dbg.log('updating '+item);
 							self.getWebPageForFeedItem(
 								item,
 								group()
@@ -356,7 +363,7 @@ var FeedServer = function()
 				);
 			},
 			function done(err, saved_webpages) {
-				console.log('saved pages'+err+'|'+saved_webpages);
+				dbg.log('saved pages'+err+'|'+saved_webpages);
 				if (err) {
 					callback(err);
 				}
@@ -382,19 +389,19 @@ var FeedServer = function()
 			function(err, webpage) {
 				if (err) {
 					if (err.message == "No such WebPage") {
-						console.log('retrying...');
+						dbg.log('retrying...');
 						self.fetchWebPageForFeedItem(
 							item,
 							callback
 						);
 					}
 					else {
-						console.log('error: '+err.message);
+						dbg.log('error: '+err.message);
 						callback(err);
 					}
 				}
 				else {
-					console.log('got page');
+					dbg.log('got page');
 					callback(null, webpage);
 				}
 			}

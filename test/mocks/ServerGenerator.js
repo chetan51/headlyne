@@ -81,7 +81,7 @@ var ServerGenerator = function() {
 							res.end();
 							break;
 					}
-					console.log('served request '+req.url);
+					dbg.log('served request '+req.url);
 				}
 			);
 			dbg.log('setting up listening');
