@@ -9,7 +9,13 @@ var http            = require('http'),
     DatabaseFaker   = require('../mocks/DatabaseFaker.js'),
     FeedModel       = require('../../src/models/Feed.js'),
     WebPageModel    = require('../../src/models/WebPage.js'),
-    FeedServer      = require('../../src/libraries/FeedServer.js');
+    FeedServer      = require('../../src/libraries/FeedServer.js'),
+    dbg             = require('../../src/libraries/Debugger.js');
+
+/**
+ *	Configurations
+ **/
+Ni.config('log_enabled', true);
 
 /**
  *	Constants and mocks
@@ -90,7 +96,7 @@ function ensureFeedAndItemsAreStored(test, test_feed, callback)
 					},
 					function done(err) {
 						if (err) {
-							console.log(err);
+							dbg.log(err);
 						}
 						test.done();
 					}
@@ -121,7 +127,7 @@ exports['get feed teaser'] = nodeunit.testCase(
 {
 	
 	setUp: function(callback) {
-		console.log('setup called');
+		dbg.log('setup called');
 		Step(
 			function mockServerAndDatabase() {
 				var step = this;
@@ -140,7 +146,7 @@ exports['get feed teaser'] = nodeunit.testCase(
 			function done(err, server) {
 				if (err) throw err;
 				mock_server = server;
-				console.log("done: "+mock_server);
+				dbg.log("done: "+mock_server);
 				callback();
 			}
 		);
@@ -155,7 +161,7 @@ exports['get feed teaser'] = nodeunit.testCase(
 		Step(
 			function closeServerAndDatabase() {
 				var step = this;
-				console.log('teardown: '+mock_server);
+				dbg.log('teardown: '+mock_server);
 				ServerGenerator.closeServer(
 					mock_server,
 					step.parallel()
@@ -180,9 +186,9 @@ exports['get feed teaser'] = nodeunit.testCase(
 			"http://www.feedforall.com/sample.xml",
 			10,
 			function(err, feed_teaser) {
-				console.log(err);
-				console.log(feed_teaser);
-				console.log(feed_teaser.items[0].webpage);
+				dbg.log(err);
+				dbg.log(feed_teaser);
+				dbg.log(feed_teaser.items[0].webpage);
 				test.ok(1);
 				test.done();
 			}
@@ -197,7 +203,7 @@ exports['get feed teaser'] = nodeunit.testCase(
 			10,
 			function(err, feed_teaser) {
 				if (err) {
-					console.log(err.message);
+					dbg.log(err.message);
 					test.done();
 				}
 				else {
@@ -207,7 +213,7 @@ exports['get feed teaser'] = nodeunit.testCase(
 						basic_feed,
 						function(err) {
 							if (err) {
-								console.log(err.message);
+								dbg.log(err.message);
 							}
 							test.done();
 						}
@@ -226,7 +232,7 @@ exports['get feed teaser'] = nodeunit.testCase(
 			10,
 			function(err, feed_teaser) {
 				if (err) {
-					console.log(err.message);
+					dbg.log(err.message);
 					test.done();
 				}
 				else {
@@ -242,7 +248,7 @@ exports['get feed teaser'] = nodeunit.testCase(
 						10,
 						function(err, feed_teaser) {
 							if (err) {
-								console.log(err.message);
+								dbg.log(err.message);
 								test.done();
 							}
 							else {
@@ -252,7 +258,7 @@ exports['get feed teaser'] = nodeunit.testCase(
 									basic_feed,
 									function(err) {
 										if (err) {
-											console.log(err.message);
+											dbg.log(err.message);
 											test.done();
 										}
 										test.done();
@@ -336,7 +342,7 @@ exports['get feed teaser urgently'] = nodeunit.testCase(
 			10,
 			function(err, feed_teaser) {
 				if (err) {
-					console.log(err.message);
+					dbg.log(err.message);
 				}
 				else {
 					test.equals(feed_teaser, null);
@@ -355,7 +361,7 @@ exports['get feed teaser urgently'] = nodeunit.testCase(
 			10,
 			function(err, feed_teaser) {
 				if (err) {
-					console.log(err.message);
+					dbg.log(err.message);
 					test.done();
 				}
 				else {
@@ -365,7 +371,7 @@ exports['get feed teaser urgently'] = nodeunit.testCase(
 						10,
 						function(err, feed_teaser) {
 							if (err) {
-								console.log(err.message);
+								dbg.log(err.message);
 							}
 							else {
 								ensureFeedTeaserIsCorrect(test, basic_feed, feed_teaser);
@@ -390,7 +396,7 @@ exports['get feed teaser urgently'] = nodeunit.testCase(
 			10,
 			function(err, feed_teaser) {
 				if (err) {
-					console.log(err.message);
+					dbg.log(err.message);
 					test.done();
 				}
 				else {
@@ -406,7 +412,7 @@ exports['get feed teaser urgently'] = nodeunit.testCase(
 						10,
 						function(err, feed_teaser) {
 							if (err) {
-								console.log(err.message);
+								dbg.log(err.message);
 							}
 							else {
 								test.equal(feed_teaser, null);
