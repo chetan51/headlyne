@@ -16,32 +16,34 @@ var sys = require('sys');
  *  The home controller
  */
 
-var HomeController = function() {
-
-    this.index = function(req, res, next) {
-	Ni.library('FeedServer').getFeedTeaser(
-		'http://www.feedforall.com/sample.xml',
-		3,
-		function(err, feed) {
-			var output = "";
-			
-			output += "<h1>" + feed.title + "</h1>";
-		
-			for (var i in feed.items) {
-				var item = feed.items[i];
+var HomeController = function()
+{
+	this.index = function(req, res, next)
+	{
+		Ni.library('FeedServer').getFeedTeaser(
+			'http://www.feedforall.com/sample.xml',
+			3,
+			function(err, feed)
+			{
+				var output = "";
 				
-				output += "<h2>" + item.title + "</h2>";
-				if (item.webpage) {
-					output += "<h3>" + item.webpage.title + "</h3>";
-					output += "<div>" + item.webpage.body + "</div>";
-				}
-			}
+				output += "<h1>" + feed.title + "</h1>";
 			
-			res.ok(output);
-		}
-	);
-    }
-
+				for (var i in feed.items)
+				{
+					var item = feed.items[i];
+					
+					output += "<h2>" + item.title + "</h2>";
+					if (item.webpage) {
+						output += "<h3>" + item.webpage.title + "</h3>";
+						output += "<div>" + item.webpage.body + "</div>";
+					}
+				}
+				
+				res.ok(output);
+			}
+		);
+	}
 };
 
 /*
