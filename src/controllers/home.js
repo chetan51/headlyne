@@ -11,8 +11,9 @@
 
 var Ni = require('ni');
 var sys = require('sys');
-var Mu = require('Mu');
+var Mu = require('mu');
 var haml = require('hamljs');
+var Connect = require('connect');
 
 /*
  *  The home controller
@@ -22,6 +23,19 @@ var HomeController = function()
 {
 	this.index = function(req, res, next)
 	{
+		var cookie = JSON.parse(req.headers.cookie).cookie;
+		console.log(cookie);
+		Ni.library('UserAuth').checkAuth(
+			cookie,
+			function(err, is_valid)
+			{
+				if(err) throw err;
+				if(!is_valid) {
+					res.writeHeader(); // redirect to login page.
+					res.end();
+				} else {
+
+
 		Ni.library('FeedServer').getFeedTeaser(
 			'http://www.feedforall.com/sample.xml',
 			3,
@@ -35,6 +49,12 @@ var HomeController = function()
 				
 				res.ok(html);
 			}
+		);
+
+
+				}
+			}
+
 		);
 	}
 };

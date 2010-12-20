@@ -52,7 +52,10 @@ var LoginController = function()
 
 						res.writeHead( 302, [
 							['Location', '/'],
-							['Set-Cookie', JSON.stringify(cookie)]
+							['Set-Cookie', 
+								JSON.stringify(cookie)+';'+
+								'path=/;'
+							]
 						]);
 						res.end();
 
