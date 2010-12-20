@@ -10,9 +10,17 @@
 	<item>
 		<title>Item 1 Title</title>
 		<description>Here is some text containing an interesting description of the thing to be described.</description>
-		<link>http://www.wikipedia.org/</link>
+		<link>http://localhost:7500/blogpost1</link>
 		<guid>unique string per item</guid>
 		<pubDate>Mon, 06 Sep 2009 16:45:00 +0000 </pubDate>
+	</item>
+	
+	<item>
+		<title>Item 2 Title</title>
+		<description>More description.</description>
+		<link>http://localhost:7500/blogpost2</link>
+		<guid>another guid</guid>
+		<pubDate>Wed, 08 Sep 2009 16:45:00 +0000 </pubDate>
 	</item>
  
 </channel>

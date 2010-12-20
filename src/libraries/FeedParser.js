@@ -17,14 +17,19 @@ var FeedParser = function()
 	/**
 	 * parse(rss, callback):
 	 * Parses a string in 'rss' into a set of objects.
-	 * Callback = function(channelinfo, items, type, version):
-	 * channelinfo: array of [key, value] pairs.
-	 * keys: title, link, and description.
-	 *
-	 * items: array of the items from the feed.
-	 *         Each item has an array of [key, value] pairs.
-	 *         keys: title, link, and description.
-	 *
+	 * Callback = function(err, feed):
+	 * feed: {
+	 * 	title,
+	 * 	link,
+	 * 	description,
+	 * 	items: [
+	 * 		{
+	 * 			title,
+	 * 			link,
+	 * 			description
+	 * 		}
+	 * 	]
+	 * 	
 	 * Parse supports Atom's 'html' and 'xhtml' types,
 	 * adding the internal XML as a string content.
 	 *
@@ -32,26 +37,10 @@ var FeedParser = function()
 	 * Version: 0 if the version cannot be detected. Otherwise the version number.
 	 **/
 	
-	/**
-	 * Example Usage:
-	 * FeedParser.parse(string,
-	 *      function(channelinfo, items, type, version)
-	 *      {
-	 *      	for(i in channelinfo)
-	 *      		console.log(channelinfo[i][0] + channelinfo[i][1]);
-	 *      	for(i in items)
-	 *      	{
-	 *      		for(j in items[i])
-	 *      			console.log(items[i][j][0] + items[i][j][1]);
-	 *      	}
-	 *      }
-	 * );
-	 **/
-
 	this.parse = function(rss, callback)
 	{
+		var feed = {};          // the feed item to be returned via the callback.
 		var items=[];           // the items returned via the callback.
-		var channelinfo=[];     // the channel information returned via the callback.
 		
 		var cur_item=0;         // the number of the current item.
 		var type='';            // type of feed: rss or atom.
@@ -85,16 +74,15 @@ var FeedParser = function()
 					tagstack.push('root');
 					pureswitch=0;
 					rellink=false;
-					items[0] = [];
 				}
 			);
 
 			cb.onEndDocument(
 				function() {
 					if(!result) {
-						items.pop();
 						result=true;
-						callback(null, channelinfo, items, type, version);
+						feed.items = items;
+						callback(null, feed);
 					}
 				}
 			);
@@ -233,20 +221,20 @@ var FeedParser = function()
 				switch(elem.toLowerCase())
 				{
 					case 'title':
-						channelinfo.push(['title', content]);
+						feed.title = content;
 						break;
 					case 'link':
 						if(type=='atom') {
 							if(rellink==true) {
-								channelinfo.push(['link',content]);
+								feed.link = content;
 								rellink=false;
 							}
-						} else	channelinfo.push(['link',content]);
-						
+						} else {
+							feed.link = content;
+						}
 						break;
 					case 'description':
-					case 'subtitle':
-						channelinfo.push(['description',content]);
+						feed.description = content;
 						break;
 				}
 			}
@@ -259,22 +247,27 @@ var FeedParser = function()
 			 **/
 			function saveItemInfo(elem)
 			{
+				if (!items[cur_item]) {
+					items[cur_item] = {};
+				}
+				
 				switch(elem.toLowerCase())
 				{
 					case 'title':
-						items[cur_item].push(['title',content]);
+						items[cur_item].title = content;
 						break;
 					case 'link':
 						if(type=='atom') {
 							if(rellink==true) {
-								items[cur_item].push(['link',content]);
+								items[cur_item].link = content;
 								rellink=false;
 							}
-						} else	items[cur_item].push(['link',content]);
+						} else	{
+							items[cur_item].link = content;
+						}
 						break;
-					case 'content':
 					case 'description':
-						items[cur_item].push(['description',content]);
+						items[cur_item].description = content;
 						break;
 				}
 			}
@@ -329,7 +322,7 @@ var FeedParser = function()
 						// if we are closing an item/entry, increment counter.
 						if(  elem.toLowerCase() == 'item' ||
 						     elem.toLowerCase() == 'entry') {
-							cur_item++; items[cur_item]=[];
+							cur_item++;
 						}
 						content='';
 					}

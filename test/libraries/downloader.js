@@ -47,7 +47,6 @@ exports['fetch URLs'] = nodeunit.testCase(
 	},
 
 	'ok': function(test) {
-		
 		test.expect(1);
 		
 		Downloader.fetch(base_url + '/ok',
@@ -148,7 +147,6 @@ exports['fetch URLs'] = nodeunit.testCase(
 	},
 
 	'endless redirects': function(test) {
-		
 		test.expect(1);
 		
 		Downloader.fetch(
@@ -156,6 +154,37 @@ exports['fetch URLs'] = nodeunit.testCase(
 			function(err, str) {
 				if (err) {
 					test.equal(err.message, 'Endless redirection.');
+				}
+				test.done();
+			}
+		);
+	},
+	
+	'empty URL': function(test) {
+		test.expect(1);
+		
+		Downloader.fetch(
+			'',
+			function(err, str) {
+				if (err) {
+					test.equal(err.message, 'Invalid URL.');
+				}
+				test.done();
+			}
+		);
+	},
+
+	'live example': function(test) {
+		test.expect(1);
+		
+		Downloader.fetch(
+			"http://google.com/",
+			function(err, str) {
+				if (err) {
+					console.log(err);
+				}
+				else {
+					test.notEqual(str, null);
 				}
 				test.done();
 			}
