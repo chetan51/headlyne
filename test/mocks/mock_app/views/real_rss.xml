@@ -3,7 +3,7 @@
   <channel>
     <title>FeedForAll Sample Feed</title>
     <description>RSS is a fascinating technology. The uses for RSS are expanding daily. Take a closer look at how various industries are using the benefits of RSS in their businesses.</description>
-    <link>http://www.feedforall.com/industry-solutions.htm</link>
+    <link>http://localhost:7500/webpage1.html</link>
     <category domain="www.dmoz.com">Computers/Software/Internet/Site Management/Content Management</category>
     <copyright>Copyright 2004 NotePage, Inc.</copyright>
     <docs>http://blogs.law.harvard.edu/tech/rss</docs>
@@ -16,7 +16,7 @@
     <image>
       <url>http://www.feedforall.com/ffalogo48x48.gif</url>
       <title>FeedForAll Sample Feed</title>
-      <link>http://www.feedforall.com/industry-solutions.htm</link>
+      <link>http://localhost:7500/webpage1.html</link>
       <description>FeedForAll Sample Feed</description>
       <width>48</width>
       <height>48</height>
@@ -29,7 +29,7 @@ RSS feed uses include:&lt;br&gt;
 &lt;i&gt;&lt;font color=&quot;#FF0000&quot;&gt;Daily Specials &lt;br&gt;
 Entertainment &lt;br&gt;
 Calendar of Events &lt;/i&gt;&lt;/font&gt;</description>
-      <link>http://www.feedforall.com/restaurant.htm</link>
+      <link>http://localhost:7500/webpage1.html</link>
       <category domain="www.dmoz.com">Computers/Software/Internet/Site Management/Content Management</category>
       <comments>http://www.feedforall.com/forum</comments>
       <pubDate>Tue, 19 Oct 2004 11:09:11 -0400</pubDate>
@@ -45,7 +45,7 @@ Calendar of Events &lt;br&gt;
 Sports Scores &lt;br&gt;
 Clubs/Organization Meetings &lt;br&gt;
 Lunches Menus &lt;/i&gt;&lt;/font&gt;</description>
-      <link>http://www.feedforall.com/schools.htm</link>
+      <link>http://localhost:7500/webpage1.html</link>
       <category domain="www.dmoz.com">Computers/Software/Internet/Site Management/Content Management</category>
       <comments>http://www.feedforall.com/forum</comments>
       <pubDate>Tue, 19 Oct 2004 11:09:09 -0400</pubDate>
@@ -58,7 +58,7 @@ Uses include:&lt;br&gt;
 &lt;i&gt;&lt;font color=&quot;#0000FF&quot;&gt;Cyber Security Alerts &lt;br&gt;
 Specials&lt;br&gt;
 Job Postings &lt;/i&gt;&lt;/font&gt;</description>
-      <link>http://www.feedforall.com/computer-service.htm</link>
+      <link>http://localhost:7500/webpage1.html</link>
       <category domain="www.dmoz.com">Computers/Software/Internet/Site Management/Content Management</category>
       <comments>http://www.feedforall.com/forum</comments>
       <pubDate>Tue, 19 Oct 2004 11:09:07 -0400</pubDate>
@@ -71,7 +71,7 @@ RSS uses Include:&lt;br&gt;
 &lt;i&gt;&lt;font color=&quot;#00FF00&quot;&gt;Legislative Calendar&lt;br&gt;
 Votes&lt;br&gt;
 Bulletins&lt;/i&gt;&lt;/font&gt;</description>
-      <link>http://www.feedforall.com/government.htm</link>
+      <link>http://localhost:7500/webpage1.html</link>
       <category domain="www.dmoz.com">Computers/Software/Internet/Site Management/Content Management</category>
       <comments>http://www.feedforall.com/forum</comments>
       <pubDate>Tue, 19 Oct 2004 11:09:05 -0400</pubDate>
@@ -85,7 +85,7 @@ Uses Include:&lt;br&gt;
 Speaking Engagements &lt;br&gt;
 Statements&lt;br&gt;
  &lt;/i&gt;&lt;/font&gt;</description>
-      <link>http://www.feedforall.com/politics.htm</link>
+      <link>http://localhost:7500/webpage1.html</link>
       <category domain="www.dmoz.com">Computers/Software/Internet/Site Management/Content Management</category>
       <comments>http://www.feedforall.com/forum</comments>
       <pubDate>Tue, 19 Oct 2004 11:09:03 -0400</pubDate>
@@ -98,7 +98,7 @@ Uses Include:&lt;br&gt;
 &lt;i&gt;&lt;font color=&quot;#0000FF&quot;&gt;Weather Alerts&lt;br&gt;
 Plotting Storms&lt;br&gt;
 School Cancellations &lt;/i&gt;&lt;/font&gt;</description>
-      <link>http://www.feedforall.com/weather.htm</link>
+      <link>http://localhost:7500/webpage1.html</link>
       <category domain="www.dmoz.com">Computers/Software/Internet/Site Management/Content Management</category>
       <comments>http://www.feedforall.com/forum</comments>
       <pubDate>Tue, 19 Oct 2004 11:09:01 -0400</pubDate>
@@ -111,7 +111,7 @@ Feeds can be used for:&lt;br&gt;
 &lt;i&gt;&lt;font color=&quot;#FF0000&quot;&gt;Open House Dates&lt;br&gt;
 New Properties For Sale&lt;br&gt;
 Mortgage Rates&lt;/i&gt;&lt;/font&gt;</description>
-      <link>http://www.feedforall.com/real-estate.htm</link>
+      <link>http://localhost:7500/webpage1.html</link>
       <category domain="www.dmoz.com">Computers/Software/Internet/Site Management/Content Management</category>
       <comments>http://www.feedforall.com/forum</comments>
       <pubDate>Tue, 19 Oct 2004 11:08:59 -0400</pubDate>
@@ -125,7 +125,7 @@ Uses include:&lt;br&gt;
 Foreign Exchange Rates &lt;br&gt;
 Bank Rates&lt;br&gt;
 Specials&lt;/i&gt;&lt;/font&gt;</description>
-      <link>http://www.feedforall.com/banks.htm</link>
+      <link>http://localhost:7500/webpage1.html</link>
       <category domain="www.dmoz.com">Computers/Software/Internet/Site Management/Content Management</category>
       <comments>http://www.feedforall.com/forum</comments>
       <pubDate>Tue, 19 Oct 2004 11:08:57 -0400</pubDate>
@@ -142,7 +142,7 @@ Scheduling &lt;br&gt;
 Security Alerts &lt;br&gt;
 Police Report &lt;br&gt;
 Meetings&lt;/i&gt;&lt;/font&gt;</description>
-      <link>http://www.feedforall.com/law-enforcement.htm</link>
+      <link>http://localhost:7500/webpage1.html</link>
       <category domain="www.dmoz.com">Computers/Software/Internet/Site Management/Content Management</category>
       <comments>http://www.feedforall.com/forum</comments>
       <pubDate>Tue, 19 Oct 2004 11:08:56 -0400</pubDate>

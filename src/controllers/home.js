@@ -11,6 +11,8 @@
 
 var Ni = require('ni');
 var sys = require('sys');
+var Mu = require('Mu');
+var jade = require('jade');
 
 /*
  *  The home controller
@@ -18,25 +20,22 @@ var sys = require('sys');
 
 var HomeController = function() {
 
-    this.index = function(req, res, next) {
-	Ni.library('FeedServer').getFeedTeaser(
-		'http://feeds.gawker.com/lifehacker/full',
-		3,
-		function(err, feed) {
-			var output = "";
-			
-			for (var i in feed.items) {
-				var item = feed.items[i];
-				
-				if (item.webpage) {
-					output += "<div>" + item.webpage.body + "</div>";
-				}
+	this.index = function(req, res, next) {
+		Ni.library('FeedServer').getFeedTeaser(
+			'http://www.feedforall.com/sample.xml',
+			3,
+			function(err, feed) {
+				if (err) throw err;
+
+				var html = jade.render(
+					Ni.view('feed_teaser').template,
+					{locals: feed}
+				);
+
+				res.ok(html);
 			}
-			
-			res.ok(output);
-		}
-	);
-    }
+		);
+	}
 
 };
 
