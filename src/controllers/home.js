@@ -11,7 +11,7 @@
 
 var Ni = require('ni');
 var sys = require('sys');
-var Mu = require('mu');
+var Mu = require('Mu');
 var haml = require('hamljs');
 var Connect = require('connect');
 
@@ -23,19 +23,28 @@ var HomeController = function()
 {
 	this.index = function(req, res, next)
 	{
+		if( typeof(req.headers.cookie) == 'undefined')
+		{
+			res.writeHead(302, [
+				['Location', '/login']
+			]);
+			res.end();
+			return;
+		}
+
 		var cookie = JSON.parse(req.headers.cookie).cookie;
-		console.log(cookie);
 		Ni.library('UserAuth').checkAuth(
 			cookie,
 			function(err, is_valid)
 			{
 				if(err) throw err;
 				if(!is_valid) {
-					res.writeHeader(); // redirect to login page.
+					res.writeHead(302, [
+						['Location', '/login']
+					]); // redirect to login page.
 					res.end();
 				} else {
-
-
+					// serve the page requested.
 		Ni.library('FeedServer').getFeedTeaser(
 			'http://www.feedforall.com/sample.xml',
 			3,
@@ -54,7 +63,6 @@ var HomeController = function()
 
 				}
 			}
-
 		);
 	}
 };
