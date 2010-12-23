@@ -21,7 +21,8 @@ var HomeController = function()
 {
 	this.index = function(req, res, next)
 	{
-		if( typeof(req.headers.cookie) == 'undefined')
+		// if no cookies are passed, redirect to login.
+		if( typeof(req.headers.cookie) == 'undefined' )
 		{
 			res.writeHead(302, [
 				['Location', '/login']
@@ -29,9 +30,18 @@ var HomeController = function()
 			res.end();
 			return;
 		}
+		// check if the cookie is a JSON object. otherwise, say cookie error.
+		var cookie;
+		try {
+			cookie = JSON.parse(req.headers.cookie);
+			console.log(cookie);
+		} catch (e) {
+			res.error('Your cookie is broken. Please clear cookies '+
+				'for this site and try again');
+			return;
+		}
 
-		var cookie = JSON.parse(req.headers.cookie);
-		console.log(cookie);
+		// check if the cookie is valid.
 		Ni.library('UserAuth').checkAuth(
 			cookie,
 			function(err, is_valid)
@@ -43,7 +53,7 @@ var HomeController = function()
 					]); // redirect to login page.
 					res.end();
 				} else {
-					// serve the page requested.
+					// if valid, serve the page requested.
 		Ni.library('FeedServer').getFeedTeaser(
 			'http://feeds.reuters.com/reuters/worldNews?format=xml',
 			3,
