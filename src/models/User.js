@@ -296,7 +296,7 @@ var User = function()
 									callback(err);
 									return;
 								}
-								callback(user);
+								callback(null, user.feeds);
 							}
 						);
 					}
@@ -347,7 +347,7 @@ var User = function()
 									callback(err);
 									return;
 								}
-								callback(user);
+								callback(null, user.feeds);
 							}
 						);
 					}
