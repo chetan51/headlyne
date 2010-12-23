@@ -32,8 +32,6 @@ var FeedServer = function()
 	
 	/**
 	 *	Gets feed and items for feed for previewing to the user.
-	 *	Returns whatever is immediately available, or null if it
-	 *	will take time to retrieve everything.
 	 *	
 	 *		If feed is in database and is up to date, calls callback
 	 *		with it immediately.
@@ -41,32 +39,36 @@ var FeedServer = function()
 	 *		If feed is not in database or is not up to date, it calls
 	 *		the callback with null and retrieves and stores the feed
 	 *		in the background for later retrieval.
+	 *		
+	 *		The second callback is called with the feed as soon as
+	 *		it is up to date.
 	 *	
 	 *		Arguments: url of feed
 	 *		           number of feed items to return
 	 *		           callback function called with whatever data
-	 *		           	is available
+	 *		           	is immediately available
 	 *		           callback function called when completely up
 	 *		           	to date
 	 **/
-	this.getFeedTeaserUrgently = function(url, num_feed_items, callback, callback_updated)
+	this.getFeedTeaser = function(url, num_feed_items, callback_immediately, callback_updated)
 	{
 		FeedModel.isUpToDate(
 			url,
 			function(err, result) {
 				if (err) {
 					if (err.message == "No such feed") {
-						callback(null, null);
+						callback_immediately(null, null);
 						self.updateFeedForURL(
 							url,
 							num_feed_items,
-							function(err, feed) {
-								callback_updated(err, feed);
+							function(err, feed_teaser) {
+								callback_updated(err, feed_teaser);
 							}
 						);
 					}
 					else {
-						callback(err);
+						callback_immediately(err);
+						callback_updated(err);
 					}
 				}
 				else {
@@ -74,86 +76,19 @@ var FeedServer = function()
 						self.getFeedTeaserFromDatabase(
 							url,
 							num_feed_items,
-							callback
-						);
-					}
-					else {
-						callback(null, null);
-						self.updateFeedForURL(
-							url,
-							num_feed_items,
-							function(err, feed) {
-								callback_updated(err, feed);
-							}
-						);
-					}
-				}
-			}
-		);
-	}
-	
-	/**
-	 *	Gets feed and items for feed for previewing to the user.
-	 *	
-	 *		If feed is in database and is up to date, calls callback
-	 *		with it immediately.
-	 *	
-	 *		If feed is not in database or is not up to date, it
-	 *		retrieves and stores the feed, and calls callback when
-	 *		the feed is ready.
-	 *	
-	 *		Arguments: url of feed
-	 *		           number of feed items to return
-	 *		           callback function called with feed when complete
-	 **/
-	this.getFeedTeaser = function(url, num_feed_items, callback)
-	{
-		FeedModel.isUpToDate(
-			url,
-			function(err, result) {
-				dbg.log('feed model responded');
-				if (err) {
-					if (err.message == "No such feed") {
-						self.updateFeedForURL(
-							url,
-							num_feed_items,
-							function(err, feed) {
-								if (err) {
-									callback(err);
-								}
-								else {
-									callback(null, feed);
-								}
+							function(err, feed_teaser) {
+								callback_immediately(err, feed_teaser);
+								callback_updated(err, feed_teaser);
 							}
 						);
 					}
 					else {
-						callback(err);
-					}
-				}
-				else {
-					dbg.log('feed up to date');
-					if (result) {
-						self.getFeedTeaserFromDatabase(
-							url,
-							num_feed_items,
-							callback
-						);
-					}
-					else {
-						dbg.log('updating feed for URL');
+						callback_immediately(null, null);
 						self.updateFeedForURL(
 							url,
 							num_feed_items,
-							function(err, feed) {
-								if (err) {
-									dbg.log('callback err');
-									callback(err);
-								}
-								else {
-									dbg.log('callback feed');
-									callback(null, feed);
-								}
+							function(err, feed_teaser) {
+								callback_updated(err, feed_teaser);
 							}
 						);
 					}

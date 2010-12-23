@@ -96,7 +96,7 @@ function ensureFeedAndItemsAreStored(test, test_feed, callback)
 							}
 						);
 					},
-					function done(err) {
+					function testResults(err) {
 						dbg.log('going out of ensureFeed&Items');
 						if (err) {
 							dbg.log(err);
@@ -130,7 +130,6 @@ exports['get feed teaser'] = nodeunit.testCase(
 {
 	
 	setUp: function(callback) {
-		dbg.log('setup called');
 		Step(
 			function mockServerAndDatabase() {
 				var step = this;
@@ -146,166 +145,7 @@ exports['get feed teaser'] = nodeunit.testCase(
 					step.parallel()
 				);
 			},
-			function done(err, server) {
-				if (err) throw err;
-				mock_server = server;
-				dbg.log("done: "+mock_server);
-				callback();
-			}
-		);
-		
-		Ni.config('http_timeout',       30000);
-		Ni.config('feedparse_timeout',  5000);
-		Ni.config('feed_expiry_length', 30 * 60 * 1000);
-		Ni.config('max_redirect',       5);
-	},
-	 
-	tearDown: function(callback) {
-		dbg.log('start teardown');
-		Step(
-			function closeServerAndDatabase() {
-				var step = this;
-				dbg.log('teardown: '+mock_server);
-				ServerGenerator.closeServer(
-					mock_server,
-					step.parallel()
-				);
-				
-				DatabaseFaker.tearDown(
-					['feeds', 'webpages'],
-					step.parallel()
-				);
-			},
-			function done(err) {
-				if (err) throw err;
-				callback();
-			}
-		);
-	},
-	
-	/*'real-life test': function(test) {
-		test.expect(1);
-		
-		FeedServer.getFeedTeaser(
-			"http://www.feedforall.com/sample.xml",
-			10,
-			function(err, feed_teaser) {
-				dbg.log(err);
-				dbg.log(feed_teaser);
-				dbg.log(feed_teaser.items[0].webpage);
-				test.ok(1);
-				test.done();
-			}
-		);
-	},*/
-
-	'feed not in database': function(test) {
-		test.expect(10);
-		
-		FeedServer.getFeedTeaser(
-			basic_feed.url,
-			10,
-			function(err, feed_teaser) {
-				dbg.log('got feed teaser');
-				if (err) {
-					dbg.log(err.message);
-					test.done();
-				}
-				else {
-					ensureFeedTeaserIsCorrect(test, basic_feed, feed_teaser);
-					ensureFeedAndItemsAreStored(
-						test,
-						basic_feed,
-						function(err) {
-							if (err) {
-								dbg.log(err.message);
-							}
-							test.done();
-						}
-					);
-				}
-			}
-		);
-	},
-	
-	'feed in database and not up to date': function(test) {
-		test.expect(10);
-		
-		// First, we make sure the feed is in the database
-		FeedServer.getFeedTeaser(
-			basic_feed.url,
-			10,
-			function(err, feed_teaser) {
-				if (err) {
-					dbg.log(err.message);
-					
-					// Restore FeedModel.isUpToDate
-					FeedModel.isUpToDate = isUpToDate_backup;
-					
-					test.done();
-				}
-				else {
-					// Then we make FeedServer think the feed expired
-					var isUpToDate_backup = FeedModel.isUpToDate;
-					FeedModel.isUpToDate = function(feed_url, callback) {
-						callback(null, false);
-					}
-
-					// Now we try to retrieve it
-					FeedServer.getFeedTeaser(
-						basic_feed.url,
-						10,
-						function(err, feed_teaser) {
-							if (err) {
-								dbg.log(err.message);
-								test.done();
-							}
-							else {
-								ensureFeedTeaserIsCorrect(test, basic_feed, feed_teaser);
-								ensureFeedAndItemsAreStored(
-									test,
-									basic_feed,
-									function(err) {
-										if (err) {
-											dbg.log(err.message);
-											test.done();
-										}
-										test.done();
-									}
-								);
-							}
-					
-							// Restore FeedModel.isUpToDate
-							FeedModel.isUpToDate = isUpToDate_backup;
-						}
-					);
-				}
-			}
-		);
-	}
-	
-});
-
-exports['get feed teaser urgently'] = nodeunit.testCase(
-{
-	
-	setUp: function(callback) {
-		Step(
-			function mockServerAndDatabase() {
-				var step = this;
-				
-				ServerGenerator.createServer(
-					mock_server_host,
-					mock_server_port,
-					step.parallel()
-				);
-				
-				DatabaseFaker.setUp(
-					['feeds', 'webpages'],
-					step.parallel()
-				);
-			},
-			function done(err, server) {
+			function testResults(err, server) {
 				if (err) throw err;
 				mock_server = server;
 				callback();
@@ -333,7 +173,7 @@ exports['get feed teaser urgently'] = nodeunit.testCase(
 					step.parallel()
 				);
 			},
-			function done(err) {
+			function testResults(err) {
 				if (err) throw err;
 				callback();
 			}
@@ -343,27 +183,29 @@ exports['get feed teaser urgently'] = nodeunit.testCase(
 	'feed not in database': function(test) {
 		test.expect(11);
 		
-		FeedServer.getFeedTeaserUrgently(
-			basic_feed.url,
-			10,
-			function(err, feed_teaser) {
-				if (err) {
-					dbg.log(err.message);
-				}
-				else {
-					test.equals(feed_teaser, null);
-				}
+		Step(
+			function getTeaser() {
+				FeedServer.getFeedTeaser(
+					basic_feed.url,
+					10,
+					this.parallel(),
+					this.parallel()
+				);
 			},
-			function(err, feed_teaser_updated) {
+			function testResults(err, immediate_teaser, updated_teaser) {
 				if (err) {
 					dbg.log(err.message);
+					test.done();
 				}
 				else {
+					test.equals(immediate_teaser, null);
+					
 					ensureFeedTeaserIsCorrect(
 						test,
 						basic_feed,
-						feed_teaser_updated
+						updated_teaser
 					);
+					
 					ensureFeedAndItemsAreStored(
 						test,
 						basic_feed,
@@ -380,36 +222,60 @@ exports['get feed teaser urgently'] = nodeunit.testCase(
 	},
 
 	'feed in database and up to date': function(test) {
-		test.expect(5);
+		test.expect(15);
 		
 		// First, we make sure the feed is in the database and up to date
 		FeedServer.getFeedTeaser(
 			basic_feed.url,
 			10,
-			function(err, feed_teaser) {
+			function(err, immediate_teaser) {},
+			function(err, updated_teaser) {
 				if (err) {
 					dbg.log(err.message);
 					test.done();
 				}
 				else {
 					// Now we try to retrieve it
-					FeedServer.getFeedTeaserUrgently(
-						basic_feed.url,
-						10,
-						function(err, feed_teaser) {
+					Step(
+						function getTeaser() {
+							FeedServer.getFeedTeaser(
+								basic_feed.url,
+								10,
+								this.parallel(),
+								this.parallel()
+							);
+						},
+						function testResults(err, immediate_teaser, updated_teaser) {
 							if (err) {
 								dbg.log(err.message);
 							}
 							else {
-								ensureFeedTeaserIsCorrect(test, basic_feed, feed_teaser);
+								ensureFeedTeaserIsCorrect(
+									test,
+									basic_feed,
+									immediate_teaser
+								);
+								
+								ensureFeedTeaserIsCorrect(
+									test,
+									basic_feed,
+									updated_teaser
+								);
+								
+								ensureFeedAndItemsAreStored(
+									test,
+									basic_feed,
+									function(err) {
+										if (err) {
+											dbg.log(err.message);
+										}
+										test.done();
+									}
+								);
 							}
-							test.done();
 						}
 					);
 				}
-			},
-			function(err) {
-				test.done();
 			}
 		);
 	},
@@ -421,7 +287,8 @@ exports['get feed teaser urgently'] = nodeunit.testCase(
 		FeedServer.getFeedTeaser(
 			basic_feed.url,
 			10,
-			function(err, feed_teaser) {
+			function(err, immediate_teaser) {},
+			function(err, updated_teaser) {
 				if (err) {
 					dbg.log(err.message);
 					
@@ -438,27 +305,33 @@ exports['get feed teaser urgently'] = nodeunit.testCase(
 					}
 
 					// Now we try to retrieve it
-					FeedServer.getFeedTeaserUrgently(
-						basic_feed.url,
-						10,
-						function(err, feed_teaser) {
-							if (err) {
-								dbg.log(err.message);
-							}
-							else {
-								test.equal(feed_teaser, null);
-							}
+					Step(
+						function getTeaser() {
+							FeedServer.getFeedTeaser(
+								basic_feed.url,
+								10,
+								this.parallel(),
+								this.parallel()
+							);
 						},
-						function(err, feed_teaser_updated) {
+						function testResults(err, immediate_teaser, updated_teaser) {
 							if (err) {
 								dbg.log(err.message);
+								
+								// Restore FeedModel.isUpToDate
+								FeedModel.isUpToDate = isUpToDate_backup;
+								
+								test.done();
 							}
 							else {
+								test.equal(immediate_teaser, null);
+								
 								ensureFeedTeaserIsCorrect(
 									test,
 									basic_feed,
-									feed_teaser_updated
+									updated_teaser
 								);
+								
 								ensureFeedAndItemsAreStored(
 									test,
 									basic_feed,
@@ -469,10 +342,10 @@ exports['get feed teaser urgently'] = nodeunit.testCase(
 										test.done();
 									}
 								);
+								
+								// Restore FeedModel.isUpToDate
+								FeedModel.isUpToDate = isUpToDate_backup;
 							}
-							
-							// Restore FeedModel.isUpToDate
-							FeedModel.isUpToDate = isUpToDate_backup;
 						}
 					);
 				}
