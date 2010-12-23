@@ -171,6 +171,8 @@ var UserAuth = function()
 					);
 					return;
 				}
+				
+				user.session.cookie.expires = parseInt(user.session.cookie.expires);
 
 				// otherwise, check if the objects match.
 				var hasher1 = crypto.createHash('sha256');
