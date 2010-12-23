@@ -12,13 +12,11 @@
 var Ni = require('ni');
 var sys = require('sys');
 var Mu = require('Mu');
-var haml = require('hamljs');
-var Connect = require('connect');
+var jade = require('jade');
 
 /*
  *  The home controller
  */
-
 var HomeController = function()
 {
 	this.index = function(req, res, next)
@@ -46,25 +44,70 @@ var HomeController = function()
 				} else {
 					// serve the page requested.
 		Ni.library('FeedServer').getFeedTeaser(
-			'http://www.feedforall.com/sample.xml',
+			'http://feeds.reuters.com/reuters/worldNews?format=xml',
 			3,
-			function(err, feed)
-			{
+			function(err, feed1) {
 				if (err) throw err;
-				var html = haml.render(
-					Ni.view('feed_teaser').template,
-					{locals: feed}
-				);
 				
-				res.ok(html);
+				Ni.library('FeedServer').getFeedTeaser(
+					'http://feeds.reuters.com/reuters/companyNews?format=xml',
+					3,
+					function(err, feed2) {
+						feed1.title_selection = "item";
+						feed1.body_selection = "item";
+						
+						feed2.title_selection = "webpage";
+						feed2.body_selection = "webpage";
+
+						var teaser1 = jade.render(
+							Ni.view('feed').template,
+							{locals: feed1}
+						);
+						
+						var teaser2 = jade.render(
+							Ni.view('feed').template,
+							{locals: feed2}
+						);
+						
+						var columns = [];
+						columns[0] = {};
+						columns[0].feeds = [];
+						columns[0].feeds[0] = teaser1;
+						
+						columns[1] = {};
+						columns[1].feeds = [];
+						columns[1].feeds[0] = teaser2;
+						
+						var page = jade.render(
+							Ni.view('page').template,
+							{locals:
+								{
+								columns: columns
+								}
+							}
+						);
+
+						var html = jade.render(
+							Ni.view('base').template,
+							{locals:
+								{
+									base_url : "/",
+								title    : "Welcome to Headlyne",
+								content  : page
+								}
+							}
+						);
+
+						res.ok(html);
+					}
+				);
 			}
 		);
-
-
 				}
 			}
 		);
 	}
+
 };
 
 /*

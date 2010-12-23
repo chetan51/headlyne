@@ -1,0 +1,115 @@
+/* --------------------------------------------------------------
+
+	typography.css
+	* Sets up typography.
+
+-------------------------------------------------------------- */
+
+/* Default font settings
+-------------------------------------------------------------- */
+
+html { font-size:100.01%; }
+body {
+  font-size: 75%; /*	The font-size percentage is of 16px.
+						(0.75 * 16px = 12px) */
+  font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+
+
+/* Headings
+-------------------------------------------------------------- */
+
+h1,h2,h3,h4,h5,h6 { font-weight: normal; }
+
+h1 { font-size: 5em; line-height: 1; font-family: 'UnifrakturCook', arial, serif; }
+h2 { font-size: 2.7em; margin-bottom: 0.5em;}
+h3 { font-size: 2em; margin-bottom: 0.5em;}
+h4 { font-size: 1.5em; line-height: 1; }
+h5 { font-size: 1.2em; line-height: 1.25; }
+h6 { font-size: 1em; font-weight: bold; }
+
+/*
+h1 .bottom-margin { margin-bottom: 0.5em; }
+h2 .bottom-margin { margin-bottom: 0.6em; }
+h3 .bottom-margin { margin-bottom: 0.75em; }
+h4 .bottom-margin { margin-bottom: 1em; }
+h5 .bottom-margin { margin-bottom: 1.25em; }
+h6 .bottom-margin { margin-bottom: 1.5em; }
+*/
+
+.inline { display: inline; }
+
+h1 img, h2 img, h3 img,
+h4 img, h5 img, h6 img {
+  margin: 0;
+}
+
+
+/* Text elements
+-------------------------------------------------------------- */
+
+p           { margin: 0 0 .5em; }
+p img.left  { float: left; margin: 1.5em 1.5em 1.5em 0; padding: 0; }
+p img.right { float: right; margin: 1.5em 0 1.5em 1.5em; }
+
+a           { text-decoration: none; }
+
+blockquote  { margin: 1.5em; font-style: italic; }
+strong      { font-weight: bold; }
+em,dfn      { font-style: italic; }
+dfn         { font-weight: bold; }
+sup, sub    { line-height: 0; }
+
+address     { margin: 0 0 1.5em; font-style: italic; }
+
+pre         { margin: 1.5em 0; white-space: pre; }
+pre,code,tt { font: 1em 'andale mono', 'lucida console', monospace; line-height: 1.5; }
+
+.date		{ font-family: Verdana, Arial, Helvetica, sans-serif }
+
+.bold		{ font-weight: bold; }
+.dim		{ color: gray; }
+
+/* Lists
+-------------------------------------------------------------- */
+
+li ul,
+li ol       { margin: 0; }
+ul, ol      { margin: 0 1.5em 1.5em 0; padding-left: 3.333em; }
+
+ul          { list-style-type: disc; }
+ol          { list-style-type: decimal; }
+
+dl          { margin: 0 0 1.5em 0; }
+dl dt       { font-weight: bold; }
+dd          { margin-left: 1.5em;}
+
+
+/* Tables
+-------------------------------------------------------------- */
+
+table       { margin-bottom: 1.4em; }
+th          { font-weight: bold; }
+th,td,caption { padding: 4px 10px 4px 5px; }
+tfoot       { font-style: italic; }
+
+
+/*		Success, notice and error boxes
+-------------------------------------------------------------- */
+
+.error a    { font-weight: bold; }
+.notice a   { font-weight: bold; }
+.success a  { font-weight: bold; }
+
+
+/* Misc classes
+-------------------------------------------------------------- */
+
+.small      { font-size: 1.2em; }
+.large      { font-size: 1.4em; }
+.hidden     { display: none; }
+
+.first      { margin-left:0; padding-left:0; }
+.last       { margin-right:0; padding-right:0; }
+.top        { margin-top:0; padding-top:0; }
+.bottom     { margin-bottom:0; padding-bottom:0; }

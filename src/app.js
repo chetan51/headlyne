@@ -97,9 +97,10 @@ Ni.boot(function() {
 			var app = Connect.createServer(
 				Quip(),               
 				Ni.router,
-				function (req, res, next) {
-					res.notFound('Page not found.');
-				}
+				Connect.staticProvider({
+					root: __dirname + '/public',
+					cache: true
+				})
 			);
 
 			app.listen(3000);

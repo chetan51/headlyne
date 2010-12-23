@@ -49,7 +49,7 @@ var LoginController = function()
 					} else {
 						// no errors -- attach the cookie, direct to
 						// home page, and get moving.
-						var expiry_date = new Date(cookie.lifetime);
+						var expiry_date = new Date(cookie.expires);
 
 						res.writeHead( 302, [
 							['Location', '/'],

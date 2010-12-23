@@ -188,6 +188,7 @@ var FeedServer = function()
 								var teaser = self.generateFeedTeaser(
 									feed,
 									feed.items,
+									num_feed_items,
 									webpages
 								);
 								callback(null, teaser);
@@ -277,6 +278,7 @@ var FeedServer = function()
 				var teaser = self.generateFeedTeaser(
 					saved_feed,
 					saved_feed.items,
+					num_feed_items,
 					saved_webpages
 				);
 					
@@ -453,16 +455,19 @@ var FeedServer = function()
 	 *		           the feed items
 	 *		           webpages for each feed item
 	 **/
-	this.generateFeedTeaser = function(feed, items, webpages)
+	this.generateFeedTeaser = function(feed, items, num_feed_items, webpages)
 	{
-		feed.items = items;
-		for (var i in items) {
+		feed.items = items.slice(0, num_feed_items);
+		
+		// Attach webpages to items
+		for (var i in feed.items) {
 			for (var j in webpages) {
 				if (webpages[j] && feed.items[i].link == webpages[j].url) {
 					feed.items[i].webpage = webpages[j];
 				}
 			}
 		}
+		
 		return feed;
 	}
 };

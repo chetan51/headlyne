@@ -1,0 +1,25 @@
+/* --------------------------------------------------------------
+
+	uielements.css
+	* Gives classes to create UI elements rapidly
+
+-------------------------------------------------------------- */
+
+/*	Buttons
+-------------------------------------------------------------- */
+
+/*	For use with the <a> tag */
+.button {
+	padding: 6.5px 13px;
+	-webkit-border-radius: 8px;
+	-moz-border-radius: 8px;
+	border-radius: 8px;
+	-webkit-box-shadow: rgba(0,0,0,1) 0 1px 0;
+	-moz-box-shadow: rgba(0,0,0,1) 0 1px 0;
+	box-shadow: rgba(0,0,0,1) 0 1px 0;
+	text-shadow: rgba(0,0,0,.4) 0 1px 0;
+	font-size: 14px;
+	font-family: 'Lucida Grande', Helvetica, Arial, Sans-Serif;
+	text-decoration: none;
+	vertical-align: middle;
+}
