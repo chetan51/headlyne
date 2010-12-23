@@ -22,6 +22,10 @@ var UserAuth = function()
 		id_gen.update(Math.random() + username);
 		var id = id_gen.digest('hex');
 
+		var now = new Date().getTime();
+		var expiry_date = new Date();
+		expiry_date.setTime(parseInt(now) + lifetime);
+
 		var data = {
 			'history': [],
 			'user': username
@@ -31,7 +35,7 @@ var UserAuth = function()
 			'id'        : id,
 			'data'      : data,
 			'persistent': true,
-			'lifetime'  : lifetime
+			'expires'  : parseInt(expiry_date.getTime())
 		};
 		return session_cookie;
 	}
@@ -45,9 +49,7 @@ var UserAuth = function()
 		// if still valid, pass the same session object.
 		
 
-		if(	parseInt(session_object.created) +
-			session_object.cookie.lifetime
-			> now ) {
+		if( session_object.cookie.expires > now ) {
 			console.log('\tSession is valid');
 			return false;
 		} else {
@@ -65,9 +67,6 @@ var UserAuth = function()
 	 *		username
 	 *		password
 	 *
-	 *		optional 'lifetime' -- if session created,
-	 *		the lifetime for it.
-	 *
 	 *	callback:
 	 *		is_new_session,    true if the session
 	 *		                   expired or did not exist
@@ -79,7 +78,7 @@ var UserAuth = function()
 	 *				user: 'username'
 	 *			},
 	 *			'persistent',
-	 *			'lifetime',
+	 *			'expires',
 	 *		}
 	 **/
 	this.authenticate = function( username, password, callback )
