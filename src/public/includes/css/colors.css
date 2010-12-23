@@ -1,0 +1,117 @@
+/* --------------------------------------------------------------
+
+   colors.css
+   * Sets up some color schemes
+
+-------------------------------------------------------------- */
+
+/*	Typography
+-------------------------------------------------------------- */
+
+/*		Headings
+-------------------------------------------------------------- */
+
+h1,h2,h3,h4,h5,h6	{ color: #111; }
+.title				{ color: #D64203; }
+
+/*		Text elements
+-------------------------------------------------------------- */
+
+a:focus,
+a:hover     { color: #235; }
+a           { color: #05E }
+
+blockquote  { color: #666; }
+
+abbr,
+acronym     { border-bottom: 1px dotted #666; }
+
+del         { color:#666; }
+
+/*		Tables
+-------------------------------------------------------------- */
+
+thead th    { background: #c3d9ff; }
+tr.even td  { background: #e5ecf9; }
+caption     { background: #eee; }
+
+
+/*		Misc classes
+-------------------------------------------------------------- */
+
+.quiet      { color: #888; }
+.loud       { color: #000; }
+.highlight  { background:#ff0; }
+.added      { background:#060; color: #fff; }
+.removed    { background:#900; color: #fff; }
+
+
+/*	Forms
+-------------------------------------------------------------- */
+
+fieldset    { border: 1px solid #ccc; }
+
+/*		Form fields
+-------------------------------------------------------------- */
+
+input.text, input.title,
+textarea, select {
+  background-color:#fff;
+  border:1px solid #bbb;
+}
+
+
+/*		Success, notice and error boxes
+-------------------------------------------------------------- */
+
+.error      { color: #8a1f11; }
+.notice     { color: #514721; }
+.success    { color: #264409; }
+.error a    { color: #8a1f11; }
+.notice a   { color: #514721; }
+.success a  { color: #264409; }
+
+
+/*	UI Elements
+-------------------------------------------------------------- */
+
+/*		Buttons
+-------------------------------------------------------------- */
+
+.button {
+	border-top: 1px solid #96d1f8;
+	background: #65a9d7;
+	background: -webkit-gradient(linear, left top, left bottom, from(#3e779d), to(#65a9d7));
+	background: -moz-linear-gradient(top, #3e779d, #65a9d7);
+	color: white;
+}
+
+.button:hover {
+	border-top-color: #28597a;
+	background: #28597a;
+	color: #ccc;
+}
+
+.button:active {
+	border-top-color: #1b435e;
+	background: #1b435e;
+}
+
+
+/*	General
+-------------------------------------------------------------- */
+
+body { background: #ffffff; }
+
+hr			{ background:#ddd; color:#ddd; }
+hr.space	{ background:#fff; color:#fff; }
+
+div .box {
+	background: white;
+	border: 1px solid gray;
+}
+
+div .item1 { background: #fafafa; }
+div .item2 { background: #f5f5f5; }
+
+div .opaque { background: #ffffff; }
