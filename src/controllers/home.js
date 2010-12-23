@@ -47,12 +47,14 @@ var HomeController = function()
 		Ni.library('FeedServer').getFeedTeaser(
 			'http://feeds.reuters.com/reuters/worldNews?format=xml',
 			3,
+			function(err, f) {},
 			function(err, feed1) {
 				if (err) throw err;
 				
 				Ni.library('FeedServer').getFeedTeaser(
 					'http://feeds.reuters.com/reuters/companyNews?format=xml',
 					3,
+					function(err, f) {},
 					function(err, feed2) {
 						feed1.title_selection = "item";
 						feed1.body_selection = "item";
