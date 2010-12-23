@@ -10,8 +10,7 @@
 
 html { font-size:100.01%; }
 body {
-  font-size: 75%; /*	The font-size percentage is of 16px.
-						(0.75 * 16px = 12px) */
+  font-size: 14px;
   font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
 }
 
@@ -22,7 +21,7 @@ body {
 h1,h2,h3,h4,h5,h6 { font-weight: normal; }
 
 h1 { font-size: 5em; line-height: 1; font-family: 'UnifrakturCook', arial, serif; }
-h2 { font-size: 2.7em; margin-bottom: 0.5em;}
+h2 { font-size: 2.2em; margin-bottom: 0.2em; line-height: 1.1; }
 h3 { font-size: 2em; margin-bottom: 0.5em;}
 h4 { font-size: 1.5em; line-height: 1; }
 h5 { font-size: 1.2em; line-height: 1.25; }
