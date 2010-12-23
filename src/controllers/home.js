@@ -30,7 +30,8 @@ var HomeController = function()
 			return;
 		}
 
-		var cookie = JSON.parse(req.headers.cookie).cookie;
+		var cookie = JSON.parse(req.headers.cookie);
+		console.log(cookie);
 		Ni.library('UserAuth').checkAuth(
 			cookie,
 			function(err, is_valid)
