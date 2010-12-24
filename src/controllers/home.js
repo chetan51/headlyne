@@ -13,6 +13,7 @@ var Ni = require('ni');
 var sys = require('sys');
 var Mu = require('Mu');
 var jade = require('jade');
+var Step = require('step');
 
 /*
  *  The home controller
@@ -21,66 +22,89 @@ var jade = require('jade');
 var HomeController = function() {
 
 	this.index = function(req, res, next) {
-		Ni.library('FeedServer').getFeedTeaser(
-			'http://feeds.reuters.com/reuters/worldNews?format=xml',
-			3,
-			function(err, f) {},
-			function(err, feed1) {
-				if (err) throw err;
+		Step(
+			function getFeeds() {
+				Ni.library('FeedServer').getFeedTeaser(
+					'http://feeds.feedburner.com/quotationspage/qotd',
+					9,
+					function() {},
+					this.parallel()
+				);
 				
 				Ni.library('FeedServer').getFeedTeaser(
 					'http://feeds.reuters.com/reuters/companyNews?format=xml',
-					3,
-					function(err, f) {},
-					function(err, feed2) {
-						feed1.title_selection = "item";
-						feed1.body_selection = "item";
+					2,
+					function() {},
+					this.parallel()
+				);
+				
+				Ni.library('FeedServer').getFeedTeaser(
+					'http://xkcd.com/rss.xml',
+					5,
+					function() {},
+					this.parallel()
+				);
 						
-						feed2.title_selection = "webpage";
-						feed2.body_selection = "webpage";
+			},
+			function displayFeeds(err, feed1, feed2, feed3) {
+				feed1.title_selection = "item";
+				feed1.body_selection = "item";
+				
+				feed2.title_selection = "webpage";
+				feed2.body_selection = "webpage";
 
-						var teaser1 = jade.render(
-							Ni.view('feed').template,
-							{locals: feed1}
-						);
-						
-						var teaser2 = jade.render(
-							Ni.view('feed').template,
-							{locals: feed2}
-						);
-						
-						var columns = [];
-						columns[0] = {};
-						columns[0].feeds = [];
-						columns[0].feeds[0] = teaser1;
-						
-						columns[1] = {};
-						columns[1].feeds = [];
-						columns[1].feeds[0] = teaser2;
-						
-						var page = jade.render(
-							Ni.view('page').template,
-							{locals:
-								{
-								columns: columns
-								}
-							}
-						);
-
-						var html = jade.render(
-							Ni.view('base').template,
-							{locals:
-								{
-									base_url : "/",
-								title    : "Welcome to Headlyne",
-								content  : page
-								}
-							}
-						);
-
-						res.ok(html);
+				feed3.title_selection = "item";
+				feed3.body_selection = "item";
+				
+				var teaser1 = jade.render(
+					Ni.view('feed').template,
+					{locals: feed1}
+				);
+				
+				var teaser2 = jade.render(
+					Ni.view('feed').template,
+					{locals: feed2}
+				);
+				
+				var teaser3 = jade.render(
+					Ni.view('feed').template,
+					{locals: feed3}
+				);
+				
+				var columns = [];
+				columns[0] = {};
+				columns[0].feeds = [];
+				columns[0].feeds[0] = teaser1;
+				
+				columns[1] = {};
+				columns[1].feeds = [];
+				columns[1].feeds[0] = teaser2;
+				
+				columns[2] = {};
+				columns[2].feeds = [];
+				columns[2].feeds[0] = teaser3;
+				
+				var page = jade.render(
+					Ni.view('page').template,
+					{locals:
+						{
+						columns: columns
+						}
 					}
 				);
+
+				var html = jade.render(
+					Ni.view('base').template,
+					{locals:
+						{
+							base_url : "/",
+						title    : "Welcome to Headlyne",
+						content  : page
+						}
+					}
+				);
+
+				res.ok(html);
 			}
 		);
 	}
