@@ -36,6 +36,28 @@ var ContentGrabber = function()
 
 	this.snip = function(fulltext)
 	{
+		var dom_text = self.domify(fulltext);
+
+		// iterate through DOM elements until 'length' = 250.
+		// one image permissible.
+
+		var done=false, length=0;
+		
+		while(!done)
+		{
+			// get next element.
+			// call helper to get children within remaining limit.
+			// 	subsnip(element, max_length) -- returns element, true if whole element returned.
+			// 
+			// *snip iterates only over top level elements.
+			// *subsnip calls itself recursively for all children.
+
+			if( length > 250 ) {
+				done=true;
+				// remove the excess item (function trailSnip?)
+			}
+		}
+
 		return fulltext;
 	}
 };
