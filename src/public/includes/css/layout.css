@@ -32,7 +32,7 @@
 .column {
 	display: inline-block; 
 	vertical-align: top;
-	width: 50%;
+	width: 33%;
 }
 
 .column-content {
@@ -40,9 +40,21 @@
 }
 
 .feed-item {
-	margin-bottom: 10px;
+	margin-bottom: 15px;
 }
 
+.feed-item-snippet pre {
+	white-space: pre-wrap;       /* css-3 */
+	white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+	white-space: -pre-wrap;      /* Opera 4-6 */
+	white-space: -o-pre-wrap;    /* Opera 7 */
+	word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+
+.feed-item-snippet img {
+	max-width:100%;
+	height:auto;
+}
 
 
 
