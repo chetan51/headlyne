@@ -8,7 +8,8 @@ $(document).ready(function() {
 			def: ","
 		},
 		position: 'bottom center',
-		offset: [20, 0],
+		direction: 'down',
+		offset: [15, 20],
 		effect: "slide"
 	});
 
@@ -49,4 +50,8 @@ function edit() {
 		button.text("Edit");
 		$("#edit-button").data("tooltip").hide();
 	}
+}
+
+function preview() {
+	var feed_url = $("#add-url").val();
 }

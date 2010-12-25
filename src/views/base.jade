@@ -2,7 +2,7 @@
 html
   head
     title= title
-    link(href="http://fonts.googleapis.com/css?family=UnifrakturCook:bold", rel="stylesheet", type="text/css")
+    //link(href="http://fonts.googleapis.com/css?family=UnifrakturCook:bold", rel="stylesheet", type="text/css")
     link(href=base_url+"includes/css/reset.css", rel="stylesheet", type="text/css")
     link(href=base_url+"includes/css/typography.css", rel="stylesheet", type="text/css")
     link(href=base_url+"includes/css/colors.css", rel="stylesheet", type="text/css")
@@ -20,7 +20,8 @@ html
         a(id="edit-button", href='#', onclick="edit()") Edit
         #add-dialog.tooltip
           input#add-url
-				  button#preview Preview
+          button#preview-button('onclick="preview()") Preview
+	    .feed-preview
       #folio
         h1.modalInput(rel="#test") The Headlyne Times
         #subtitle December 23, 2010
