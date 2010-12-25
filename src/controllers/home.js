@@ -11,7 +11,6 @@
 
 var Ni = require('ni');
 var sys = require('sys');
-var Mu = require('Mu');
 var jade = require('jade');
 var Step = require('step');
 
