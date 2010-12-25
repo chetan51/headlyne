@@ -14,7 +14,6 @@ var Downloader     = require('./Downloader.js'),
     FeedModel      = require('../models/Feed.js'),
     WebPageModel   = require('../models/WebPage.js'),
     Step           = require('step'),
-    Conduct        = require('conductor'),
     Ni             = require('ni'),
     dbg            = require('../../src/libraries/Debugger.js');
 
