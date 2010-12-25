@@ -1,7 +1,6 @@
 /* Dependencies */
 var jsdom       = require('jsdom');
 var path        = require('path');
-var Worker      = require('webworker').Worker;
 var Readability = require('readability');
 
 /**
