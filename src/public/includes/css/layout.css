@@ -8,6 +8,15 @@
 /* Divs
 -------------------------------------------------------------- */
 
+.tooltip {
+	display:none;
+	background:transparent;
+	height:163px;
+	width:110px;
+	font-size:11px;
+	color:#fff;
+}
+
 .modal {
 		background-color:#fff;
 		display:none;
@@ -72,6 +81,15 @@
 
 .column-content {
 	padding: 10px;
+}
+
+.feed-header {
+	border: 1px solid;
+	text-align: center;
+}
+
+.feed-title {
+	margin-bottom: 5px;
 }
 
 .feed-item {

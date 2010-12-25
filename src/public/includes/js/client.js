@@ -1,4 +1,18 @@
 $(document).ready(function() {
+	// Hide elements
+	$(".feed-header").hide();
+	
+	// Set up tooltips
+	$("#edit-button").tooltip({
+		events: {
+			def: ","
+		},
+		position: 'bottom center',
+		offset: [20, 0],
+		effect: "slide"
+	});
+
+	// Set up overlays
 	var triggers = $(".modalInput").overlay({
 		// some mask tweaks suitable for modal dialogs
 		mask: {
@@ -13,11 +27,26 @@ $(document).ready(function() {
 function collapseOrExpand() {
 	$(".feed-item-body").slideToggle("fast");
 	
-	var button = $("#expand_collapse_button");
+	var button = $("#expand-collapse-button");
 	if (button.text() == "Collapse") {
 		button.text("Expand");
 	}
 	else {
 		button.text("Collapse");
+	}
+}
+
+function edit() {
+	$(".feed-body").slideToggle("fast");
+	$(".feed-header").slideToggle("fast");
+	
+	var button = $("#edit-button");
+	if (button.text() == "Edit") {
+		button.text("Done");
+		$("#edit-button").data("tooltip").show();
+	}
+	else {
+		button.text("Edit");
+		$("#edit-button").data("tooltip").hide();
 	}
 }

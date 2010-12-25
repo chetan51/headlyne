@@ -1,19 +1,22 @@
-- each item in items
-  .feed-item
-    .feed-item-header
-      - if (title_selection == "item")
-        - if (item.title)
-        h2.feed-item-title= item.title
-      - if (title_selection == "webpage")
-        - if (item.webpage)
-          - if (item.webpage.title)
-            h2.feed-webpage-title= item.webpage.title
-    .feed-item-body
-      .feed-item-snippet
-        - if (body_selection == "item")
-          - if (item.description)
-            div.feed-item-description!= item.description
-        - if (body_selection == "webpage")
+.feed-header
+  h3.feed-title= title
+.feed-body
+  - each item in items
+    .feed-item
+      .feed-item-header
+        - if (title_selection == "item")
+          - if (item.title)
+          h2.feed-item-title= item.title
+        - if (title_selection == "webpage")
           - if (item.webpage)
-            - if (item.webpage.body)
-              div.feed-webpage-snippet!= item.webpage.body
+            - if (item.webpage.title)
+              h2.feed-webpage-title= item.webpage.title
+      .feed-item-body
+        .feed-item-snippet
+          - if (body_selection == "item")
+            - if (item.description)
+              div.feed-item-description!= item.description
+          - if (body_selection == "webpage")
+            - if (item.webpage)
+              - if (item.webpage.body)
+                div.feed-webpage-snippet!= item.webpage.body
