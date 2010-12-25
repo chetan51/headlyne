@@ -35,7 +35,7 @@ Ni.config('root', __dirname);
 
 Ni.config('http_timeout',       30000);
 Ni.config('feedparse_timeout',  5000);
-Ni.config('feed_expiry_length', 30 * 60 * 1000);
+Ni.config('feed_expiry_length', 10000 * 30 * 60 * 1000);
 Ni.config('max_redirect',       5);
 
 Ni.boot(function() {
