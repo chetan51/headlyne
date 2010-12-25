@@ -36,28 +36,22 @@ var ContentGrabber = function()
 
 	this.snip = function(fulltext)
 	{
-		var dom_text = self.domify(fulltext);
+		var length = 0, var snip_text = '';
+		var tag_stack=[];
+		var done = false;
 
-		// iterate through DOM elements until 'length' = 250.
-		// one image permissible.
-
-		var done=false, length=0;
-		
-		while(!done)
+		while( !done )
 		{
-			// get next element.
-			// call helper to get children within remaining limit.
-			// 	subsnip(element, max_length) -- returns element, true if whole element returned.
-			// 
-			// *snip iterates only over top level elements.
-			// *subsnip calls itself recursively for all children.
+			// main body
+			// use node-xml to skip tags, count only content towards length,
+			// and add the tag text + the content to snip_text.
+			//
+			// maintain tag stack so at 250, close all open tags manually.
 
-			if( length > 250 ) {
-				done=true;
-				// remove the excess item (function trailSnip?)
-			}
+			if( length > 250 )
+				done = true;
+
 		}
-
 		return fulltext;
 	}
 };
