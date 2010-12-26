@@ -1,0 +1,19 @@
+.feed-header
+  h3.feed-title= title
+  .feed-url= url
+.feed-body
+  - each item in items
+    .feed-item
+      .feed-item-header
+        - if (item.title)
+        h2.feed-item-title= item.title
+        - if (item.webpage)
+          - if (item.webpage.title)
+            h2.feed-webpage-title= item.webpage.title
+      .feed-item-body
+        .feed-item-snippet
+          - if (item.description)
+            div.feed-item-description!= item.description
+          - if (item.webpage)
+            - if (item.webpage.body)
+              div.feed-webpage-snippet!= item.webpage.body
