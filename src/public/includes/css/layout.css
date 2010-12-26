@@ -79,6 +79,29 @@
 	text-align: center;
 }
 
+.feed-edit-control {
+	background: #ddd;
+	width: 100%;
+}
+
+.feed-edit-click-label {
+	float: left;
+	font-size: 14px;
+}
+
+.feed-edit-items-label {
+	float: right;
+	font-size: 14px;
+}
+
+.clear {
+	clear: both;
+}
+
+.feed-preview {
+	margin-top: 10px;
+}
+
 .feed-title {
 	margin-bottom: 5px;
 }

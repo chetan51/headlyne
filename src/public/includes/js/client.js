@@ -1,6 +1,8 @@
 $(document).ready(function() {
 	// Hide elements
 	$(".feed-header").hide();
+	$(".feed-edit-control").hide();
+	$(".feed-preview").hide();
 	$("#edit-editing-control").hide();
 	$("#collapse-control").hide();
 	
@@ -21,6 +23,8 @@ $(document).ready(function() {
 	
 	$("#edit-button").click(editOrDoneClicked);
 	$("#done-button").click(editOrDoneClicked);
+	
+	$(".feed-edit-control").click(feedEditClicked);
 });
 
 function expandOrCollapseClicked(e) {
@@ -33,7 +37,30 @@ function expandOrCollapseClicked(e) {
 function editOrDoneClicked(e) {
 	$(".feed-body").slideToggle("fast");
 	$(".feed-header").slideToggle("fast");
+	$(".feed-edit-control").toggle();
 	
 	$("#edit-editing-control").toggle();
 	$("#edit-default-control").toggle();
+}
+
+function feedEditClicked(e) {
+	var preview_container = $(this).siblings(".feed-preview");
+	var url_container = $(this).siblings(".feed-url");
+	
+	preview_container.html("Loading feed preview...");
+	preview_container.show();
+	
+	$.ajax({
+		url: "/feed/preview",
+		data: {
+			url: url_container.text(),
+		},
+		success: function(data) {
+			preview_container.html(data);
+		},
+		error: function() {
+			preview_container.html("An error was encountered.");
+		}
+	});
+
 }
