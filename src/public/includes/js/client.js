@@ -1,6 +1,8 @@
 $(document).ready(function() {
 	// Hide elements
 	$(".feed-header").hide();
+	$("#edit-editing-control").hide();
+	$("#collapse-control").hide();
 	
 	// Set up overlays
 	var triggers = $(".modalInput").overlay({
@@ -14,27 +16,24 @@ $(document).ready(function() {
 	});
 	
 	// Set up event listeners
-	$("#expand-collapse-button").click(function(e) {
-		$(".feed-item-body").slideToggle("fast");
-		
-		if ($(this).text() == "Collapse") {
-			$(this).text("Expand");
-		}
-		else {
-			$(this).text("Collapse");
-		}
-	});
+	$("#expand-button").click(expandOrCollapseClicked);
+	$("#collapse-button").click(expandOrCollapseClicked);
 	
-	$("#edit-button").click(function(e) {
-		$(".feed-body").slideToggle("fast");
-		$(".feed-header").slideToggle("fast");
-		
-		var button = $("#edit-button");
-		if ($(this).text() == "Edit") {
-			$(this).text("Done");
-		}
-		else {
-			$(this).text("Edit");
-		}
-	});
+	$("#edit-button").click(editOrDoneClicked);
+	$("#done-button").click(editOrDoneClicked);
 });
+
+function expandOrCollapseClicked(e) {
+	$(".feed-item-body").slideToggle("fast");
+	
+	$("#expand-control").toggle();
+	$("#collapse-control").toggle();
+}
+
+function editOrDoneClicked(e) {
+	$(".feed-body").slideToggle("fast");
+	$(".feed-header").slideToggle("fast");
+	
+	$("#edit-editing-control").toggle();
+	$("#edit-default-control").toggle();
+}
