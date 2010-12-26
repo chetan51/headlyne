@@ -17,6 +17,15 @@ $(document).ready(function() {
 		closeOnClick: true
 	});
 	
+	// Set up sortable
+	$( ".column" ).sortable({
+		connectWith: ".column",
+		handle: $(".feed-header")
+	});
+	
+	// Set up UI elements
+	$("button").button();
+	
 	// Set up event listeners
 	$("#expand-button").click(expandOrCollapseClicked);
 	$("#collapse-button").click(expandOrCollapseClicked);
@@ -24,7 +33,8 @@ $(document).ready(function() {
 	$("#edit-button").click(editOrDoneClicked);
 	$("#done-button").click(editOrDoneClicked);
 	
-	$(".feed-edit-control").click(feedEditClicked);
+	$(".feed-edit-edit-button").click(feedEditClicked);
+	$(".feed-header").hover(feedHeaderHoverIn, feedHeaderHoverOut);
 });
 
 function expandOrCollapseClicked(e) {
@@ -37,15 +47,14 @@ function expandOrCollapseClicked(e) {
 function editOrDoneClicked(e) {
 	$(".feed-body").slideToggle("fast");
 	$(".feed-header").slideToggle("fast");
-	$(".feed-edit-control").toggle();
 	
 	$("#edit-editing-control").toggle();
 	$("#edit-default-control").toggle();
 }
 
 function feedEditClicked(e) {
-	var preview_container = $(this).siblings(".feed-preview");
-	var url_container = $(this).siblings(".feed-url");
+	var preview_container = $(this).parent().parent().siblings(".feed-preview");
+	var url_container = $(this).parent().parent().siblings(".feed-url");
 	
 	preview_container.html("Loading feed preview...");
 	preview_container.show();
@@ -64,3 +73,11 @@ function feedEditClicked(e) {
 	});
 
 }
+
+function feedHeaderHoverIn(e) {
+	$(this).children(".feed-edit-control").show();
+}	
+
+function feedHeaderHoverOut(e) {
+	$(this).children(".feed-edit-control").hide();
+}	

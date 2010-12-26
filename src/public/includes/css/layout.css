@@ -68,19 +68,62 @@
 	display: inline-block; 
 	vertical-align: top;
 	width: 33%;
+	min-height: 50px;
 }
 
 .column-content {
 	padding: 10px;
 }
 
+.ui-sortable-placeholder {
+	border: 1px dotted black;
+	visibility: visible !important;
+	margin: 10px;
+	height: 30px !important;
+}
+.ui-sortable-placeholder * {
+	visibility: hidden;
+}
+
 .feed-header {
 	border: 1px solid;
 	text-align: center;
+	position: relative;
 }
 
 .feed-edit-control {
 	background: #ddd;
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+}
+
+.feed-edit-move-icon {
+	position: absolute;
+	top: 50%;
+	height: 26px;
+	margin-top:-13px;
+	left: 5px;
+	font-size: 14px;
+}
+
+.feed-edit-edit-button {
+	float: right;
+	font-size: 12px !important;
+}
+
+.clear {
+	clear: both;
+}
+
+.feed-preview {
+	margin-top: 10px;
+}
+
+.feed-edit-control {
+	background: #ccc;
+	opacity:0.8;
 	width: 100%;
 }
 
