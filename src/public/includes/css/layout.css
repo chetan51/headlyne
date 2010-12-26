@@ -95,6 +95,10 @@
 	margin-bottom: 5px;
 }
 
+.feed-url {
+	display: none;
+}
+
 .feed-item {
 	margin-bottom: 15px;
 }
