@@ -2,21 +2,10 @@
   h3.feed-title= title
   .feed-url= url
   .feed-edit-control
-    span.feed-edit-click-label Click to edit
-    span.feed-edit-items-label Items to display:\ 
-      select
-        option 1
-        option 2
-        option 3
-        option 4
-        option 5
-        option 6
-        option 7
-        option 8
-        option 9
-        option 10
+    span.feed-edit-move-icon.ui-icon.ui-icon-arrow-4
+    button.feed-edit-edit-button Edit
     .clear
-  .feed-preview
+.feed-preview
 .feed-body
   - each item in items
     .feed-item
