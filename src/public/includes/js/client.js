@@ -23,35 +23,31 @@ $(document).ready(function() {
 		},
 		closeOnClick: true
 	});
+	
+	// Set up event listeners
+	$("#expand-collapse-button").click(function(e) {
+		$(".feed-item-body").slideToggle("fast");
+		
+		if ($(this).text() == "Collapse") {
+			$(this).text("Expand");
+		}
+		else {
+			$(this).text("Collapse");
+		}
+	});
+	
+	$("#edit-button").click(function(e) {
+		$(".feed-body").slideToggle("fast");
+		$(".feed-header").slideToggle("fast");
+		
+		var button = $("#edit-button");
+		if ($(this).text() == "Edit") {
+			$(this).text("Done");
+			$(this).data("tooltip").show();
+		}
+		else {
+			$(this).text("Edit");
+			$(this).data("tooltip").hide();
+		}
+	});
 });
-
-function collapseOrExpand() {
-	$(".feed-item-body").slideToggle("fast");
-	
-	var button = $("#expand-collapse-button");
-	if (button.text() == "Collapse") {
-		button.text("Expand");
-	}
-	else {
-		button.text("Collapse");
-	}
-}
-
-function edit() {
-	$(".feed-body").slideToggle("fast");
-	$(".feed-header").slideToggle("fast");
-	
-	var button = $("#edit-button");
-	if (button.text() == "Edit") {
-		button.text("Done");
-		$("#edit-button").data("tooltip").show();
-	}
-	else {
-		button.text("Edit");
-		$("#edit-button").data("tooltip").hide();
-	}
-}
-
-function preview() {
-	var feed_url = $("#add-url").val();
-}
