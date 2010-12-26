@@ -8,18 +8,6 @@
 /* Divs
 -------------------------------------------------------------- */
 
-.tooltip {
-	display:none;
-	height:120px;
-	width:240px;
-	font-size:11px;
-	color:#fff;
-}
-
-#add-dialog {
-	text-align: center;
-}
-
 .modal {
 		background-color:#fff;
 		display:none;

@@ -2,17 +2,6 @@ $(document).ready(function() {
 	// Hide elements
 	$(".feed-header").hide();
 	
-	// Set up tooltips
-	$("#edit-button").tooltip({
-		events: {
-			def: ","
-		},
-		position: 'bottom center',
-		direction: 'down',
-		offset: [15, 20],
-		effect: "slide"
-	});
-
 	// Set up overlays
 	var triggers = $(".modalInput").overlay({
 		// some mask tweaks suitable for modal dialogs
@@ -43,11 +32,9 @@ $(document).ready(function() {
 		var button = $("#edit-button");
 		if ($(this).text() == "Edit") {
 			$(this).text("Done");
-			$(this).data("tooltip").show();
 		}
 		else {
 			$(this).text("Edit");
-			$(this).data("tooltip").hide();
 		}
 	});
 });
