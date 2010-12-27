@@ -85,6 +85,10 @@
 	visibility: hidden;
 }
 
+.feed {
+	margin-bottom: 10px;
+}
+
 .feed-header {
 	border: 1px solid;
 	text-align: center;
