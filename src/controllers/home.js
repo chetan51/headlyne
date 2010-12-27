@@ -39,13 +39,20 @@ var HomeController = function() {
 				
 				Ni.library('FeedServer').getFeedTeaser(
 					'http://xkcd.com/rss.xml',
-					5,
+					4,
+					function() {},
+					this.parallel()
+				);
+				
+				Ni.library('FeedServer').getFeedTeaser(
+					'http://feeds.feedburner.com/FutilityCloset',
+					2,
 					function() {},
 					this.parallel()
 				);
 						
 			},
-			function displayFeeds(err, feed1, feed2, feed3) {
+			function displayFeeds(err, feed1, feed2, feed3, feed4) {
 				feed1.title_selection = "item";
 				feed1.body_selection = "item";
 				
@@ -54,6 +61,9 @@ var HomeController = function() {
 
 				feed3.title_selection = "item";
 				feed3.body_selection = "item";
+				
+				feed4.title_selection = "item";
+				feed4.body_selection = "webpage";
 				
 				var teaser1 = jade.render(
 					Ni.view('feed').template,
@@ -70,6 +80,11 @@ var HomeController = function() {
 					{locals: feed3}
 				);
 				
+				var teaser4 = jade.render(
+					Ni.view('feed').template,
+					{locals: feed4}
+				);
+				
 				var columns = [];
 				columns[0] = {};
 				columns[0].feeds = [];
@@ -82,6 +97,7 @@ var HomeController = function() {
 				columns[2] = {};
 				columns[2].feeds = [];
 				columns[2].feeds[0] = teaser3;
+				columns[2].feeds[1] = teaser4;
 				
 				var page = jade.render(
 					Ni.view('page').template,
