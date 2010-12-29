@@ -1,9 +1,20 @@
 .feed-header
   h3.feed-title= title
   .feed-url= url
-  .feed-edit-control
-    span.feed-edit-move-icon.ui-icon.ui-icon-arrow-4
-    button.feed-edit-edit-button Edit
+  .feed-edit-overlay
+    span.feed-move-icon.ui-icon.ui-icon-arrow-4
+    span.feed-edit-control
+      span [\ 
+        span.feed-delete-default-control
+          a.feed-delete-button(href='#') Delete
+        span.feed-delete-deleting-control
+          a.feed-delete-cancel-button(href='#') Cancel
+      span \ - 
+        span.feed-edit-default-control
+          a.feed-edit-button(href='#') Edit
+        span.feed-edit-editing-control
+          a.feed-edit-done-button(href='#') Done
+      span \ ]
     .clear
 .feed-preview
 .feed-body

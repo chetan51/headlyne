@@ -1,8 +1,10 @@
 $(document).ready(function() {
 	// Hide elements
 	$(".feed-header").hide();
-	$(".feed-edit-control").hide();
 	$(".feed-preview").hide();
+	$(".feed-edit-overlay").hide();
+	$(".feed-delete-deleting-control").hide();
+	$(".feed-edit-editing-control").hide();
 	$("#edit-editing-control").hide();
 	$("#collapse-control").hide();
 	
@@ -33,7 +35,7 @@ $(document).ready(function() {
 	$("#edit-button").click(editOrDoneClicked);
 	$("#done-button").click(editOrDoneClicked);
 	
-	$(".feed-edit-edit-button").click(feedEditClicked);
+	$(".feed-edit-button").click(feedEditClicked);
 	$(".feed-header").hover(feedHeaderHoverIn, feedHeaderHoverOut);
 });
 
@@ -53,8 +55,8 @@ function editOrDoneClicked(e) {
 }
 
 function feedEditClicked(e) {
-	var preview_container = $(this).parent().parent().siblings(".feed-preview");
-	var url_container = $(this).parent().parent().siblings(".feed-url");
+	var preview_container = $(this).parents(".feed").children(".feed-preview");
+	var url_container = $(this).parents(".feed").children(".feed-url");
 	
 	preview_container.html("Loading feed preview...");
 	preview_container.show();
@@ -75,9 +77,9 @@ function feedEditClicked(e) {
 }
 
 function feedHeaderHoverIn(e) {
-	$(this).children(".feed-edit-control").show();
+	$(this).children(".feed-edit-overlay").show();
 }	
 
 function feedHeaderHoverOut(e) {
-	$(this).children(".feed-edit-control").hide();
+	$(this).children(".feed-edit-overlay").hide();
 }	
