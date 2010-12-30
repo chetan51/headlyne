@@ -1,57 +1,46 @@
-!!! 5
-html
-  head
-    title= title
-    link(href="http://fonts.googleapis.com/css?family=UnifrakturCook:bold", rel="stylesheet", type="text/css")
-    link(href="/includes/css/reset.css", rel="stylesheet", type="text/css")
-    link(href="/includes/css/typography.css", rel="stylesheet", type="text/css")
-    link(href="/includes/css/colors.css", rel="stylesheet", type="text/css")
-    link(href="/includes/css/forms.css", rel="stylesheet", type="text/css")
-    link(href="/includes/css/uielements.css", rel="stylesheet", type="text/css")
-    link(href="/includes/css/layout.css", rel="stylesheet", type="text/css")
-    // jQuery Library + UI Tools
-    script(src="http://cdn.jquerytools.org/1.2.5/full/jquery.tools.min.js", type="text/javascript")
-    // jQuery UI
-    link(href="/includes/css/ui-darkness/jquery-ui-1.8.7.custom.css", rel="stylesheet", type="text/css")
-    script(src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.min.js", type="text/javascript")
-    script(src="/includes/js/client.js", type="text/javascript")
-  body
-    .feed-num-items-control
-      span Items to display:\ 
-      select.num-items-input
-        option 1
-        option 2
-        option 3
-        option 4
-        option 5
-        option 6
-        option 7
-        option 8
-        option 9
-        option 10
-    .feed-preview-body
-      - var item = items[0]
-      .titles
-        form
-          .item
-            .control
-              input.input(type="radio", name="titles")
-            .title
-              p item title
-          .webpage
-            .control
-              input.input(type="radio", name="titles")
-            .title
-              p webpage title
-      .bodies
-        form
-          .item
-            .control
-              input.input(type="radio", name="bodies")
-            .body
-              p item description
-          .webpage
-            .control
-              input.input(type="radio", name="bodies")
-            .body
-              p webpage snippet
+.feed-preview
+  .num-items
+    span Items to display:\ 
+    select.input
+      option 1
+      option 2
+      option 3
+      option 4
+      option 5
+      option 6
+      option 7
+      option 8
+      option 9
+      option 10
+  .display
+    - var item = items[0]
+    .titles
+      form
+        .item
+          .control
+            input.input(type="radio", name="titles")
+          .title
+            - if (item.title)
+              p= item.title
+        .webpage
+          .control
+            input.input(type="radio", name="titles")
+          .title
+            - if (item.webpage)
+              - if (item.webpage.title)
+                p= item.webpage.title
+    .bodies
+      form
+        .item
+          .control
+            input.input(type="radio", name="bodies")
+          .body
+            - if (item.description)
+              p!= item.description
+        .webpage
+          .control
+            input.input(type="radio", name="bodies")
+          .body
+            - if (item.webpage)
+              - if (item.webpage.body)
+                p!= item.webpage.body
