@@ -17,10 +17,44 @@ var Step = require('step');
 /*
  *  The home controller
  */
+var HomeController = function()
+{
+	this.index = function(req, res, next)
+	{
+		// if no cookies are passed, redirect to login.
+		if( typeof(req.headers.cookie) == 'undefined' )
+		{
+			res.writeHead(302, [
+				['Location', '/login']
+			]);
+			res.end();
+			return;
+		}
+		// check if the cookie is a JSON object. otherwise, say cookie error.
+		var cookie;
+		try {
+			cookie = JSON.parse(req.headers.cookie);
+			console.log(cookie);
+		} catch (e) {
+			res.error('Your cookie is broken. Please clear cookies '+
+				'for this site and try again');
+			return;
+		}
 
-var HomeController = function() {
-
-	this.index = function(req, res, next) {
+		// check if the cookie is valid.
+		Ni.library('UserAuth').checkAuth(
+			cookie,
+			function(err, is_valid)
+			{
+				if(err) throw err;
+				if(!is_valid) {
+					res.writeHead(302, [
+						['Location', '/login']
+					]); // redirect to login page.
+					res.end();
+				} else {
+					// if valid, serve the page requested.
+		
 		Step(
 			function getFeeds() {
 				Ni.library('FeedServer').getFeedTeaser(
@@ -50,8 +84,8 @@ var HomeController = function() {
 					function() {},
 					this.parallel()
 				);
-						
 			},
+
 			function displayFeeds(err, feed1, feed2, feed3, feed4) {
 				feed1.title_selection = "item";
 				feed1.body_selection = "item";
@@ -120,6 +154,9 @@ var HomeController = function() {
 				);
 
 				res.ok(html);
+			}
+		);
+				}
 			}
 		);
 	}
