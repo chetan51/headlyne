@@ -4,6 +4,7 @@
 var nodeunit = require('nodeunit');
 var ContentGrabber = require('../../src/libraries/ContentGrabber.js');
 var fs = require('fs');
+var Ni = require('ni');
 
 /**
  *  Sample data
@@ -115,8 +116,92 @@ exports['grab content from page'] = nodeunit.testCase(
 				}
 			}
 		);
+	}
+});
+
+exports['snippets'] = nodeunit.testCase(
+{
+	setUp: function (callback) {
+		Ni.config('snippet_image_limit', 2);
+		Ni.config('snippet_text_limit', 300);
+		callback();
 	},
 
+	tearDown: function (callback) {
+		callback();
+	},
+
+	'basic': function(test)
+	{
+		test.expect(1);
+		
+		var html = fs.readFileSync(sampleDocument.url, 'utf-8');
+		
+		ContentGrabber.readable(
+			html,
+			function(err, title, readableHTML) {
+				if (err) {
+					test.ifError(err);
+					test.done();
+				}
+				else {
+					var snippet = ContentGrabber.snip(readableHTML);
+
+					console.log(snippet);
+					test.equal(snippet.length, 497);
+					test.done();
+				}
+			}
+		);
+	},
+
+	'basic 2': function(test)
+	{
+		test.expect(1);
+		
+		var html = fs.readFileSync(sampleDocument2.url, 'utf-8');
+		
+		ContentGrabber.readable(
+			html,
+			function(err, title, readableHTML) {
+				if (err) {
+					test.ifError(err);
+					test.done();
+				}
+				else {
+					var snippet = ContentGrabber.snip(readableHTML);
+					
+					console.log(snippet);
+					test.equal(snippet.length, 577);
+					test.done();
+				}
+			}
+		);
+	},
+	
+	'basic 3': function(test)
+	{
+		test.expect(1);
+		
+		var html = fs.readFileSync(sampleDocument3.url, 'utf-8');
+		
+		ContentGrabber.readable(
+			html,
+			function(err, title, readableHTML) {
+				if (err) {
+					test.ifError(err);
+					test.done();
+				}
+				else {
+					var snippet = ContentGrabber.snip(readableHTML);
+					
+					console.log(snippet);
+					test.equal(snippet.length, 524);
+					test.done();
+				}
+			}
+		);
+	}
 });
 
 exports['DOM Testing'] = nodeunit.testCase(
