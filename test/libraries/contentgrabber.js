@@ -4,6 +4,7 @@
 var nodeunit = require('nodeunit');
 var ContentGrabber = require('../../src/libraries/ContentGrabber.js');
 var fs = require('fs');
+var Ni = require('ni');
 
 /**
  *  Sample data
@@ -15,21 +16,21 @@ var html='<html><head></head><body><div id="lol">hello</div></body></html>';
  **/
 var sampleDocument = {
 	url        : './test/mocks/mock_app/views/blogpost1.html',
-	title      : "Why Node.js Is Totally Awesome \n            \n            Chetan Surpur",
+	title      : " \n\t\t\t\n            \n                Why Node.js Is Totally Awesome | \n            \n            Chetan Surpur\n\t\t\t\n\t\t",
 	first_line : "Three reasons: speed, easability, and reusability.",
 	last_line  : "Sorry about that everyone!"
 };
 
 var sampleDocument2 = {
 	url        : './test/mocks/mock_app/views/blogpost3.html',
-	title      : "A Curious Breach Of Privacy \n            \n            Chetan Surpur",
+	title      : " \n\t\t\t\n            \n                A Curious Breach Of Privacy | \n            \n            Chetan Surpur\n\t\t\t\n\t\t",
 	first_line : "I got this email",
 	last_line  : "life will continue to be"
 };
 
 var sampleDocument3 = {
 	url        : './test/mocks/mock_app/views/webpage1.html',
-	title      : "Create and publish your own website quickly and easily using iWeb, Pages, and many other applications available for Mac OS X.",
+	title      : "Your Website",
 	first_line : "It’s a snap to create and publish your own website",
 	last_line  : "For more information about the Apache web server"
 };
@@ -115,8 +116,92 @@ exports['grab content from page'] = nodeunit.testCase(
 				}
 			}
 		);
+	}
+});
+
+exports['snippets'] = nodeunit.testCase(
+{
+	setUp: function (callback) {
+		Ni.config('snippet_image_limit', 2);
+		Ni.config('snippet_text_limit', 300);
+		callback();
 	},
 
+	tearDown: function (callback) {
+		callback();
+	},
+
+	'basic': function(test)
+	{
+		test.expect(1);
+		
+		var html = fs.readFileSync(sampleDocument.url, 'utf-8');
+		
+		ContentGrabber.readable(
+			html,
+			function(err, title, readableHTML) {
+				if (err) {
+					test.ifError(err);
+					test.done();
+				}
+				else {
+					var snippet = ContentGrabber.snip(readableHTML);
+
+					console.log(snippet);
+					test.equal(snippet.length, 777);
+					test.done();
+				}
+			}
+		);
+	},
+
+	'basic 2': function(test)
+	{
+		test.expect(1);
+		
+		var html = fs.readFileSync(sampleDocument2.url, 'utf-8');
+		
+		ContentGrabber.readable(
+			html,
+			function(err, title, readableHTML) {
+				if (err) {
+					test.ifError(err);
+					test.done();
+				}
+				else {
+					var snippet = ContentGrabber.snip(readableHTML);
+					
+					console.log(snippet);
+					test.equal(snippet.length, 627);
+					test.done();
+				}
+			}
+		);
+	},
+	
+	'basic 3': function(test)
+	{
+		test.expect(1);
+		
+		var html = fs.readFileSync(sampleDocument3.url, 'utf-8');
+		
+		ContentGrabber.readable(
+			html,
+			function(err, title, readableHTML) {
+				if (err) {
+					test.ifError(err);
+					test.done();
+				}
+				else {
+					var snippet = ContentGrabber.snip(readableHTML);
+					
+					console.log(snippet);
+					test.equal(snippet.length, 581);
+					test.done();
+				}
+			}
+		);
+	}
 });
 
 exports['DOM Testing'] = nodeunit.testCase(
