@@ -1,39 +1,40 @@
-.feed-header
-  h3.feed-title= title
-  .feed-url= url
-  .feed-edit-overlay
-    span.feed-move-icon.ui-icon.ui-icon-arrow-4
-    span.feed-edit-control
+.header
+  h3.title= title
+  .url= url
+  .edit-overlay
+    span.move-icon.ui-icon.ui-icon-arrow-4
+    span.edit-delete
       span [\ 
-        span.feed-delete-default-control
-          a.feed-delete-button(href='#') Delete
-        span.feed-delete-deleting-control
-          a.feed-delete-cancel-button(href='#') Cancel
+      span.delete
+        span.default-control
+          a.delete-button(href='#') Delete
+        span.deleting-control
+          a.cancel-button(href='#') Cancel
       span \ - 
-        span.feed-edit-default-control
-          a.feed-edit-button(href='#') Edit
-        span.feed-edit-editing-control
-          a.feed-edit-done-button(href='#') Done
+      span.edit
+        span.default-control
+          a.edit-button(href='#') Edit
+        span.editing-control
+          a.done-button(href='#') Done
       span \ ]
     .clear
-.feed-preview
-.feed-body
+.preview
+.body
   - each item in items
-    .feed-item
-      .feed-item-header
+    .item
+      .header
         - if (title_selection == "item")
           - if (item.title)
-            h2.feed-item-title= item.title
+            h2.title= item.title
         - if (title_selection == "webpage")
           - if (item.webpage)
             - if (item.webpage.title)
-              h2.feed-webpage-title= item.webpage.title
-      .feed-item-body
-        .feed-item-snippet
-          - if (body_selection == "item")
-            - if (item.description)
-              div.feed-item-description!= item.description
-          - if (body_selection == "webpage")
-            - if (item.webpage)
-              - if (item.webpage.body)
-                div.feed-webpage-snippet!= item.webpage.body
+              h2.title= item.webpage.title
+      .body
+        - if (body_selection == "item")
+          - if (item.description)
+            div.snippet!= item.description
+        - if (body_selection == "webpage")
+          - if (item.webpage)
+            - if (item.webpage.body)
+              div.snippet!= item.webpage.body

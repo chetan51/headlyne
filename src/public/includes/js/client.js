@@ -3,11 +3,11 @@ $(document).ready(function() {
 	$("#edit-page #editing-control").hide();
 	$("#collapse-expand #expand-control").hide();
 	
-	$(".feed-header").hide();
-	$(".feed-preview").hide();
-	$(".feed-edit-overlay").hide();
-	$(".feed-delete-deleting-control").hide();
-	$(".feed-edit-editing-control").hide();
+	$(".feed > .header").hide();
+	$(".feed > .preview").hide();
+	$(".feed > .header > .edit-overlay").hide();
+	$(".feed > .header > .edit-overlay > .edit-delete > .delete > .deleting-control").hide();
+	$(".feed > .header > .edit-overlay > .edit-delete > .edit > .editing-control").hide();
 	
 	// Set up overlays
 	var triggers = $(".modalInput").overlay({
@@ -23,30 +23,30 @@ $(document).ready(function() {
 	// Set up sortable
 	$( ".column" ).sortable({
 		connectWith: ".column",
-		handle: $(".feed-header")
+		handle: $(".feed .header")
 	});
 	
 	// Set up UI elements
 	$("button").button();
 	
 	// Set up event listeners
-	$("#collapse-expand #expand-button").click(expandOrCollapseClicked);
-	$("#collapse-expand #collapse-button").click(expandOrCollapseClicked);
+	$("#collapse-expand > #collapse-control > #collapse-button").click(expandOrCollapseClicked);
+	$("#collapse-expand > #expand-control > #expand-button").click(expandOrCollapseClicked);
 	
-	$("#edit-page #edit-button").click(editClicked);
-	$("#edit-page #done-button").click(doneClicked);
+	$("#edit-page > #default-control > #edit-button").click(editClicked);
+	$("#edit-page > #editing-control > #done-button").click(doneClicked);
 	
 	$("#add-column-button").click(addColumnClicked);
 	
-	$(".feed-edit-button").click(feedEditClicked);
-	$(".feed-header").hover(feedHeaderHoverIn, feedHeaderHoverOut);
+	$(".feed > .header > .edit-overlay > .edit-delete > .edit > .default-control > .edit-button").click(feedEditClicked);
+	$(".feed > .header").hover(feedHeaderHoverIn, feedHeaderHoverOut);
 });
 
 function expandOrCollapseClicked(e) {
-	$(".feed-item-body").slideToggle("fast");
+	$(".feed > .body > .item > .body").slideToggle("fast");
 	
-	$("#collapse-expand #expand-control").toggle();
-	$("#collapse-expand #collapse-control").toggle();
+	$("#collapse-expand > #expand-control").toggle();
+	$("#collapse-expand > #collapse-control").toggle();
 }
 
 function editClicked(e) {
@@ -54,16 +54,16 @@ function editClicked(e) {
 }
 
 function doneClicked(e) {
-	$(".feed-preview").hide("slide", {direction: "up"}, "fast");
+	$(".feed > .preview").hide("slide", {direction: "up"}, "fast");
 	editOrDoneClicked(e);
 }
 
 function editOrDoneClicked(e) {
-	$(".feed-body").slideToggle("fast");
-	$(".feed-header").slideToggle("fast");
+	$(".feed > .body").slideToggle("fast");
+	$(".feed > .header").slideToggle("fast");
 	
-	$("#edit-page #default-control").toggle();
-	$("#edit-page #editing-control").toggle();
+	$("#edit-page > #default-control").toggle();
+	$("#edit-page > #editing-control").toggle();
 	
 	equallyWidenColumns();
 }
@@ -77,8 +77,8 @@ function addColumnClicked(e) {
 
 function feedEditClicked(e) {
 	var this_column = $(this).parents(".column");
-	var preview_container = $(this).parents(".feed").children(".feed-preview");
-	var url_container = $(this).parents(".feed").children(".feed-url");
+	var preview_container = $(this).parents(".feed").children(".preview");
+	var url_container = $(this).parents(".feed").children(".header > .url");
 	
 	preview_container.html("Loading feed preview...");
 	preview_container.show();
@@ -105,11 +105,11 @@ function feedEditClicked(e) {
 }
 
 function feedHeaderHoverIn(e) {
-	$(this).children(".feed-edit-overlay").show();
+	$(this).children(".header > .edit-overlay").show();
 }	
 
 function feedHeaderHoverOut(e) {
-	$(this).children(".feed-edit-overlay").hide();
+	$(this).children(".header > .edit-overlay").hide();
 }	
 
 
