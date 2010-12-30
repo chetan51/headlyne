@@ -1,29 +1,57 @@
-.feed-num-items-control
-  span Items to display:\ 
-  select.num-items-input
-    option 1
-    option 2
-    option 3
-    option 4
-    option 5
-    option 6
-    option 7
-    option 8
-    option 9
-    option 10
-.feed-preview-body
-  - var item = items[0]
-  .feed-item
-    .feed-item-header
-      - if (item.title)
-      h2.feed-item-title= item.title
-      - if (item.webpage)
-        - if (item.webpage.title)
-          h2.feed-webpage-title= item.webpage.title
-    .feed-item-body
-      .feed-item-snippet
-        - if (item.description)
-          div.feed-item-description!= item.description
-        - if (item.webpage)
-          - if (item.webpage.body)
-            div.feed-webpage-snippet!= item.webpage.body
+!!! 5
+html
+  head
+    title= title
+    link(href="http://fonts.googleapis.com/css?family=UnifrakturCook:bold", rel="stylesheet", type="text/css")
+    link(href="/includes/css/reset.css", rel="stylesheet", type="text/css")
+    link(href="/includes/css/typography.css", rel="stylesheet", type="text/css")
+    link(href="/includes/css/colors.css", rel="stylesheet", type="text/css")
+    link(href="/includes/css/forms.css", rel="stylesheet", type="text/css")
+    link(href="/includes/css/uielements.css", rel="stylesheet", type="text/css")
+    link(href="/includes/css/layout.css", rel="stylesheet", type="text/css")
+    // jQuery Library + UI Tools
+    script(src="http://cdn.jquerytools.org/1.2.5/full/jquery.tools.min.js", type="text/javascript")
+    // jQuery UI
+    link(href="/includes/css/ui-darkness/jquery-ui-1.8.7.custom.css", rel="stylesheet", type="text/css")
+    script(src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.min.js", type="text/javascript")
+    script(src="/includes/js/client.js", type="text/javascript")
+  body
+    .feed-num-items-control
+      span Items to display:\ 
+      select.num-items-input
+        option 1
+        option 2
+        option 3
+        option 4
+        option 5
+        option 6
+        option 7
+        option 8
+        option 9
+        option 10
+    .feed-preview-body
+      - var item = items[0]
+      .titles
+        form
+          .item
+            .control
+              input.input(type="radio", name="titles")
+            .title
+              p item title
+          .webpage
+            .control
+              input.input(type="radio", name="titles")
+            .title
+              p webpage title
+      .bodies
+        form
+          .item
+            .control
+              input.input(type="radio", name="bodies")
+            .body
+              p item description
+          .webpage
+            .control
+              input.input(type="radio", name="bodies")
+            .body
+              p webpage snippet
