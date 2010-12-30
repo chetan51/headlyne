@@ -1,46 +1,45 @@
-.feed-preview
-  .num-items
-    span Items to display:\ 
-    select.input
-      option 1
-      option 2
-      option 3
-      option 4
-      option 5
-      option 6
-      option 7
-      option 8
-      option 9
-      option 10
-  .display
-    - var item = items[0]
-    .titles
-      form
-        .item
-          .control
-            input.input(type="radio", name="titles")
-          .title
-            - if (item.title)
-              p= item.title
-        .webpage
-          .control
-            input.input(type="radio", name="titles")
-          .title
-            - if (item.webpage)
-              - if (item.webpage.title)
-                p= item.webpage.title
-    .bodies
-      form
-        .item
-          .control
-            input.input(type="radio", name="bodies")
-          .body
-            - if (item.description)
-              p!= item.description
-        .webpage
-          .control
-            input.input(type="radio", name="bodies")
-          .body
-            - if (item.webpage)
-              - if (item.webpage.body)
-                p!= item.webpage.body
+.num-items
+  span Items to display:\ 
+  select.input
+    option 1
+    option 2
+    option 3
+    option 4
+    option 5
+    option 6
+    option 7
+    option 8
+    option 9
+    option 10
+.display
+  - var item = items[0]
+  .titles
+    form
+      .item
+        .control
+          input.input(type="radio", name="titles")
+        .title
+          - if (item.title)
+            p= item.title
+      .webpage
+        .control
+          input.input(type="radio", name="titles")
+        .title
+          - if (item.webpage)
+            - if (item.webpage.title)
+              p= item.webpage.title
+  .bodies
+    form
+      .item
+        .control
+          input.input(type="radio", name="bodies")
+        .body
+          - if (item.description)
+            p!= item.description
+      .webpage
+        .control
+          input.input(type="radio", name="bodies")
+        .body
+          - if (item.webpage)
+            - if (item.webpage.body)
+              p!= item.webpage.body
