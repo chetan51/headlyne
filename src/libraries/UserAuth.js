@@ -136,7 +136,7 @@ var UserAuth = function()
 	 **/
 	this.checkAuth = function(session_cookie, callback)
 	{
-		if(session_cookie == null || typeof(session_cookie.data.username) != 'undefined') {
+		if(session_cookie == null || typeof(session_cookie.data.user) != 'undefined') {
 			callback(new Error('Invalid Session Cookie'));
 			return;
 		}

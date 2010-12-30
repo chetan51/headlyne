@@ -54,13 +54,16 @@ var HomeController = function()
 					res.end();
 				} else {
 					// if valid, serve the page requested.
+		
+		res.ok('Home page loaded!');
+		/*
 		Ni.library('FeedServer').getFeedTeaser(
 			'http://feeds.reuters.com/reuters/worldNews?format=xml',
 			3,
 			function(err, f) {},
 			function(err, feed1) {
 				if (err) throw err;
-				
+
 				Ni.library('FeedServer').getFeedTeaser(
 					'http://feeds.reuters.com/reuters/companyNews?format=xml',
 					3,
@@ -116,6 +119,7 @@ var HomeController = function()
 				);
 			}
 		);
+		*/
 				}
 			}
 		);
