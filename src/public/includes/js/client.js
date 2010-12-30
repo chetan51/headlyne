@@ -6,7 +6,7 @@ $(document).ready(function() {
 	$(".feed-delete-deleting-control").hide();
 	$(".feed-edit-editing-control").hide();
 	$("#edit-editing-control").hide();
-	$("#collapse-control").hide();
+	$("#expand-control").hide();
 	
 	// Set up overlays
 	var triggers = $(".modalInput").overlay({
