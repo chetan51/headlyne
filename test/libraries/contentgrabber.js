@@ -4,6 +4,7 @@
 var nodeunit = require('nodeunit');
 var ContentGrabber = require('../../src/libraries/ContentGrabber.js');
 var fs = require('fs');
+var Ni = require('ni');
 
 /**
  *  Sample data
@@ -121,6 +122,8 @@ exports['grab content from page'] = nodeunit.testCase(
 exports['snippets'] = nodeunit.testCase(
 {
 	setUp: function (callback) {
+		Ni.config('snippet_image_limit', 2);
+		Ni.config('snippet_text_limit', 300);
 		callback();
 	},
 
@@ -144,7 +147,8 @@ exports['snippets'] = nodeunit.testCase(
 				else {
 					var snippet = ContentGrabber.snip(readableHTML);
 
-					test.equal(snippet.length, 692);
+					console.log(snippet);
+					test.equal(snippet.length, 497);
 					test.done();
 				}
 			}

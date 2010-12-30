@@ -3,6 +3,7 @@ var jsdom       = require('jsdom');
 var path        = require('path');
 var Worker      = require('webworker').Worker;
 var Readability = require('readability');
+var Ni          = require('ni');
 
 /**
  * ContentGrabber: given a URL, fetch *only* the text
@@ -63,13 +64,15 @@ var ContentGrabber = function()
 		{
 			// if we are inside an opened tag, do some different stuff
 			if( in_tag ) {
-
-				/*// first, try to get the tag name.
-				if( fulltext[pos] != '>' &&
-				    fulltext[pos] != ' ' )
-				{
-					tag_name += fulltext[pos];
-				}*/
+				
+				if( !got_name) {
+					// first, try to get the tag name.
+					if( fulltext[pos] != '>' &&
+					    fulltext[pos] != ' ' )
+					{
+						tag_name += fulltext[pos];
+					}
+				}
 
 				switch( fulltext[pos] )
 				{
@@ -104,14 +107,15 @@ var ContentGrabber = function()
 						if( !in_dquotes && !in_squotes ) {
 							in_tag = false;
 						
-							/*// handle all special tags here.
+							// handle all special tags here.
 							switch(tag_name)
 							{
 								case 'img':
-									image_count++;
-									if ( image_count > 1 )
+									image_count = image_count + 1;
+									console.log(image_count);
+									if ( image_count == Ni.config('snippet_image_limit') )
 										done = true;
-							}*/
+							}
 						}
 
 						// if '>' or ' ', end the tag name.
@@ -135,7 +139,7 @@ var ContentGrabber = function()
 			snip_text += fulltext[pos];
 			pos ++;
 			// check end conditions
-			if( text_length > 250 )      done = true;
+			if( text_length > Ni.config('snippet_text_limit') ) done = true;
 			if( fulltext.length == pos ) done = true;
 		}
 		var dom_temp = jsdom.jsdom(snip_text);
