@@ -10,16 +10,16 @@ var Ni = require('ni');
  **/
 var test_session = 
 	{
-		cookie: {
-			id: 'random_id',
-			data: {
-				history: '',
-				user: 'username'
+		'cookie': {
+			'id': 'random_id',
+			'data': {
+				'history': '',
+				'user': 'username'
 			},
-			persistent: true,
-			lifetime: 100000
+			'persistent': true,
+			'expires': 100000 + parseInt(new Date().getTime())
 		},
-		created: null,
+		'created': null,
 	};
 
 exports['authenticate'] = nodeunit.testCase(
@@ -135,8 +135,9 @@ exports['authenticate'] = nodeunit.testCase(
 			{
 				if(err != null) throw err;
 
-				// set a session from 100 days ago.
-				test_session.created = new Date().getTime() - 1000*3600*24*100;
+				// set a session expiring 100 days ago.
+				var temp = test_session.cookie.expires;
+				test_session.cookie.expires = new Date().getTime() - 1000*3600*24*100;
 				UserModel.setSession(
 					'username',
 					test_session,
@@ -147,6 +148,7 @@ exports['authenticate'] = nodeunit.testCase(
 							'password',
 							function(err, is_new_sesh, sesh)
 							{
+								test_session.cookie.expires = temp;
 								test.ok(is_new_sesh);
 								test.done();
 							}
@@ -172,10 +174,9 @@ exports['authenticate'] = nodeunit.testCase(
 			{
 				if(err != null) throw err;
 
-				// set a session from 1 second within the lifetime
-				test_session.created =
-					new Date().getTime() -
-					(test_session.cookie.lifetime - 1000);
+				// set a session expiring in 1 second
+				var temp = test_session.cookie.expires;
+				test_session.cookie.expires = parseInt(new Date().getTime()) + 1000;
 
 				UserModel.setSession(
 					'username',
@@ -187,6 +188,7 @@ exports['authenticate'] = nodeunit.testCase(
 							'password',
 							function(err, is_new_sesh, sesh)
 							{
+								test_session.cookie.expires = temp;
 								test.ok(!is_new_sesh);
 								test.done();
 							}
@@ -244,6 +246,8 @@ exports['checkauth'] = nodeunit.testCase(
 				if( err != null) throw err;
 
 				test_session.created = new Date().getTime();
+				var temp = test_session.cookie.expires;
+				test_session.cookie.expires = parseInt(test_session.created) + Ni.config('session_lifetime');
 				UserModel.setSession(
 					'username',
 					test_session,
@@ -253,6 +257,7 @@ exports['checkauth'] = nodeunit.testCase(
 							test_session.cookie,
 							function(err, is_valid)
 							{
+								test_session.cookie.expires = temp;
 								if( err != null) throw err;
 	
 								test.ok(is_valid);
@@ -339,8 +344,8 @@ exports['checkauth'] = nodeunit.testCase(
 					test_session,
 					function(err, session)
 					{
-						// malform by increasing lifetime.
-						test_session.cookie.lifetime += 5;
+						// malform by increasing expiry
+						test_session.cookie.expires += 5;
 
 						UserAuth.checkAuth(
 							test_session.cookie,
@@ -368,7 +373,8 @@ exports['checkauth'] = nodeunit.testCase(
 			{
 				if( err != null) throw err;
 
-				test_session.created = new Date().getTime() - 1000*60*60*24*200;
+				var temp = test_session.cookie.expires;
+				test_session.cookie.expires = new Date().getTime();
 				UserModel.setSession(
 					'username',
 					test_session,
@@ -378,6 +384,7 @@ exports['checkauth'] = nodeunit.testCase(
 							test_session.cookie,
 							function(err, is_valid)
 							{
+								test_session.cookie.expires = temp;
 								if( err != null) throw err;
 	
 								test.ok(!is_valid);

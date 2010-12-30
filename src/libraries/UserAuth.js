@@ -22,6 +22,10 @@ var UserAuth = function()
 		id_gen.update(Math.random() + username);
 		var id = id_gen.digest('hex');
 
+		var now = new Date().getTime();
+		var expiry_date = new Date();
+		expiry_date.setTime(parseInt(now) + lifetime);
+
 		var data = {
 			'history': [],
 			'user': username
@@ -31,7 +35,7 @@ var UserAuth = function()
 			'id'        : id,
 			'data'      : data,
 			'persistent': true,
-			'lifetime'  : lifetime
+			'expires'  : parseInt(expiry_date.getTime())
 		};
 		return session_cookie;
 	}
@@ -45,9 +49,7 @@ var UserAuth = function()
 		// if still valid, pass the same session object.
 		
 
-		if(	parseInt(session_object.created) +
-			session_object.cookie.lifetime
-			> now ) {
+		if( session_object.cookie.expires > now ) {
 			console.log('\tSession is valid');
 			return false;
 		} else {
@@ -65,9 +67,6 @@ var UserAuth = function()
 	 *		username
 	 *		password
 	 *
-	 *		optional 'lifetime' -- if session created,
-	 *		the lifetime for it.
-	 *
 	 *	callback:
 	 *		is_new_session,    true if the session
 	 *		                   expired or did not exist
@@ -79,7 +78,7 @@ var UserAuth = function()
 	 *				user: 'username'
 	 *			},
 	 *			'persistent',
-	 *			'lifetime',
+	 *			'expires',
 	 *		}
 	 **/
 	this.authenticate = function( username, password, callback )
@@ -128,6 +127,21 @@ var UserAuth = function()
 			}
 		);
 	}
+	
+	/**
+	 * Returns true if the session_cookie is a valid JSON object for session_cookies
+	 **/
+	this.validate_cookie = function(session_cookie)
+	{
+		if( typeof(session_cookie) == 'undefined' || session_cookie == 'null') return false;
+		if( typeof(session_cookie.id) == 'undefined' || session_cookie.id == 'null') return false;
+		if( typeof(session_cookie.data) == 'undefined' || session_cookie.data == 'null') return false;
+		if( typeof(session_cookie.persistent) == 'undefined' || session_cookie.persistent == 'null') return false;
+		if( typeof(session_cookie.expires) == 'undefined' || session_cookie.expires == 'null') return false;
+		if( typeof(session_cookie.data.user) == 'undefined' || session_cookie.data.user == 'null') return false;
+
+		return true;
+	}
 
 	/**
 	 * Check if the session provided is a valid one or not.
@@ -137,13 +151,13 @@ var UserAuth = function()
 	 **/
 	this.checkAuth = function(session_cookie, callback)
 	{
-		if(session_cookie == null || typeof(session_cookie.data.username) != 'undefined') {
+		if( !self.validate_cookie(session_cookie) ) {
 			callback(new Error('Invalid Session Cookie'));
 			return;
 		}
 
 		var username = session_cookie.data.user;
-
+		
 		User.get(
 			username,
 			function(err,user)
@@ -154,7 +168,7 @@ var UserAuth = function()
 				}
 				// if user's cookie has expired...
 				if(	user.session == null ||
-					user.session.cookie == null ) {
+					!self.validate_cookie( user.session.cookie ) ) {
 
 					callback(new Error('Invalid Session Cookie'));
 					return;
@@ -172,6 +186,10 @@ var UserAuth = function()
 					);
 					return;
 				}
+				
+				user.session.cookie.expires = parseInt(user.session.cookie.expires);
+
+				session_cookie.expires = parseInt(session_cookie.expires);
 
 				// otherwise, check if the objects match.
 				var hasher1 = crypto.createHash('sha256');
