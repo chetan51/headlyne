@@ -234,31 +234,126 @@ var User = function()
 	}
 
 	/**
+	 * userUpdateHelper -- an internal use function for add, update and 
+	 * 	removeFeed. Given a new user object, updates the old one
+	 * 	with it.
+	 *
+	 * 	Arguments:
+	 * 		user_object
+	 *
+	 * 		callback(err, new_user_object)
+	 **/
+	this.userUpdateHelper = function(user_object, callback)
+	{
+		DatabaseDriver.getCollection(
+			'users',
+			function(err, collection)
+			{
+				if (err) {
+					callback(err);
+					return;
+				}
+				
+				DatabaseDriver.update(
+					collection,
+					{'username_hash': user_object.username_hash},
+					user_object,
+					function(err, user)
+					{
+						if (err) {
+							callback(err);
+							return;
+						}
+						callback(null, user);
+					}
+				);
+			}
+		);
+	}
+
+	/**
 	 * Updates feed placement for a user.
 	 *
-	 * **Since addFeed does this anyway, this is just an alternate
-	 * call to perform the same thing, for more understandable code.
-	 * Call this when updating, and call add when adding new entries.
+	 * 	Arguments:
+	 * 		username,
+	 * 		feed_url,
+	 * 		row,
+	 * 		column
+	 *
+	 * 	Returns:      list of feeds.
 	 **/
-	this.updateFeed = function(username, feed_url, placement, callback)
+	this.updateFeed = function(username, feed_url, row, column, callback)
 	{
-		self.addFeed(username, feed_url, placement, callback);
+		self.get(
+			username,
+			function(err, user)
+			{
+				if(err != null) {
+					callback(err);
+					return;
+				}
+				
+				// the user exists, find the old entry.
+				var to_move;
+				for( i in user.feeds )
+				{
+					for( j in user.feeds[i] )
+					{
+						if(
+							'url' in user.feeds[i][j] &&
+							user.feeds[i][j].url == feed_url ) {
+
+							to_move = user.feeds[i].splice(j, 1);
+						}
+					}
+				}
+				
+				// now, add it in the right place.
+
+				// add columns if necessary
+				if( user.feeds.length <= column )
+				{
+					while(user.feeds.length <= column)
+					{
+						user.feeds.splice(
+							user.feeds.length, // add at end
+							0,
+							[] // splice an empty array
+						);
+					}
+				}
+				
+				// add url in correct column.
+				user.feeds[column].splice(
+					row,
+					0,
+					to_move[0]
+				);
+				
+				// update the user.
+				self.userUpdateHelper(
+					user,
+					function(err, user2)
+					{
+						callback(err, user2.feeds);
+					}
+				);
+			}
+		);
 	}
 
 	/**
 	 * Adds a feed for a user.
 	 * 
 	 * 	Arguments:
-	 * 		username
-	 * 		feed_url
-	 * 		placement: {
-	 * 			row: ,
-	 * 			column:
-	 * 		}
+	 * 		username,
+	 * 		feed_url,
+	 * 		row,
+	 * 		column
 	 *
 	 * 	Returns:      list of feeds.
 	 **/
-	this.addFeed = function(username, feed_url, placement, callback)
+	this.addFeed = function(username, feed_url, row, column, callback)
 	{
 		self.get(
 			username,
@@ -270,35 +365,70 @@ var User = function()
 				}
 
 				// The user exists, add the new entry.
-				var entry = {
-					'url': feed_url,
-					'placement': placement
-				};
-				
-				user.feeds[feed_url] = entry;
 
-				DatabaseDriver.getCollection(
-					'users',
-					function(err, collection)
+				// add columns if necessary
+				if( user.feeds.length <= column )
+				{
+					while(user.feeds.length <= column)
 					{
-						if (err) {
-							callback(err);
-							return;
-						}
-						
-						DatabaseDriver.update(
-							collection,
-							{'username_hash': user.username_hash},
-							user,
-							function(err, user)
-							{
-								if (err) {
-									callback(err);
-									return;
-								}
-								callback(null, user.feeds);
-							}
+						user.feeds.splice(
+							user.feeds.length, // add at end
+							0,
+							[] // splice an empty array
 						);
+					}
+				}
+				
+				// add url in correct column.
+				user.feeds[column].splice(
+					row,
+					0,
+					{'url':feed_url}
+				);
+				
+				// update the user.
+				self.userUpdateHelper(
+					user,
+					function(err, user2)
+					{
+						callback(err, user2.feeds);
+					}
+				);
+			}
+		);
+	}
+
+	/**
+	 * Remove a feed column.
+	 * 
+	 * 	Arguments:
+	 * 		username
+	 * 		column to remove.
+	 *
+	 * 	Returns: list of feeds.
+	 **/
+	this.deleteColumn = function(username, column, callback)
+	{
+		self.get(
+			username,
+			function(err, user)
+			{
+				if(err != null) {
+					callback(err);
+					return;
+				}
+
+				// The user exists, remove the bad column.
+				if( column < user.feeds.length ) {
+					user.feeds.splice(column, 1);
+				}
+
+				// update the user.
+				self.userUpdateHelper(
+					user,
+					function(err, user2)
+					{
+						callback(err, user2.feeds);
 					}
 				);
 			}
@@ -326,30 +456,33 @@ var User = function()
 				}
 
 				// The user exists, find and remove the old feed.
-				delete user.feeds[feed_url];
-
-				DatabaseDriver.getCollection(
-					'users',
-					function(err, collection)
+				var found=false;
+				for( i in user.feeds )
+				{
+					for( j in user.feeds[i] )
 					{
-						if (err) {
-							callback(err);
-							return;
+						if( 'url' in user.feeds[i][j]       &&
+						    user.feeds[i][j].url == feed_url  ) {
+							
+							user.feeds[i].splice(j, 1);
+							found=true;
 						}
-						
-						DatabaseDriver.update(
-							collection,
-							{'username_hash': user.username_hash},
-							user,
-							function(err, user)
-							{
-								if (err) {
-									callback(err);
-									return;
-								}
-								callback(null, user.feeds);
-							}
-						);
+					}
+				}
+
+				// if not found, toss an error.
+				if( !found )
+				{
+					callback(new Error('No such feed'), user.feeds);
+					return;
+				}
+
+				// otherwise, update the user.
+				self.userUpdateHelper(
+					user,
+					function(err, user2)
+					{
+						callback(err, user2.feeds);
 					}
 				);
 			}
