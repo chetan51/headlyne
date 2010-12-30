@@ -20,21 +20,23 @@ html
   body
     #header
     	#navbar
-        span#collapse-control
-          a(id="collapse-button", href='#', title='Collapse everything') Collapse
-        span#expand-control
-          a(id="expand-button", href='#', title='Expand everything') Expand
+        span#collapse-expand
+          span#collapse-control
+            a(id="collapse-button", href='#', title='Collapse everything') Collapse
+          span#expand-control
+            a(id="expand-button", href='#', title='Expand everything') Expand
         span \ - 
-        span#edit-default-control
-          a(id="edit-button", href='#') Edit
-        span#edit-editing-control
-          span [\ 
-          a(id="done-button", href='#') Done
-          span \ - 
-          a(id="add-feed-button", href='#') Add Feed
-          span \ - 
-          a(id="add-column-button", href='#') Add Column
-          span \ ]
+        span#edit-page
+          span#default-control
+            a(id="edit-button", href='#') Edit
+          span#editing-control
+            span [\ 
+            a(id="done-button", href='#') Done
+            span \ - 
+            a(id="add-feed-button", href='#') Add Feed
+            span \ - 
+            a(id="add-column-button", href='#') Add Column
+            span \ ]
       #folio
         h1.modalInput(rel="#test") The Headlyne Times
         #subtitle December 23, 2010

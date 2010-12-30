@@ -1,12 +1,13 @@
 $(document).ready(function() {
 	// Hide elements
+	$("#edit-page #editing-control").hide();
+	$("#collapse-expand #expand-control").hide();
+	
 	$(".feed-header").hide();
 	$(".feed-preview").hide();
 	$(".feed-edit-overlay").hide();
 	$(".feed-delete-deleting-control").hide();
 	$(".feed-edit-editing-control").hide();
-	$("#edit-editing-control").hide();
-	$("#expand-control").hide();
 	
 	// Set up overlays
 	var triggers = $(".modalInput").overlay({
@@ -29,11 +30,11 @@ $(document).ready(function() {
 	$("button").button();
 	
 	// Set up event listeners
-	$("#expand-button").click(expandOrCollapseClicked);
-	$("#collapse-button").click(expandOrCollapseClicked);
+	$("#collapse-expand #expand-button").click(expandOrCollapseClicked);
+	$("#collapse-expand #collapse-button").click(expandOrCollapseClicked);
 	
-	$("#edit-button").click(editClicked);
-	$("#done-button").click(doneClicked);
+	$("#edit-page #edit-button").click(editClicked);
+	$("#edit-page #done-button").click(doneClicked);
 	
 	$("#add-column-button").click(addColumnClicked);
 	
@@ -44,8 +45,8 @@ $(document).ready(function() {
 function expandOrCollapseClicked(e) {
 	$(".feed-item-body").slideToggle("fast");
 	
-	$("#expand-control").toggle();
-	$("#collapse-control").toggle();
+	$("#collapse-expand #expand-control").toggle();
+	$("#collapse-expand #collapse-control").toggle();
 }
 
 function editClicked(e) {
@@ -61,8 +62,8 @@ function editOrDoneClicked(e) {
 	$(".feed-body").slideToggle("fast");
 	$(".feed-header").slideToggle("fast");
 	
-	$("#edit-editing-control").toggle();
-	$("#edit-default-control").toggle();
+	$("#edit-page #default-control").toggle();
+	$("#edit-page #editing-control").toggle();
 	
 	equallyWidenColumns();
 }
