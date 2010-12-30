@@ -12,6 +12,8 @@
     option 9
     option 10
 .display
+  div
+    p Select a title and snippet:
   - var item = items[0]
   .titles
     form
@@ -20,14 +22,14 @@
           input.input(type="radio", name="titles")
         .title
           - if (item.title)
-            p= item.title
+            h2= item.title
       .webpage
         .control
           input.input(type="radio", name="titles")
         .title
           - if (item.webpage)
             - if (item.webpage.title)
-              p= item.webpage.title
+              h2= item.webpage.title
   .bodies
     form
       .item
@@ -35,11 +37,11 @@
           input.input(type="radio", name="bodies")
         .body
           - if (item.description)
-            p!= item.description
+            div!= item.description
       .webpage
         .control
           input.input(type="radio", name="bodies")
         .body
           - if (item.webpage)
             - if (item.webpage.body)
-              p!= item.webpage.body
+              div!= item.webpage.body
