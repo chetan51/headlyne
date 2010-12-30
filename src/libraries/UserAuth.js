@@ -121,7 +121,7 @@ var UserAuth = function()
 						new_sesh,
 						function(err, sesh)
 						{
-							callback(err, true, sesh);
+							callback(err, true, sesh.cookie);
 						}
 					);
 				}
