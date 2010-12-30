@@ -148,7 +148,7 @@ exports['snippets'] = nodeunit.testCase(
 					var snippet = ContentGrabber.snip(readableHTML);
 
 					console.log(snippet);
-					test.equal(snippet.length, 497);
+					test.equal(snippet.length, 777);
 					test.done();
 				}
 			}
@@ -172,7 +172,7 @@ exports['snippets'] = nodeunit.testCase(
 					var snippet = ContentGrabber.snip(readableHTML);
 					
 					console.log(snippet);
-					test.equal(snippet.length, 577);
+					test.equal(snippet.length, 627);
 					test.done();
 				}
 			}
@@ -196,7 +196,7 @@ exports['snippets'] = nodeunit.testCase(
 					var snippet = ContentGrabber.snip(readableHTML);
 					
 					console.log(snippet);
-					test.equal(snippet.length, 524);
+					test.equal(snippet.length, 581);
 					test.done();
 				}
 			}
