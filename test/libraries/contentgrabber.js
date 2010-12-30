@@ -115,8 +115,89 @@ exports['grab content from page'] = nodeunit.testCase(
 				}
 			}
 		);
+	}
+});
+
+exports['snippets'] = nodeunit.testCase(
+{
+	setUp: function (callback) {
+		callback();
 	},
 
+	tearDown: function (callback) {
+		callback();
+	},
+
+	'basic': function(test)
+	{
+		test.expect(1);
+		
+		var html = fs.readFileSync(sampleDocument.url, 'utf-8');
+		
+		ContentGrabber.readable(
+			html,
+			function(err, title, readableHTML) {
+				if (err) {
+					test.ifError(err);
+					test.done();
+				}
+				else {
+					var snippet = ContentGrabber.snip(readableHTML);
+
+					test.equal(snippet.length, 692);
+					test.done();
+				}
+			}
+		);
+	},
+
+	'basic 2': function(test)
+	{
+		test.expect(1);
+		
+		var html = fs.readFileSync(sampleDocument2.url, 'utf-8');
+		
+		ContentGrabber.readable(
+			html,
+			function(err, title, readableHTML) {
+				if (err) {
+					test.ifError(err);
+					test.done();
+				}
+				else {
+					var snippet = ContentGrabber.snip(readableHTML);
+					
+					console.log(snippet);
+					test.equal(snippet.length, 577);
+					test.done();
+				}
+			}
+		);
+	},
+	
+	'basic 3': function(test)
+	{
+		test.expect(1);
+		
+		var html = fs.readFileSync(sampleDocument3.url, 'utf-8');
+		
+		ContentGrabber.readable(
+			html,
+			function(err, title, readableHTML) {
+				if (err) {
+					test.ifError(err);
+					test.done();
+				}
+				else {
+					var snippet = ContentGrabber.snip(readableHTML);
+					
+					console.log(snippet);
+					test.equal(snippet.length, 524);
+					test.done();
+				}
+			}
+		);
+	}
 });
 
 exports['DOM Testing'] = nodeunit.testCase(
