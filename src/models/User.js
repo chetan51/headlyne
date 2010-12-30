@@ -83,7 +83,7 @@ var User = function()
 	 * 	                  first_name
 	 * 	                  last_name
 	 * 	                  email_id
-	 * 	                  feeds{}[]
+	 * 	                  feeds{}
 	 * 	                  session{}
 	 * 	              }
 	 **/
@@ -235,50 +235,37 @@ var User = function()
 	}
 
 	/**
-	 * Pushes a feed for a user. STUB!!!
-	 * Also, the callback format for self.get is not properly implemented, so fix that.
-	 * And fix the callback format of this function itself.
+	 * userUpdateHelper -- an internal use function for add, update and 
+	 * 	removeFeed. Given a new user object, updates the old one
+	 * 	with it.
 	 *
-	 * 	Arguments:    feed_url, Feed({url, title, description, time_published})
+	 * 	Arguments:
+	 * 		user_object
 	 *
-	 * 	Returns:      updated feed.
+	 * 		callback(err, new_user_object)
 	 **/
-	this.pushFeedItems = function(feed_url, feed_items, errback, callback)
+	this.userUpdateHelper = function(user_object, callback)
 	{
-		self.get(
-			feed_url,
-			function(err)
+		DatabaseDriver.getCollection(
+			'users',
+			function(err, collection)
 			{
-				errback(err);
-			},
-			function(feed)
-			{
-				// The feed exists.
-				feed.items = feed.items.concat(feed_items);
-				feed.time_modified = new Date().getTime();
-				DatabaseDriver.getCollection(
-					'feeds',
-					function(err, collection)
+				if (err) {
+					callback(err);
+					return;
+				}
+				
+				DatabaseDriver.update(
+					collection,
+					{'username_hash': user_object.username_hash},
+					user_object,
+					function(err, user)
 					{
 						if (err) {
-							errback(err);
+							callback(err);
+							return;
 						}
-						else {
-							DatabaseDriver.update(
-								collection,
-								{'url_hash': feed.url_hash},
-								feed,
-								function(err, feed)
-								{
-									if (err) {
-										errback(err);
-									}
-									else {
-										callback(feed);
-									}
-								}
-							);
-						}
+						callback(null, user);
 					}
 				);
 			}
@@ -286,56 +273,217 @@ var User = function()
 	}
 
 	/**
-	 * Pops a feed item from a feed. STUB!
-	 * Also, the callback format for self.get is not properly implemented, so fix that.
-	 * And fix the callback format of this function itself.
+	 * Updates feed placement for a user.
 	 *
-	 * 	Arguments:    feed_url
+	 * 	Arguments:
+	 * 		username,
+	 * 		feed_url,
+	 * 		row,
+	 * 		column
 	 *
-	 * 	Returns:      updated feed, popped items.
+	 * 	Returns:      list of feeds.
 	 **/
-	this.popFeedItems = function(feed_url, errback, callback, pop_size)
+	this.updateFeed = function(username, feed_url, row, column, callback)
 	{
-		if(pop_size == null || typeof(pop_size) == 'undefined')
-		{
-			pop_size = 1;
-		}
-
 		self.get(
-			feed_url,
-			function(err)
+			username,
+			function(err, user)
 			{
-				errback(err);
-			},
-			function(feed)
-			{
-				// The feed exists.
-				var feed_items = feed.items.splice(0, pop_size);
-				feed.time_modified = new Date().getTime();
+				if(err != null) {
+					callback(err);
+					return;
+				}
 				
-				DatabaseDriver.getCollection(
-					'feeds',
-					function(err, collection)
+				// the user exists, find the old entry.
+				var to_move;
+				for( i in user.feeds )
+				{
+					for( j in user.feeds[i] )
 					{
-						if (err) {
-							errback(err);
+						if(
+							'url' in user.feeds[i][j] &&
+							user.feeds[i][j].url == feed_url ) {
+
+							to_move = user.feeds[i].splice(j, 1);
 						}
-						else {
-							DatabaseDriver.update(
-								collection,
-								{'url_hash':feed.url_hash},
-								feed,
-								function(err, new_feed)
-								{
-									if (err) {
-										errback(err);
-									}
-									else {
-										callback(new_feed, feed_items);
-									}
-								}
-							);
+					}
+				}
+				
+				// now, add it in the right place.
+
+				// add columns if necessary
+				if( user.feeds.length <= column )
+				{
+					while(user.feeds.length <= column)
+					{
+						user.feeds.splice(
+							user.feeds.length, // add at end
+							0,
+							[] // splice an empty array
+						);
+					}
+				}
+				
+				// add url in correct column.
+				user.feeds[column].splice(
+					row,
+					0,
+					to_move[0]
+				);
+				
+				// update the user.
+				self.userUpdateHelper(
+					user,
+					function(err, user2)
+					{
+						callback(err, user2.feeds);
+					}
+				);
+			}
+		);
+	}
+
+	/**
+	 * Adds a feed for a user.
+	 * 
+	 * 	Arguments:
+	 * 		username,
+	 * 		feed_url,
+	 * 		row,
+	 * 		column
+	 *
+	 * 	Returns:      list of feeds.
+	 **/
+	this.addFeed = function(username, feed_url, row, column, callback)
+	{
+		self.get(
+			username,
+			function(err, user)
+			{
+				if(err != null) {
+					callback(err);
+					return;
+				}
+
+				// The user exists, add the new entry.
+
+				// add columns if necessary
+				if( user.feeds.length <= column )
+				{
+					while(user.feeds.length <= column)
+					{
+						user.feeds.splice(
+							user.feeds.length, // add at end
+							0,
+							[] // splice an empty array
+						);
+					}
+				}
+				
+				// add url in correct column.
+				user.feeds[column].splice(
+					row,
+					0,
+					{'url':feed_url}
+				);
+				
+				// update the user.
+				self.userUpdateHelper(
+					user,
+					function(err, user2)
+					{
+						callback(err, user2.feeds);
+					}
+				);
+			}
+		);
+	}
+
+	/**
+	 * Remove a feed column.
+	 * 
+	 * 	Arguments:
+	 * 		username
+	 * 		column to remove.
+	 *
+	 * 	Returns: list of feeds.
+	 **/
+	this.deleteColumn = function(username, column, callback)
+	{
+		self.get(
+			username,
+			function(err, user)
+			{
+				if(err != null) {
+					callback(err);
+					return;
+				}
+
+				// The user exists, remove the bad column.
+				if( column < user.feeds.length ) {
+					user.feeds.splice(column, 1);
+				}
+
+				// update the user.
+				self.userUpdateHelper(
+					user,
+					function(err, user2)
+					{
+						callback(err, user2.feeds);
+					}
+				);
+			}
+		);
+	}
+	
+	/**
+	 * Remove a feed from a user.
+	 * 
+	 * 	Arguments:
+	 * 		username
+	 * 		feed_url
+	 *
+	 * 	Returns: list of feeds.
+	 **/
+	this.removeFeed = function(username, feed_url, callback)
+	{
+		self.get(
+			username,
+			function(err, user)
+			{
+				if(err != null) {
+					callback(err);
+					return;
+				}
+
+				// The user exists, find and remove the old feed.
+				var found=false;
+				for( i in user.feeds )
+				{
+					for( j in user.feeds[i] )
+					{
+						if( 'url' in user.feeds[i][j]       &&
+						    user.feeds[i][j].url == feed_url  ) {
+							
+							user.feeds[i].splice(j, 1);
+							found=true;
 						}
+					}
+				}
+
+				// if not found, toss an error.
+				if( !found )
+				{
+					callback(new Error('No such feed'), user.feeds);
+					return;
+				}
+
+				// otherwise, update the user.
+				self.userUpdateHelper(
+					user,
+					function(err, user2)
+					{
+						callback(err, user2.feeds);
 					}
 				);
 			}
