@@ -72,7 +72,8 @@ var HomeController = function()
 				);
 				
 				Ni.library('FeedServer').getFeedTeaser(
-					'http://xkcd.com/rss.xml',
+					'http://feeds.reuters.com/reuters/entertainment',
+					//'http://xkcd.com/rss.xml',
 					4,
 					function() {},
 					this.parallel()
