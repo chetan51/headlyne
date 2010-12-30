@@ -55,8 +55,8 @@ var HomeController = function()
 				} else {
 					// if valid, serve the page requested.
 		
-		res.ok('Home page loaded!');
-		/*
+		//res.ok('Home page loaded!');
+		///*
 		Ni.library('FeedServer').getFeedTeaser(
 			'http://feeds.reuters.com/reuters/worldNews?format=xml',
 			3,
@@ -119,7 +119,7 @@ var HomeController = function()
 				);
 			}
 		);
-		*/
+		//*/
 				}
 			}
 		);
