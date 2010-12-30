@@ -78,7 +78,11 @@ function addColumnClicked(e) {
 function feedEditClicked(e) {
 	var this_column = $(this).parents(".column");
 	var preview_container = $(this).parents(".feed").children(".preview");
-	var url_container = $(this).parents(".feed").children(".header > .url");
+	var url_container = $(this).parents(".feed").find(".header > .url");
+	
+	var edit_container = $(this).parents(".feed").find(".header > .edit-overlay > .edit-delete > .edit");
+	edit_container.children(".default-control").toggle();
+	edit_container.children(".editing-control").toggle();
 	
 	preview_container.html("Loading feed preview...");
 	preview_container.show();
@@ -106,11 +110,11 @@ function feedEditClicked(e) {
 }
 
 function feedHeaderHoverIn(e) {
-	$(this).children(".header > .edit-overlay").show();
+	$(this).children(".edit-overlay").show();
 }	
 
 function feedHeaderHoverOut(e) {
-	$(this).children(".header > .edit-overlay").hide();
+	$(this).children(".edit-overlay").hide();
 }	
 
 
