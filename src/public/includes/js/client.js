@@ -35,6 +35,8 @@ $(document).ready(function() {
 	$("#edit-button").click(editOrDoneClicked);
 	$("#done-button").click(editOrDoneClicked);
 	
+	$("#add-column-button").click(addColumnClicked);
+	
 	$(".feed-edit-button").click(feedEditClicked);
 	$(".feed-header").hover(feedHeaderHoverIn, feedHeaderHoverOut);
 });
@@ -52,6 +54,15 @@ function editOrDoneClicked(e) {
 	
 	$("#edit-editing-control").toggle();
 	$("#edit-default-control").toggle();
+}
+
+function addColumnClicked(e) {
+	var new_column = $("<div></div>").addClass("column ui-sortable");
+	$(".page").append(new_column);
+	
+	// Resize all the columns
+	var width = 100 / $(".column").length;
+	$(".column").css("width", width + "%");
 }
 
 function feedEditClicked(e) {
