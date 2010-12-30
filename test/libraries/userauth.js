@@ -287,7 +287,6 @@ exports['checkauth'] = nodeunit.testCase(
 					test_session.cookie,
 					function(err, is_valid)
 					{
-						console.log(err);
 						test.equal(err.message, 'Invalid Session Cookie');
 						test.done();
 					}
