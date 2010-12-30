@@ -94,8 +94,9 @@ function feedEditClicked(e) {
 			// Resize all columns based on preview width
 			var this_column_width_percent = 50;
 			var other_columns_width_percent = (100 -this_column_width_percent) / ($(".column").length - 1);
-			$(".column").css("width", other_columns_width_percent+"%");
-			this_column.css("width", this_column_width_percent+"%");
+			
+			$(".column").not(this_column).animate({"width" : other_columns_width_percent+"%"});
+			this_column.animate({"width" : this_column_width_percent+"%"});
 		},
 		error: function() {
 			preview_container.html("An error was encountered.");
@@ -118,5 +119,5 @@ function feedHeaderHoverOut(e) {
  */
 function equallyWidenColumns() {
 	var width = 100 / $(".column").length;
-	$(".column").css("width", width + "%");
+	$(".column").animate({"width" : width + "%"});
 }
