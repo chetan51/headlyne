@@ -46,7 +46,14 @@ var HomeController = function()
 			cookie,
 			function(err, is_valid)
 			{
-				if(err) throw err;
+				if(err) {
+					console.log(err.message);
+					res.writeHead(302, [
+						['Location', '/logout'],
+					]);
+					res.end();
+					return;
+				}
 				if(!is_valid) {
 					res.writeHead(302, [
 						['Location', '/login']
