@@ -50,7 +50,8 @@ var LoginController = function()
 						// no errors -- attach the cookie, direct to
 						// home page, and get moving.
 						var expiry_date = new Date(cookie.expires);
-
+						
+						console.log('redirect: login to home, logged in');
 						res.writeHead( 302, [
 							['Location', '/'],
 							['Set-Cookie', 

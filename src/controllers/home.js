@@ -24,6 +24,7 @@ var HomeController = function()
 		// if no cookies are passed, redirect to login.
 		if( typeof(req.headers.cookie) == 'undefined' )
 		{
+			console.log('redirect: home to login, no cookie');
 			res.writeHead(302, [
 				['Location', '/login']
 			]);
@@ -55,8 +56,9 @@ var HomeController = function()
 					return;
 				}
 				if(!is_valid) {
+					console.log('redirect: home to logout, non-valid cookie');
 					res.writeHead(302, [
-						['Location', '/login']
+						['Location', '/logout']
 					]); // redirect to login page.
 					res.end();
 				} else {
