@@ -109,6 +109,7 @@ function feedEditClicked(e) {
 			this_column.animate({"width" : this_column_width_percent+"%"});
 		},
 		error: function() {
+			// Test if this is hit when server is off
 			preview_container.html("An error was encountered.");
 		}
 	});
