@@ -66,32 +66,47 @@ var UserController = function()
 	
 	this.edit = function(req, res, next)
 	{
+		var res_obj = {
+			'error': null,
+			'success': false;
+		};
+
 		checkCookie(req, res,
 			function(err, cookie)
 			{
 				if(err) {
 					console.log(err.message);
-				} else {
-					// if valid, serve the page requested.
-					
-					Ni.model('User').addFeed(
-						cookie.data.user,
-						feed_url,
-						row,
-						column,
-						function(err, feeds)
-						{
-							if(err) {
-								res.ok({'Error': 'Cannot add feed'});
-								console.log('cannot add feed: '+err.message);
-							} else {
-								res.ok(feeds);
-								console.log(feeds);
-							}
-						}
-					);
+					res_obj.error = err;
+					res.ok(res_obj);
+					return;
 				}
+				
+				// if valid, add that feed.
+				Ni.model('User').addFeed(
+					cookie.data.user,
+					feed_url,
+					row,
+					column,
+					function(err, feeds)
+					{
+						if(err) {
+							console.log(err.message);
+							res_obj.error = err;
+							res.ok(res_obj);
+							return;
+						}
+						
+						// return success = true
+						res_obj.success = true;
+						res.ok(res_obj);
+					}
+				);
 			}
 		);
 	}
-	
+};
+
+/*
+ *  Exports the user controller
+ */
+module.exports = new UserController();
