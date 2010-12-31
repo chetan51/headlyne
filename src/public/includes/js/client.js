@@ -43,8 +43,8 @@ $(document).ready(function() {
 
 function addColumnListeners(columns) {
 	// Set up sortable
-	columns.sortable({
-		connectWith: ".column",
+	columns.children(".content").sortable({
+		connectWith: ".column > .content",
 		handle: $(".feed .header")
 	});
 }
