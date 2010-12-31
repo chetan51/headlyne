@@ -34,7 +34,6 @@ $(document).ready(function() {
 	$("#add-column-button").click(addColumnClicked);
 	
 	addColumnListeners($(".column"));
-	
 	addFeedListeners($(".feed"));
 });
 
@@ -96,6 +95,7 @@ function addFeedClicked(e) {
 	$(".column").last().children(".content").append(new_feed);
 	
 	addFeedListeners(new_feed);
+	addColumnListeners($(".column"));
 }
 
 function addColumnClicked(e) {
