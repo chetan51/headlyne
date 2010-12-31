@@ -39,6 +39,7 @@ $(document).ready(function() {
 	$("#add-column-button").click(addColumnClicked);
 	
 	$(".feed > .header > .edit-overlay > .edit-delete > .edit > .default-control > .edit-button").click(feedEditClicked);
+	$(".feed > .header > .edit-overlay > .edit-delete > .edit > .editing-control > .done-button").click(feedDoneClicked);
 	$(".feed > .header").hover(feedHeaderHoverIn, feedHeaderHoverOut);
 });
 
@@ -54,7 +55,12 @@ function editClicked(e) {
 }
 
 function doneClicked(e) {
-	$(".feed > .preview").hide("slide", {direction: "up"}, "fast");
+	hideFeedPreviews();
+	
+	var edit_containers = $(".feed").find(".header > .edit-overlay > .edit-delete > .edit");
+	edit_containers.children(".default-control").show();
+	edit_containers.children(".editing-control").hide();
+	
 	editOrDoneClicked(e);
 }
 
@@ -81,8 +87,8 @@ function feedEditClicked(e) {
 	var url_container = $(this).parents(".feed").find(".header > .url");
 	
 	var edit_container = $(this).parents(".feed").find(".header > .edit-overlay > .edit-delete > .edit");
-	edit_container.children(".default-control").toggle();
-	edit_container.children(".editing-control").toggle();
+	edit_container.children(".default-control").hide();
+	edit_container.children(".editing-control").show();
 	
 	preview_container.html("Loading feed preview...");
 	preview_container.show();
@@ -106,7 +112,15 @@ function feedEditClicked(e) {
 			preview_container.html("An error was encountered.");
 		}
 	});
+}
 
+function feedDoneClicked(e) {
+	var edit_container = $(this).parents(".feed").find(".header > .edit-overlay > .edit-delete > .edit");
+	edit_container.children(".default-control").show();
+	edit_container.children(".editing-control").hide();
+	
+	hideFeedPreviews();
+	equallyWidenColumns();
 }
 
 function feedHeaderHoverIn(e) {
@@ -117,7 +131,6 @@ function feedHeaderHoverOut(e) {
 	$(this).children(".edit-overlay").hide();
 }	
 
-
 /*
  * Helper functions
  */
@@ -125,3 +138,7 @@ function equallyWidenColumns() {
 	var width = 100 / $(".column").length;
 	$(".column").animate({"width" : width + "%"});
 }
+
+function hideFeedPreviews() {
+	$(".feed > .preview").hide("slide", {direction: "up"}, "fast");
+}	
