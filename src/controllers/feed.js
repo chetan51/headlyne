@@ -23,26 +23,35 @@ var FeedController = function() {
 	}
 	
 	this.preview = function(req, res, next) {
-		var feed_url = url.parse(req.url, true).query.url;
-		if (typeof(feed_url) == "undefined") {
+		var query = url.parse(req.url, true).query;
+		if (typeof(query) == "undefined") {
 			res.error("No feed URL provided.");
 		}
 		else {
-			Ni.library('FeedServer').getFeedTeaser(
-				feed_url,
-				1,
-				function() {},
-				function(err, teaser) {
-					if (err) throw err;
-					
-					var preview = jade.render(
-						Ni.view('preview').template,
-						{locals: teaser}
-					);
+			var feed_url = query.url;
+			if (typeof(feed_url) == "undefined") {
+				res.error("No feed URL provided.");
+			}
+			else {
+				Ni.library('FeedServer').getFeedTeaser(
+					feed_url,
+					1,
+					function() {},
+					function(err, teaser) {
+						if (err) {
+							res.error("Unable to retrieve feed preview.");
+						}
+						else {
+							var preview = jade.render(
+								Ni.view('preview').template,
+								{locals: teaser}
+							);
 
-					res.ok(preview);
-				}
-			);
+							res.ok(preview);
+						}
+					}
+				);
+			}
 		}
 	}
 
