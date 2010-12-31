@@ -1,3 +1,6 @@
+/*
+ * Initialization
+ */
 $(document).ready(function() {
 	// Hide elements
 	$("#edit-page #editing-control").hide();
@@ -20,15 +23,6 @@ $(document).ready(function() {
 		closeOnClick: true
 	});
 	
-	// Set up sortable
-	$( ".column" ).sortable({
-		connectWith: ".column",
-		handle: $(".feed .header")
-	});
-	
-	// Set up UI elements
-	$("button").button();
-	
 	// Set up event listeners
 	$("#collapse-expand > #collapse-control > #collapse-button").click(expandOrCollapseClicked);
 	$("#collapse-expand > #expand-control > #expand-button").click(expandOrCollapseClicked);
@@ -36,12 +30,35 @@ $(document).ready(function() {
 	$("#edit-page > #default-control > #edit-button").click(editClicked);
 	$("#edit-page > #editing-control > #done-button").click(doneClicked);
 	
+	$("#add-feed-button").click(addFeedClicked);
 	$("#add-column-button").click(addColumnClicked);
 	
-	$(".feed > .header > .edit-overlay > .edit-delete > .edit > .default-control > .edit-button").click(feedEditClicked);
-	$(".feed > .header > .edit-overlay > .edit-delete > .edit > .editing-control > .done-button").click(feedDoneClicked);
-	$(".feed > .header").hover(feedHeaderHoverIn, feedHeaderHoverOut);
+	addColumnListeners($(".column"));
+	
+	addFeedListeners($(".feed"));
 });
+
+/*
+ * Functions that add listeners
+ */
+
+function addColumnListeners(columns) {
+	// Set up sortable
+	columns.sortable({
+		connectWith: ".column",
+		handle: $(".feed .header")
+	});
+}
+
+function addFeedListeners(feeds) {
+	feeds.find(".header > .edit-overlay > .edit-delete > .edit > .default-control > .edit-button").click(feedEditClicked);
+	feeds.find(".header > .edit-overlay > .edit-delete > .edit > .editing-control > .done-button").click(feedDoneClicked);
+	feeds.children(".header").hover(feedHeaderHoverIn, feedHeaderHoverOut);
+}
+
+/*
+ * Listeners
+ */
 
 function expandOrCollapseClicked(e) {
 	$(".feed > .body > .item > .body").slideToggle("fast");
@@ -74,11 +91,20 @@ function editOrDoneClicked(e) {
 	equallyWidenColumns();
 }
 
+function addFeedClicked(e) {
+	var new_feed = $(".feed").last().clone();
+	$(".column").last().children(".content").append(new_feed);
+	
+	addFeedListeners(new_feed);
+}
+
 function addColumnClicked(e) {
-	var new_column = $("<div></div>").addClass("column ui-sortable");
+	var new_column = $(".column").last().clone();
+	new_column.children(".content").html("");
 	$(".page").append(new_column);
 	
 	equallyWidenColumns();
+	addColumnListeners(new_column);
 }
 
 function feedEditClicked(e) {
