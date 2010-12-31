@@ -38,14 +38,17 @@ var FeedController = function() {
 					1,
 					function() {},
 					function(err, teaser) {
-						if (err) throw err;
-						
-						var preview = jade.render(
-							Ni.view('preview').template,
-							{locals: teaser}
-						);
+						if (err) {
+							res.error("Unable to retrieve feed preview.");
+						}
+						else {
+							var preview = jade.render(
+								Ni.view('preview').template,
+								{locals: teaser}
+							);
 
-						res.ok(preview);
+							res.ok(preview);
+						}
 					}
 				);
 			}
