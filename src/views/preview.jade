@@ -43,5 +43,5 @@
           input.input(type="radio", name="bodies")
         .body
           - if (item.webpage)
-            - if (item.webpage.body)
-              div!= item.webpage.body
+            - if (item.webpage.snippet)
+              div!= item.webpage.snippet
