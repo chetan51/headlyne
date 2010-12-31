@@ -141,6 +141,11 @@ var ContentGrabber = function()
 			if( text_length > Ni.config('snippet_text_limit') ) done = true;
 			if( fulltext.length == pos ) done = true;
 		}
+		// add ellipses
+		if( fulltext.length != pos )
+			snip_text += "...";
+
+		// finish processing DOM
 		var dom_temp = jsdom.jsdom(snip_text);
 		return dom_temp.innerHTML;
 	}

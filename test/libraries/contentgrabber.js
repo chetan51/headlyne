@@ -148,7 +148,7 @@ exports['snippets'] = nodeunit.testCase(
 					var snippet = ContentGrabber.snip(readableHTML);
 
 					console.log(snippet);
-					test.equal(snippet.length, 198);
+					test.equal(snippet.length, 201);
 					test.done();
 				}
 			}
@@ -172,7 +172,7 @@ exports['snippets'] = nodeunit.testCase(
 					var snippet = ContentGrabber.snip(readableHTML);
 					
 					console.log(snippet);
-					test.equal(snippet.length, 779);
+					test.equal(snippet.length, 782);
 					test.done();
 				}
 			}
