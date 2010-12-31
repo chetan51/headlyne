@@ -94,6 +94,57 @@ var FeedController = function()
 			);
 		});
 	}
+	
+	this.getWebPage = function(req, res, next)
+	{
+		// object to be filled and returned.
+		var res_obj = {
+			'error': null,
+			'page': ''
+		};
+
+		// get POST variables, then proceed.
+		getPOST(req, function(err, POST)
+		{
+			// check if there are any errors...
+			if(err) {
+				res_obj.error = err;
+				res.ok(res_obj);
+				return;
+			}
+			
+			if(typeof(POST.webpage_url) == 'undefined') {
+				res_obj.error = new Error('No feed provided');
+				res.ok(res_obj);
+				return;
+			}
+		
+			// STUBBED
+			POST.webpage_url = "http://www.futilitycloset.com/2010/12/31/mail-snail/";
+
+			// now get the full page
+			Ni.library('FeedServer').getFullContent(
+				POST.feed_url,
+				function(err, webpage)
+				{
+					if(err) {
+						res_obj.error = err;
+						res.ok(res_obj);
+						return;
+					}
+
+					// render the preview and return it.
+					var page = jade.render(
+						Ni.view('webpage').template,
+						{locals: webpage}
+					);
+
+					res_obj.page = page;
+					res.ok(res_obj);
+				}
+			);
+		});
+	}
 };
 
 /*
