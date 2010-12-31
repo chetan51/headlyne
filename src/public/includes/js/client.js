@@ -45,7 +45,7 @@ function addColumnListeners(columns) {
 	// Set up sortable
 	columns.children(".content").sortable({
 		connectWith: ".column > .content",
-		handle: $(".feed .header")
+		handle: $(".feed > .header")
 	});
 }
 
