@@ -10,7 +10,7 @@ var Ni = require('ni');
 var sys = require('sys');
 var jade = require('jade');
 var Step = require('step');
-var qs = require('querystring');
+var url = require('url');
 
 /*
  *  The home controller
@@ -23,7 +23,7 @@ var FeedController = function() {
 	}
 	
 	this.preview = function(req, res, next) {
-		feed_url = "http://feeds.reuters.com/reuters/companyNews?format=xml";
+		var feed_url = url.parse(req.url, true).query.url;
 		if (typeof(feed_url) == "undefined") {
 			res.error("No feed URL provided.");
 		}
