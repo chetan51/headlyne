@@ -120,7 +120,7 @@ function feedDoneClicked(e) {
 	edit_container.children(".default-control").show();
 	edit_container.children(".editing-control").hide();
 	
-	hideFeedPreviews();
+	$(this).parents(".feed").children(".preview").hide("slide", {direction: "up"}, "fast");
 	equallyWidenColumns();
 }
 
