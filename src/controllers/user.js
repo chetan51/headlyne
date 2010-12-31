@@ -20,6 +20,28 @@ var UserController = function()
 		res.error("No operation selected.");
 	}
 	
+	// temporary location for functions -- should be globally usable!!
+	function getPOST(req, callback)
+	{
+		var returned = false;
+		if( req.method == 'POST') {
+			req.addListener('data', function(chunk)
+			{
+				try{
+					POST = querystring.parse(chunk);
+				} catch(e) {
+					returned = true;
+					callback(e);
+				}
+			});
+			req.addListener('end', function()
+			{
+				if(!returned)
+					callback(null, POST);
+			});
+		} else callback(new Error('No POST data'));
+	}
+
 	function checkCookie(req, res, callback)
 	{
 		// if no cookies are passed, redirect to login.
@@ -81,26 +103,44 @@ var UserController = function()
 					return;
 				}
 				
-				// if valid, add that feed.
-				Ni.model('User').addFeed(
-					cookie.data.user,
-					feed_url,
-					row,
-					column,
-					function(err, feeds)
-					{
-						if(err) {
-							console.log(err.message);
-							res_obj.error = err;
-							res.ok(res_obj);
-							return;
-						}
-						
-						// return success = true
-						res_obj.success = true;
+				// if valid, get POST variable
+				getPOST(req, function(err, POST)
+				{
+					if(err) {
+						console.log(err.message);
+						res_obj.error = err;
 						res.ok(res_obj);
+						return;
 					}
-				);
+					if(	typeof(POST.feed_url)        == 'undefined' ||
+						typeof(POST.row)  == 'undefined' ||
+						typeof(POST.column)  == 'undefined' ) {
+
+						res_obj.error = new Error('POST variables not found.');
+						res.ok(res_obj);
+						return;
+					}
+					
+					Ni.model('User').addFeed(
+						cookie.data.user,
+						POST.feed_url,
+						POST.row,
+						POST.column,
+						function(err, feeds)
+						{
+							if(err) {
+								console.log(err.message);
+								res_obj.error = err;
+								res.ok(res_obj);
+								return;
+							}
+							
+							// return success = true
+							res_obj.success = true;
+							res.ok(res_obj);
+						}
+					);
+				});
 			}
 		);
 	}
