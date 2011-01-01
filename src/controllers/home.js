@@ -9,10 +9,11 @@
  *  Module dependencies
  */
 
-var Ni = require('ni');
-var sys = require('sys');
+var Ni   = require('ni');
+var sys  = require('sys');
 var jade = require('jade');
 var Step = require('step');
+var dbg  = require('../../src/libraries/Debugger.js');
 
 /*
  *  The home controller
@@ -24,7 +25,7 @@ var HomeController = function()
 		// if no cookies are passed, redirect to login.
 		if( typeof(req.headers.cookie) == 'undefined' )
 		{
-			console.log('redirect: home to login, no cookie');
+			dbg.log('redirect: home to login, no cookie');
 			res.writeHead(302, [
 				['Location', '/login']
 			]);
@@ -35,7 +36,7 @@ var HomeController = function()
 		var cookie;
 		try {
 			cookie = JSON.parse(req.headers.cookie);
-			console.log(cookie);
+			dbg.log(cookie);
 		} catch (e) {
 			res.error('Your cookie is broken. Please clear cookies '+
 				'for this site and try again');
@@ -48,7 +49,7 @@ var HomeController = function()
 			function(err, is_valid)
 			{
 				if(err) {
-					console.log(err.message);
+					dbg.log(err.message);
 					res.writeHead(302, [
 						['Location', '/logout'],
 					]);
@@ -56,7 +57,7 @@ var HomeController = function()
 					return;
 				}
 				if(!is_valid) {
-					console.log('redirect: home to logout, non-valid cookie');
+					dbg.log('redirect: home to logout, non-valid cookie');
 					res.writeHead(302, [
 						['Location', '/logout']
 					]); // redirect to login page.

@@ -3,6 +3,7 @@
  **/
 var crypto  = require('crypto'),
     User    = require('../models/User'),
+    dbg     = require('./Debugger.js');
     Ni      = require('ni');
 
 
@@ -50,10 +51,10 @@ var UserAuth = function()
 		
 
 		if( session_object.cookie.expires > now ) {
-			console.log('\tSession is valid');
+			dbg.log('\tSession is valid');
 			return false;
 		} else {
-			console.log('\tSession has expired');
+			dbg.log('\tSession has expired');
 			return true;
 		}
 	}

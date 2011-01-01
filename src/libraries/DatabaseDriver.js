@@ -6,6 +6,7 @@ var Mongo      = require('mongodb'),
     Connection = Mongo.Connection,
     Server     = Mongo.Server,
     BSON       = Mongo.BSONPure;
+var dbg        = require('./Debugger.js');
 
 
 /**
@@ -98,7 +99,7 @@ var DatabaseDriver = function()
 							obj,
 							function(err, inserted_docs)
 							{
-								//console.log(inserted_docs);
+								dbg.log('inserted: '+inserted_docs);
 								callback(err, inserted_docs[0]);
 								/*if(err != null)
 									callback(new Error('Database Insertion Error'));

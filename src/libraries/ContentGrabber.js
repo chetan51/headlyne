@@ -3,6 +3,7 @@ var jsdom       = require('jsdom');
 var path        = require('path');
 var Readability = require('readability');
 var Ni          = require('ni');
+var dbg         = require('./Debugger.js');
 
 /**
  * ContentGrabber: given a URL, fetch *only* the text
@@ -111,7 +112,7 @@ var ContentGrabber = function()
 							{
 								case 'img':
 									image_count = image_count + 1;
-									console.log(image_count);
+									dbg.log('Found '+image_count+' image.');
 									if ( image_count == Ni.config('snippet_image_limit') )
 										done = true;
 							}
