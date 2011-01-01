@@ -363,7 +363,7 @@ exports['placeFeed'] = nodeunit.testCase(
 	}
 });
 
-exports['updateFeed'] = nodeunit.testCase(
+exports['editFeed'] = nodeunit.testCase(
 {
 
 	setUp: function (callback) {
@@ -419,13 +419,14 @@ exports['updateFeed'] = nodeunit.testCase(
 								throw err;
 							} else {
 								console.log(first_feed);
-								UserModel.updateFeed(
+								UserModel.editFeed(
 									'my_user',
 									'the_feeds_url',
-									2, 3,
+									0,
+									'body',
+									'webpage',
 									function(err, feeds)
 									{
-										console.log(feeds);
 										var count=0;
 										for(i in feeds)
 											for(j in feeds[i])
