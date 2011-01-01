@@ -110,7 +110,10 @@ function addColumnClicked(e) {
 function feedEditClicked(e) {
 	var this_column = $(this).parents(".column");
 	var preview_container = $(this).parents(".feed").children(".preview");
-	var url_container = $(this).parents(".feed").find(".header > .url");
+	var settings_container = $(this).parents(".feed").find(".header > .settings");
+	var feed_url = settings_container.children(".url").text();
+	var title_selection = settings_container.children(".title-selection").text();
+	var body_selection = settings_container.children(".body-selection").text();
 	
 	var edit_container = $(this).parents(".feed").find(".header > .edit-overlay > .edit-delete > .edit");
 	edit_container.children(".default-control").hide();
@@ -122,7 +125,7 @@ function feedEditClicked(e) {
 	$.ajax({
 		url: "/feed/preview",
 		data: {
-			url: url_container.text()
+			url: feed_url
 		},
 		success: function(data) {
 			preview_container.html(data);
@@ -133,6 +136,18 @@ function feedEditClicked(e) {
 			
 			$(".column").not(this_column).animate({"width" : other_columns_width_percent+"%"});
 			this_column.animate({"width" : this_column_width_percent+"%"});
+			
+			// Mark selected settings
+			var titles_container = preview_container.find(".display > .titles");
+			var bodies_container = preview_container.find(".display > .bodies");
+			if (title_selection == "item") {
+				titles_container.find("form > .item > .control > .input").click();
+				bodies_container.find("form > .item > .control > .input").click();
+			}
+			else if (title_selection == "webpage") {
+				titles_container.find("form > .webpage > .control > .input").click();
+				bodies_container.find("form > .webpage > .control > .input").click();
+			}
 		},
 		error: function() {
 			// Test if this is hit when server is off
