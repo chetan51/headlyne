@@ -396,7 +396,7 @@ exports['editFeed'] = nodeunit.testCase(
 
 	'basic': function(test)
 	{
-		test.expect(3);
+		test.expect(2);
 		UserModel.save(
 			'my_user',
 			'my_pass',
@@ -432,8 +432,7 @@ exports['editFeed'] = nodeunit.testCase(
 											for(j in feeds[i])
 												count++;
 										test.equal(count, 1);
-										test.equal(feeds[0].length, 0);
-										test.equal(feeds[3].length, 1);
+										test.equal(feeds[0].length, 1);
 										test.done();
 									}
 								);
