@@ -113,8 +113,9 @@ var UserController = function()
 						return;
 					}
 					if(	typeof(POST.feed_url)        == 'undefined' ||
-						typeof(POST.row)  == 'undefined' ||
-						typeof(POST.column)  == 'undefined' ) {
+						typeof(POST.num_feed_items)  == 'undefined' ||
+						typeof(POST.title_selection)  == 'undefined' ||
+						typeof(POST.body_selection)  == 'undefined' ) {
 
 						res_obj.error = new Error('POST variables not found.');
 						res.ok(res_obj);
@@ -124,8 +125,9 @@ var UserController = function()
 					Ni.model('User').addFeed(
 						cookie.data.user,
 						POST.feed_url,
-						POST.row,
-						POST.column,
+						POST.num_feed_items,
+						POST.title_selection,
+						POST.body_selection,
 						function(err, feeds)
 						{
 							if(err) {
