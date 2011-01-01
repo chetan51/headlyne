@@ -436,7 +436,10 @@ var User = function()
 					user,
 					function(err, user2)
 					{
-						callback(err, user2.feeds);
+						if(err) callback(err);
+						else {
+							callback(err, user2.feeds);
+						}
 					}
 				);
 			}
@@ -473,7 +476,10 @@ var User = function()
 					user,
 					function(err, user2)
 					{
-						callback(err, user2.feeds);
+						if(err) callback(err);
+						else {
+							callback(err, user2.feeds);
+						}
 					}
 				);
 			}
@@ -527,7 +533,10 @@ var User = function()
 					user,
 					function(err, user2)
 					{
-						callback(err, user2.feeds);
+						if(err) callback(err);
+						else {
+							callback(err, user2.feeds);
+						}
 					}
 				);
 			}
