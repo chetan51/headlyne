@@ -182,15 +182,19 @@ var DatabaseDriver = function()
 	 **/
 	this.update = function(collection, key, obj_part, callback)
 	{
+		var once=false;
 		collection.update(
 			key,
 			obj_part,
 			function(err, doc)
 			{
-				if(err != null)
-					callback(new Error('Database Update Error:'+ err.message));
-				else {
-					callback(null, doc);
+				if( !once ) {
+					once = true;
+					if(err != null)
+						callback(new Error('Database Update Error:'+ err.message));
+					else {
+						callback(null, doc);
+					}
 				}
 			}
 		);
