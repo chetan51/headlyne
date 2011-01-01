@@ -180,7 +180,7 @@ exports['get'] = nodeunit.testCase(
 	}
 });
 
-exports['addFeed'] = nodeunit.testCase(
+exports['placeFeed'] = nodeunit.testCase(
 {
 
 	setUp: function (callback) {
@@ -226,7 +226,7 @@ exports['addFeed'] = nodeunit.testCase(
 					console.log(err.message);
 					test.done();
 				} else {
-					UserModel.addFeed(
+					UserModel.placeFeed(
 						'my_user',
 						'the_feeds_url',
 						0, 0,
@@ -255,7 +255,7 @@ exports['addFeed'] = nodeunit.testCase(
 	{
 		test.expect(1);
 		
-		UserModel.addFeed(
+		UserModel.placeFeed(
 			'my_user',
 			'the_feeds_url',
 			0, 0,
@@ -287,7 +287,7 @@ exports['addFeed'] = nodeunit.testCase(
 					Step(
 						function addFirst()
 						{
-							UserModel.addFeed(
+							UserModel.placeFeed(
 								'my_user',
 								'the_feeds_url',
 								0, 0,
@@ -300,7 +300,7 @@ exports['addFeed'] = nodeunit.testCase(
 							if( err ) {
 								throw err;
 							} else {
-								UserModel.addFeed(
+								UserModel.placeFeed(
 									'my_user',
 									'second_feeds_url',
 									2, 3,
@@ -314,7 +314,7 @@ exports['addFeed'] = nodeunit.testCase(
 							if( err ) {
 								throw err;
 							} else {
-								UserModel.addFeed(
+								UserModel.placeFeed(
 									'my_user',
 									'third_feeds_url',
 									0, 0,
@@ -328,7 +328,7 @@ exports['addFeed'] = nodeunit.testCase(
 							if( err ) {
 								throw err;
 							} else {
-								UserModel.addFeed(
+								UserModel.placeFeed(
 									'my_user',
 									'fourth_feeds_url',
 									1, 0,
@@ -409,7 +409,7 @@ exports['updateFeed'] = nodeunit.testCase(
 					console.log(err.message);
 					test.done();
 				} else {
-					UserModel.addFeed(
+					UserModel.placeFeed(
 						'my_user',
 						'the_feeds_url',
 						0, 0,
@@ -492,7 +492,7 @@ exports['removeFeed'] = nodeunit.testCase(
 					console.log(err.message);
 					test.done();
 				} else {
-					UserModel.addFeed(
+					UserModel.placeFeed(
 						'my_user',
 						'the_feeds_url',
 						0, 0,
@@ -538,7 +538,7 @@ exports['removeFeed'] = nodeunit.testCase(
 					console.log(err.message);
 					test.done();
 				} else {
-					UserModel.addFeed(
+					UserModel.placeFeed(
 						'my_user',
 						'the_feeds_url',
 						0, 0,

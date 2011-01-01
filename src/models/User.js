@@ -344,7 +344,7 @@ var User = function()
 	}
 
 	/**
-	 * Adds a feed for a user.
+	 * Place a feed for a user.
 	 * 
 	 * 	Arguments:
 	 * 		username,
@@ -354,7 +354,7 @@ var User = function()
 	 *
 	 * 	Returns:      list of feeds.
 	 **/
-	this.addFeed = function(username, feed_url, row, column, callback)
+	this.placeFeed = function(username, feed_url, row, column, callback)
 	{
 		self.get(
 			username,
@@ -365,7 +365,23 @@ var User = function()
 					return;
 				}
 
-				// The user exists, add the new entry.
+				// The user exists.
+				
+				// remove the old entry.
+				for( i in user.feeds )
+				{
+					for( j in user.feeds[i] )
+					{
+						if(
+							'url' in user.feeds[i][j] &&
+							user.feeds[i][j].url == feed_url ) {
+				
+							user.feeds[i].splice(j, 1);
+						}
+					}
+				}
+
+				// add the new entry:
 
 				// add columns if necessary
 				if( user.feeds.length <= column )
