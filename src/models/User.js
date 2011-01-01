@@ -446,6 +446,35 @@ var User = function()
 		);
 	}
 
+	this.updateFeeds = function(username, feeds_array, callback)
+	{
+		self.get(
+			username,
+			function(err, user)
+			{
+				if(err != null) {
+					callback(err);
+					return;
+				}
+
+				// The user exists.
+				user.feeds = feeds_array;
+				
+				// update the user.
+				self.userUpdateHelper(
+					user,
+					function(err, user2)
+					{
+						if(err) callback(err);
+						else {
+							callback(err, user2.feeds);
+						}
+					}
+				);
+			}
+		);
+	}
+
 	/**
 	 * Remove a feed column.
 	 * 
