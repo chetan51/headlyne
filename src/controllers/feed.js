@@ -8,7 +8,12 @@
 var Ni = require('ni');
 var sys = require('sys');
 var jade = require('jade');
+<<<<<<< HEAD
 var qs = require('querystring');
+=======
+var Step = require('step');
+var url = require('url');
+>>>>>>> master
 
 /*
  *  The feed controller
@@ -61,7 +66,7 @@ var FeedController = function()
 			}
 			
 			if(typeof(POST.feed_url) == 'undefined') {
-				res_obj.error = new Error('No feed provided');
+				res_obj.error = new Error('No feed URL provided.');
 				res.ok(res_obj);
 				return;
 			}
