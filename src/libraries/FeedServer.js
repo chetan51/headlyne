@@ -28,6 +28,34 @@ Ni.config('log_enabled', false);
 var FeedServer = function()
 {    
 	var self = this;
+
+	/**
+	 * Gets the content for a webpage given a URL
+	 *
+	 * 	Arguments:
+	 * 		webpage_url
+	 *
+	 * 	Returns (via callback):
+	 * 		err
+	 * 		webpage {
+	 * 			url
+	 * 			url_hash
+	 * 			title
+	 * 			snippet
+	 * 			body
+	 * 		}
+	 **/
+	this.getFullContent = function(webpage_url, callback)
+	{
+		var fake_item = {}; fake_item.link = webpage_url;
+		self.getWebPageForFeedItem(
+			fake_item,
+			function(err, webpage)
+			{
+				callback(err, webpage);
+			}
+		);
+	}
 	
 	/**
 	 *	Gets feed and items for feed for previewing to the user.

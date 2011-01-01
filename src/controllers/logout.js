@@ -20,6 +20,7 @@ var LogoutController = function()
 		// if no cookies are passed, simply redirect to login.
 		if( typeof(req.headers.cookie) == 'undefined' )
 		{
+			console.log('redirect: logout to login, no cookie');
 			res.writeHead(302, [
 				['Location', '/login']
 			]);
@@ -36,6 +37,7 @@ var LogoutController = function()
 				throw new Error('invalid cookie');
 
 		} catch (e) {
+			console.log('redirect: logout to login, bad cookie');
 			res.writeHead( 302, [
 				['Location', '/login'],
 				['Set-Cookie', 
@@ -53,6 +55,7 @@ var LogoutController = function()
 				{
 					// no errors -- attach a null cookie, direct to
 					// login page, and get moving.
+					console.log('redirect: logout to login, successful');
 					res.writeHead( 302, [
 						['Location', '/login'],
 						['Set-Cookie', 

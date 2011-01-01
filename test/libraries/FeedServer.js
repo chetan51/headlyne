@@ -351,6 +351,10 @@ exports['get feed teaser'] = nodeunit.testCase(
 				}
 			}
 		);
-	}
+	},
 	
+	'0 web pages requested': function(test) {
+		test.expect(1);
+		test.done();
+	}
 });

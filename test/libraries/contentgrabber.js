@@ -16,21 +16,21 @@ var html='<html><head></head><body><div id="lol">hello</div></body></html>';
  **/
 var sampleDocument = {
 	url        : './test/mocks/mock_app/views/blogpost1.html',
-	title      : " \n\t\t\t\n            \n                Why Node.js Is Totally Awesome | \n            \n            Chetan Surpur\n\t\t\t\n\t\t",
+	title      : "Why Node.js Is Totally Awesome \n            \n            Chetan Surpur",
 	first_line : "Three reasons: speed, easability, and reusability.",
 	last_line  : "Sorry about that everyone!"
 };
 
 var sampleDocument2 = {
 	url        : './test/mocks/mock_app/views/blogpost3.html',
-	title      : " \n\t\t\t\n            \n                A Curious Breach Of Privacy | \n            \n            Chetan Surpur\n\t\t\t\n\t\t",
+	title      : "A Curious Breach Of Privacy \n            \n            Chetan Surpur",
 	first_line : "I got this email",
 	last_line  : "life will continue to be"
 };
 
 var sampleDocument3 = {
 	url        : './test/mocks/mock_app/views/webpage1.html',
-	title      : "Your Website",
+	title      : "Create and publish your own website quickly and easily using iWeb, Pages, and many other applications available for Mac OS X.",
 	first_line : "It’s a snap to create and publish your own website",
 	last_line  : "For more information about the Apache web server"
 };
@@ -122,8 +122,8 @@ exports['grab content from page'] = nodeunit.testCase(
 exports['snippets'] = nodeunit.testCase(
 {
 	setUp: function (callback) {
-		Ni.config('snippet_image_limit', 2);
-		Ni.config('snippet_text_limit', 300);
+		Ni.config('snippet_image_limit', 1);
+		Ni.config('snippet_text_limit', 650);
 		callback();
 	},
 
@@ -131,7 +131,7 @@ exports['snippets'] = nodeunit.testCase(
 		callback();
 	},
 
-	'basic': function(test)
+	'image limited': function(test)
 	{
 		test.expect(1);
 		
@@ -148,14 +148,14 @@ exports['snippets'] = nodeunit.testCase(
 					var snippet = ContentGrabber.snip(readableHTML);
 
 					console.log(snippet);
-					test.equal(snippet.length, 777);
+					test.equal(snippet.length, 201);
 					test.done();
 				}
 			}
 		);
 	},
 
-	'basic 2': function(test)
+	'text limited': function(test)
 	{
 		test.expect(1);
 		
@@ -172,14 +172,14 @@ exports['snippets'] = nodeunit.testCase(
 					var snippet = ContentGrabber.snip(readableHTML);
 					
 					console.log(snippet);
-					test.equal(snippet.length, 627);
+					test.equal(snippet.length, 782);
 					test.done();
 				}
 			}
 		);
 	},
 	
-	'basic 3': function(test)
+	'post limited': function(test)
 	{
 		test.expect(1);
 		
@@ -196,7 +196,7 @@ exports['snippets'] = nodeunit.testCase(
 					var snippet = ContentGrabber.snip(readableHTML);
 					
 					console.log(snippet);
-					test.equal(snippet.length, 581);
+					test.equal(snippet.length, 757);
 					test.done();
 				}
 			}
