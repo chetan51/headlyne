@@ -122,7 +122,7 @@ var UserController = function()
 						return;
 					}
 					
-					Ni.model('User').addFeed(
+					Ni.model('User').editFeed(
 						cookie.data.user,
 						POST.feed_url,
 						POST.num_feed_items,
