@@ -135,7 +135,7 @@ function feedEditClicked(e) {
 	edit_container.children(".editing-control").show();
 	
 	preview_container.html("Loading feed preview...");
-	preview_container.show();
+	preview_container.slideDown("fast");
 	
 	$.ajax({
 		url: "/feed/preview",
@@ -143,7 +143,9 @@ function feedEditClicked(e) {
 			url: feed_url
 		},
 		success: function(data) {
+			preview_container.hide();
 			preview_container.html(data);
+			preview_container.slideDown("fast");
 			
 			// Resize all columns based on preview width
 			var this_column_width_percent = 50;
@@ -171,7 +173,9 @@ function feedEditClicked(e) {
 		},
 		error: function() {
 			// Test if this is hit when server is off
+			preview_container.hide();
 			preview_container.html("An error was encountered.");
+			preview_container.slideDown("fast");
 		}
 	});
 }
@@ -181,13 +185,13 @@ function feedDoneClicked(e) {
 	edit_container.children(".default-control").show();
 	edit_container.children(".editing-control").hide();
 	
-	$(this).parents(".feed").children(".preview").hide("slide", {direction: "up"}, "fast");
+	$(this).parents(".feed").children(".preview").slideUp("fast");
 	equallyWidenColumns();
 }
 
 function feedDeleteClicked(e) {
 	var feed_container = $(this).parents(".feed");
-	feed_container.children(".confirm-delete").show();
+	feed_container.children(".confirm-delete").slideDown("fast");
 	
 	var delete_container = feed_container.find(".header > .edit-overlay > .edit-delete > .delete");
 	delete_container.children(".default-control").hide();
@@ -196,7 +200,7 @@ function feedDeleteClicked(e) {
 
 function feedDeleteCancelClicked(e) {
 	var feed_container = $(this).parents(".feed");
-	feed_container.children(".confirm-delete").hide();
+	feed_container.children(".confirm-delete").slideUp("fast");
 	
 	var delete_container = feed_container.find(".header > .edit-overlay > .edit-delete > .delete");
 	delete_container.children(".default-control").show();
