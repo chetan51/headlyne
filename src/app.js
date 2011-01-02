@@ -1,4 +1,4 @@
-/*  
+/**
  *  This is an example of how to use Ni to organize your code into a nice,
  *  neat MVC project.
  *
@@ -8,15 +8,14 @@
  *
  *  Take a look at the example controllers and views for how to structure that
  *  code to make it integrate with Ni.
- */
+ **/
 
-/*
+/**
  *  Module dependencies
- */
-
+ **/
 var Connect = require('connect'),
-    Quip = require('quip'),
-    Ni = require('ni');
+    Quip    = require('quip'),
+    Ni      = require('ni');
 
 /**
  * Constants
@@ -27,10 +26,9 @@ var db_name = 'headlyne',
     db_user = 'username',
     db_pass = 'password';
 
-/*
+/**
  *  Load Ni and start the server.
- */
-
+ **/
 Ni.config('root', __dirname);
 
 Ni.config('http_timeout',        30000);
@@ -40,6 +38,7 @@ Ni.config('max_redirect',        5);
 Ni.config('session_lifetime',    14 * 24 * 60 * 60 * 1000);
 Ni.config('snippet_image_limit', 2);
 Ni.config('snippet_text_limit',  300);
+Ni.config('log_enabled',         true);
 
 Ni.boot(function() {
 	Ni.library('DatabaseDriver').init(

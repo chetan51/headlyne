@@ -6,9 +6,10 @@
 /*
  *  Module dependencies
  */
-var Ni = require('ni');
-var url = require('url'),
-	querystring = require('querystring');
+var Ni          = require('ni'),
+    url         = require('url'),
+    querystring = require('querystring'),
+    dbg         = require('../../src/libraries/Debugger.js');
 
 /*
  *  The login controller
@@ -26,7 +27,7 @@ var LoginController = function()
 	{
 		var params = url.parse(req.url, true).query;
 		
-		console.log(params);
+		dbg.log(params);
 
 		if(params.username == null || params.password == null) {
 			res.error('You must provide both a Username and Password');
@@ -51,7 +52,7 @@ var LoginController = function()
 						// home page, and get moving.
 						var expiry_date = new Date(cookie.expires);
 						
-						console.log('redirect: login to home, logged in');
+						dbg.log('redirect: login to home, logged in');
 						res.writeHead( 302, [
 							['Location', '/'],
 							['Set-Cookie', 

@@ -18,11 +18,6 @@ var Downloader     = require('./Downloader.js'),
     dbg            = require('../../src/libraries/Debugger.js');
 
 /**
- *	Configurations
- **/
-Ni.config('log_enabled', false);
-
-/**
  *	The FeedServer library
  **/
 var FeedServer = function()

@@ -1,6 +1,9 @@
 .header
   h3.title= title
-  .url= url
+  .settings
+    .url= url
+    .title-selection= title_selection
+    .body-selection= body_selection
   .edit-overlay
     span.move-icon.ui-icon.ui-icon-arrow-4
     span.edit-delete
@@ -18,6 +21,9 @@
           a.done-button(href='#') Done
       span \ ]
     .clear
+.confirm-delete
+  span Confirm feed deletion: 
+  a.delete-button(href="#") Delete
 .preview
 .body
   - each item in items

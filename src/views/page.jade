@@ -1,6 +1,16 @@
 .page
   - each column in columns 
     .column
+      .header
+        .edit-overlay
+          span.delete
+            span.default-control
+              a.delete-button(href='#') Delete Column
+            span.deleting-control
+              a.cancel-button(href='#') Cancel
+      .confirm-delete
+        span Confirm column deletion: 
+        a.delete-button(href="#") Delete
       .content
         - each feed in column.feeds
           .feed!= feed
