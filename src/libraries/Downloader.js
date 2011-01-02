@@ -4,7 +4,8 @@
 var u    = require('url'),
     http = require('http'),
     rest = require('restler'),
-    Ni   = require('ni');
+    Ni   = require('ni'),
+    dbg  = require('./Debugger');
 
 /**
  *	Downloader library
@@ -39,6 +40,7 @@ var Downloader = function() {
 			                        // Restler cannot handle infinite redirection
 			parser: false
 		};
+
 		rest.get(url, options).addListener('complete', function(data, response) {
 			clearTimeout(timeout);
 			
@@ -58,7 +60,14 @@ var Downloader = function() {
 					callback(new Error("Error " + response.statusCode + ": Page not found."));
 					break;
 			}
-		}).addListener('error', function(data, response) {});
+		}).addListener('error', function(data, response) {
+			dbg.log('REST error?');
+		});
+
+		process.on('uncaughtException', function(err){
+			dbg.log('Debugger: Uncaught exception!');
+			// allow request to time out.
+		});
 	}
 };
 
