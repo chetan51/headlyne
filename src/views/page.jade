@@ -7,9 +7,11 @@
             span.default-control
               a.delete-button(href='#') Delete Column
             span.deleting-control
-              a.cancel-button(href='#') Cancel
-              br
+              span [\ 
               a.delete-confirm-button(href="#") Confirm Delete
+              span \ - 
+              a.cancel-button(href='#') Cancel
+              span \ ] 
       .content
         - each feed in column.feeds
           .feed!= feed
