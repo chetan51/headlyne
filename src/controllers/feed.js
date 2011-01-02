@@ -6,11 +6,13 @@
  *  Module dependencies
  */
 var Ni = require('ni');
+var http = require('http');
 var sys = require('sys');
 var jade = require('jade');
 var Step = require('step');
 var url = require('url');
 var Util = require('../utilities/Util');
+var dbg = require('../libraries/Debugger');
 
 /*
  *  The feed controller
@@ -57,6 +59,7 @@ var FeedController = function()
 				function(err, teaser)
 				{
 					if (err) {
+						dbg.log('preview error: '+err.message);
 						res_obj.error = err;
 						res.ok(res_obj);
 						return;
@@ -69,7 +72,8 @@ var FeedController = function()
 					);
 
 					res_obj.preview = preview;
-					res.ok(res_obj);
+					res.ok(JSON.stringify(res_obj));
+					dbg.log('preview sent');
 				}
 			);
 		});

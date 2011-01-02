@@ -84,6 +84,7 @@ var FeedServer = function()
 							url,
 							num_feed_items,
 							function(err, feed_teaser) {
+								dbg.log('fire back from feedTeaser');
 								callback_updated(err, feed_teaser);
 							}
 						);
@@ -110,6 +111,7 @@ var FeedServer = function()
 							url,
 							num_feed_items,
 							function(err, feed_teaser) {
+								dbg.log('get feed teaser callback fired');
 								callback_updated(err, feed_teaser);
 							}
 						);
@@ -188,7 +190,10 @@ var FeedServer = function()
 									url,
 									feed,
 									num_feed_items,
-									callback
+									function(err, teaser)
+									{
+										callback(err, teaser);
+									}
 								);
 							}
 						}
@@ -238,6 +243,8 @@ var FeedServer = function()
 					num_feed_items,
 					saved_webpages
 				);
+				
+				dbg.log('generated teaser');
 					
 				if (err) {
 					callback(err);
