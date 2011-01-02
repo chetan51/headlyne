@@ -17,6 +17,15 @@ $(document).ready(function() {
 	edit_overlays.find(".edit-delete > .delete > .deleting-control").hide();
 	edit_overlays.find(".edit-delete > .edit > .editing-control").hide();
 	
+	var column_containers = $(".column");
+	var header_containers = column_containers.children(".header");
+	header_containers.hide();
+	column_containers.children(".confirm-delete").hide();
+	
+	var edit_overlays = header_containers.children(".edit-overlay");
+	edit_overlays.hide();
+	edit_overlays.find(".delete > .deleting-control").hide();
+	
 	// Set up overlays
 	var triggers = $(".modalInput").overlay({
 		// some mask tweaks suitable for modal dialogs
@@ -52,6 +61,13 @@ function addColumnListeners(columns) {
 		connectWith: ".column > .content",
 		handle: $(".feed > .header")
 	});
+	
+	var delete_container = columns.find(".header > .edit-overlay > .delete"); 
+	delete_container.find(".default-control > .delete-button").click(columnDeleteClicked);
+	delete_container.find(".deleting-control > .cancel-button").click(columnDeleteCancelClicked);
+	columns.find(".confirm-delete > .delete-button").click(columnDeleteConfirmClicked);
+	
+	columns.hover(columnHoverIn, columnHoverOut);
 }
 
 function addFeedListeners(feeds) {
@@ -98,6 +114,8 @@ function doneClicked(e) {
 function editOrDoneClicked(e) {
 	$(".feed > .body").slideToggle("fast");
 	$(".feed > .header").slideToggle("fast");
+	
+	$(".column > .header").slideToggle("fast");
 	
 	$("#edit-page > #default-control").toggle();
 	$("#edit-page > #editing-control").toggle();
@@ -147,12 +165,7 @@ function feedEditClicked(e) {
 			preview_container.html(data);
 			preview_container.slideDown("fast");
 			
-			// Resize all columns based on preview width
-			var this_column_width_percent = 50;
-			var other_columns_width_percent = (100 -this_column_width_percent) / ($(".column").length - 1);
-			
-			$(".column").not(this_column).animate({"width" : other_columns_width_percent+"%"});
-			this_column.animate({"width" : this_column_width_percent+"%"});
+			resizeColumnDynamically(this_column, 50);
 			
 			// Mark selected settings
 			var titles_form = preview_container.find(".display > .titles > form");
@@ -220,14 +233,57 @@ function feedHeaderHoverOut(e) {
 	$(this).children(".edit-overlay").hide();
 }	
 
+function columnDeleteClicked(e) {
+	var column_container = $(this).parents(".column");
+	column_container.children(".confirm-delete").slideDown("fast");
+	
+	var delete_container = column_container.find(".header > .edit-overlay > .delete");
+	delete_container.children(".default-control").hide();
+	delete_container.children(".deleting-control").show();
+}
+
+function columnDeleteCancelClicked(e) {
+	var column_container = $(this).parents(".column");
+	column_container.children(".confirm-delete").slideUp("fast");
+	
+	var delete_container = column_container.find(".header > .edit-overlay > .delete");
+	delete_container.children(".default-control").show();
+	delete_container.children(".deleting-control").hide();
+}
+
+function columnDeleteConfirmClicked(e) {
+	var column_container = $(this).parents(".column");
+	
+	resizeColumnDynamically(column_container, 0);
+}
+
+function columnHoverIn(e) {
+	$(this).find("> .header > .edit-overlay").show();
+}	
+
+function columnHoverOut(e) {
+	$(this).find("> .header > .edit-overlay").hide();
+}	
+
 /*
  * Helper functions
  */
 function equallyWidenColumns() {
 	var width = 100 / $(".column").length;
-	$(".column").animate({"width" : width + "%"});
+	$(".column").animate({"width" : width + "%"}, "fast");
+}
+
+function resizeColumnDynamically(column, width_percent) {
+	var other_columns_width_percent = (100 - width_percent) / ($(".column").length - 1);
+	
+	column.animate({"width" : width_percent+"%"}, "fast", function() {
+		if (width_percent == 0) {
+			column.remove();
+		}
+	});
+	$(".column").not(column).animate({"width" : other_columns_width_percent+"%"}, "fast");
 }
 
 function hideFeedPreviews() {
 	$(".feed > .preview").hide("slide", {direction: "up"}, "fast");
-}	
+}
