@@ -6,11 +6,15 @@ $(document).ready(function() {
 	$("#edit-page #editing-control").hide();
 	$("#collapse-expand #expand-control").hide();
 	
-	$(".feed > .header").hide();
-	$(".feed > .preview").hide();
-	$(".feed > .header > .edit-overlay").hide();
-	$(".feed > .header > .edit-overlay > .edit-delete > .delete > .deleting-control").hide();
-	$(".feed > .header > .edit-overlay > .edit-delete > .edit > .editing-control").hide();
+	var feed_containers = $(".feed");
+	var header_containers = feed_containers.children(".header");
+	header_containers.hide();
+	feed_containers.children(".preview").hide();
+	
+	var edit_overlays = header_containers.children(".edit-overlay");
+	edit_overlays.hide();
+	edit_overlays.find(".edit-delete > .delete > .deleting-control").hide();
+	edit_overlays.find(".edit-delete > .edit > .editing-control").hide();
 	
 	// Set up overlays
 	var triggers = $(".modalInput").overlay({
@@ -50,8 +54,10 @@ function addColumnListeners(columns) {
 }
 
 function addFeedListeners(feeds) {
-	feeds.find(".header > .edit-overlay > .edit-delete > .edit > .default-control > .edit-button").click(feedEditClicked);
-	feeds.find(".header > .edit-overlay > .edit-delete > .edit > .editing-control > .done-button").click(feedDoneClicked);
+	var edit_container = feeds.find(".header > .edit-overlay > .edit-delete > .edit");
+	edit_container.find(".default-control > .edit-button").click(feedEditClicked);
+	edit_container.find(".editing-control > .done-button").click(feedDoneClicked);
+	
 	feeds.children(".header").hover(feedHeaderHoverIn, feedHeaderHoverOut);
 }
 
@@ -138,15 +144,15 @@ function feedEditClicked(e) {
 			this_column.animate({"width" : this_column_width_percent+"%"});
 			
 			// Mark selected settings
-			var titles_container = preview_container.find(".display > .titles");
-			var bodies_container = preview_container.find(".display > .bodies");
+			var titles_form = preview_container.find(".display > .titles > form");
+			var bodies_form = preview_container.find(".display > .bodies > form");
 			if (title_selection == "item") {
-				titles_container.find("form > .item > .control > .input").click();
-				bodies_container.find("form > .item > .control > .input").click();
+				titles_form.find(".item > .control > .input").click();
+				bodies_form.find(".item > .control > .input").click();
 			}
 			else if (title_selection == "webpage") {
-				titles_container.find("form > .webpage > .control > .input").click();
-				bodies_container.find("form > .webpage > .control > .input").click();
+				titles_form.find(".webpage > .control > .input").click();
+				bodies_form.find(".webpage > .control > .input").click();
 			}
 		},
 		error: function() {
