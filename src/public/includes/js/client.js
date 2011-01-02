@@ -253,6 +253,10 @@ function columnDeleteCancelClicked(e) {
 function columnDeleteConfirmClicked(e) {
 	var column_container = $(this).parents(".column");
 	
+	// Fix column contents' width while animating the column away
+	var column_width = column_container.width();
+	column_container.find("> div").css("width", column_width+"px");
+	
 	resizeColumnDynamically(column_container, 0);
 }
 
