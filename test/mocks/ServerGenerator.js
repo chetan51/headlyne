@@ -6,6 +6,7 @@
  * Module dependencies
  */
 var http = require('http'),
+    Connect = require('connect'),
     url  = require('url'),
     Ni   = require('ni'),
     dbg  = require('../../src/libraries/Debugger.js');
@@ -20,16 +21,19 @@ Ni.config('log_enabled', false);
  */
 var ServerGenerator = function() {
 	
-	this.createServer = function(host, port, callback)
+	this.createServer = function(host, port, callback, dir_name)
 	{
-		Ni.config('root', __dirname + "/mock_app");
+		if( dir_name == null)
+			Ni.config('root', __dirname + "/mock_app");
+		else
+			Ni.config('root', __dirname + dir_name);
 		
 		dbg.log('createServer called');
 
 		Ni.boot(function() {
 			dbg.log('boot called');
-			var serv = http.createServer(
-				function (req, res) {
+			var serv = Connect.createServer(
+				function (req, res, next) {
 					dbg.log('creating server');
 					var parsed_url = url.parse(req.url, true);
 			
@@ -92,12 +96,14 @@ var ServerGenerator = function() {
 							res.end();
 							break;
 						default:
-							res.writeHead(404, {'Content-Type': 'text/html'});
-							res.end();
-							break;
+							next();
+							// res.writeHead(404, {'Content-Type': 'text/html'});
+							// res.end();
+							// break;
 					}
 					dbg.log('served request '+req.url);
-				}
+				},
+				Ni.router
 			);
 			dbg.log('setting up listening');
 			serv.listen(port, host, function() {
