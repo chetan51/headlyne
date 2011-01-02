@@ -7,6 +7,7 @@
  */
 var http = require('http'),
     Connect = require('connect'),
+    Quip = require('quip'),
     url  = require('url'),
     Ni   = require('ni'),
     dbg  = require('../../src/libraries/Debugger.js');
@@ -39,6 +40,7 @@ var ServerGenerator = function() {
 			dbg.log('boot called');
 			dbg.log('creating server');
 			var serv = Connect.createServer(
+				Quip(),
 				self.router,
 				Ni.router
 			);
