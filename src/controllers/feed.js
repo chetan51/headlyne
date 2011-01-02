@@ -8,12 +8,8 @@
 var Ni = require('ni');
 var sys = require('sys');
 var jade = require('jade');
-<<<<<<< HEAD
-var qs = require('querystring');
-=======
 var Step = require('step');
 var url = require('url');
->>>>>>> master
 
 /*
  *  The feed controller
