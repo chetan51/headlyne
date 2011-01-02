@@ -85,8 +85,11 @@ function refreshColumnDeleteOptions(columns) {
 	
 	var deleting_controls = columns.find("> .header > .edit-overlay > .delete > .deleting-control");
 	
+	deleting_controls.children(".move-left-button").unbind("click");
+	deleting_controls.children(".move-right-button").unbind("click");
 	deleting_controls.children(".move-left-button").removeClass("disabled").attr("href", "#").click(columnMoveFeedsLeftClicked);
 	deleting_controls.children(".move-right-button").removeClass("disabled").attr("href", "#").click(columnMoveFeedsRightClicked);
+	
 	deleting_controls.first().children(".move-left-button").addClass("disabled").removeAttr("href").unbind("click");
 	deleting_controls.last().children(".move-right-button").addClass("disabled").removeAttr("href").unbind("click");
 	
@@ -302,14 +305,10 @@ function equallyWidenColumns() {
 	$(".column").animate({"width" : width + "%"}, "fast");
 }
 
-function resizeColumnDynamically(column, width_percent) {
+function resizeColumnDynamically(column, width_percent, callback) {
 	var other_columns_width_percent = (99 - width_percent) / ($(".column").length - 1);
 	
-	column.animate({"width" : width_percent+"%"}, "fast", function() {
-		if (width_percent == 0) {
-			column.remove();
-		}
-	});
+	column.animate({"width" : width_percent+"%"}, "fast", callback);
 	$(".column").not(column).animate({"width" : other_columns_width_percent+"%"}, "fast");
 }
 
@@ -334,5 +333,8 @@ function removeColumn(column_container) {
 	var column_width = column_container.width();
 	column_container.find("> div").css("width", column_width+"px");
 	
-	resizeColumnDynamically(column_container, 0);
+	resizeColumnDynamically(column_container, 0, function() {
+		column_container.remove();
+		refreshColumnDeleteOptions($(".column"));
+	});
 }
