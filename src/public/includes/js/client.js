@@ -10,7 +10,6 @@ $(document).ready(function() {
 	var header_containers = feed_containers.children(".header");
 	header_containers.hide();
 	feed_containers.children(".preview").hide();
-	feed_containers.children(".confirm-delete").hide();
 	
 	var edit_overlays = header_containers.children(".edit-overlay");
 	edit_overlays.hide();
@@ -20,7 +19,6 @@ $(document).ready(function() {
 	var column_containers = $(".column");
 	var header_containers = column_containers.children(".header");
 	header_containers.hide();
-	column_containers.children(".confirm-delete").hide();
 	
 	var edit_overlays = header_containers.children(".edit-overlay");
 	edit_overlays.hide();
@@ -65,7 +63,7 @@ function addColumnListeners(columns) {
 	var delete_container = columns.find("> .header > .edit-overlay > .delete"); 
 	delete_container.find("> .default-control > .delete-button").click(columnDeleteClicked);
 	delete_container.find("> .deleting-control > .cancel-button").click(columnDeleteCancelClicked);
-	columns.find("> .confirm-delete > .delete-button").click(columnDeleteConfirmClicked);
+	delete_container.find("> .deleting-control > .delete-confirm-button").click(columnDeleteConfirmClicked);
 	
 	columns.hover(columnHoverIn, columnHoverOut);
 }
@@ -80,7 +78,7 @@ function addFeedListeners(feeds) {
 	var delete_container = edit_delete_container.children(".delete");
 	delete_container.find("> .default-control > .delete-button").click(feedDeleteClicked);
 	delete_container.find("> .deleting-control > .cancel-button").click(feedDeleteCancelClicked);
-	feeds.find("> .confirm-delete > .delete-button").click(feedDeleteConfirmClicked);
+	delete_container.find("> .deleting-control > .delete-confirm-button").click(feedDeleteConfirmClicked);
 	
 	feeds.children(".header").hover(feedHeaderHoverIn, feedHeaderHoverOut);
 }
@@ -203,8 +201,6 @@ function feedDoneClicked(e) {
 
 function feedDeleteClicked(e) {
 	var feed_container = $(this).parents(".feed");
-	feed_container.children(".confirm-delete").slideDown("fast");
-	
 	var delete_container = feed_container.find("> .header > .edit-overlay > .edit-delete > .delete");
 	delete_container.children(".default-control").hide();
 	delete_container.children(".deleting-control").show();
@@ -212,11 +208,7 @@ function feedDeleteClicked(e) {
 
 function feedDeleteCancelClicked(e) {
 	var feed_container = $(this).parents(".feed");
-	feed_container.children(".confirm-delete").slideUp("fast");
-	
-	var delete_container = feed_container.find("> .header > .edit-overlay > .edit-delete > .delete");
-	delete_container.children(".default-control").show();
-	delete_container.children(".deleting-control").hide();
+	resetFeedDelete(feed_container);
 }
 
 function feedDeleteConfirmClicked(e) {
@@ -230,12 +222,11 @@ function feedHeaderHoverIn(e) {
 
 function feedHeaderHoverOut(e) {
 	$(this).children(".edit-overlay").hide();
+	resetFeedDelete(feed_container);
 }	
 
 function columnDeleteClicked(e) {
 	var column_container = $(this).parents(".column");
-	column_container.children(".confirm-delete").slideDown("fast");
-	
 	var delete_container = column_container.find("> .header > .edit-overlay > .delete");
 	delete_container.children(".default-control").hide();
 	delete_container.children(".deleting-control").show();
@@ -243,11 +234,7 @@ function columnDeleteClicked(e) {
 
 function columnDeleteCancelClicked(e) {
 	var column_container = $(this).parents(".column");
-	column_container.children(".confirm-delete").slideUp("fast");
-	
-	var delete_container = column_container.find("> .header > .edit-overlay > .delete");
-	delete_container.children(".default-control").show();
-	delete_container.children(".deleting-control").hide();
+	resetColumnDelete(column_container);
 }
 
 function columnDeleteConfirmClicked(e) {
@@ -265,7 +252,11 @@ function columnHoverIn(e) {
 }	
 
 function columnHoverOut(e) {
-	$(this).find("> .header > .edit-overlay").hide();
+	var edit_overlay = $(this).find("> .header > .edit-overlay");
+	edit_overlay.hide();
+	
+	var column_container = $(this);
+	resetColumnDelete(column_container);
 }	
 
 /*
@@ -290,3 +281,15 @@ function resizeColumnDynamically(column, width_percent) {
 function hideFeedPreviews() {
 	$(".feed > .preview").hide("slide", {direction: "up"}, "fast");
 }
+
+function resetFeedDelete(feed_container) {
+	var delete_container = feed_container.find("> .header > .edit-overlay > .edit-delete > .delete");
+	delete_container.children(".default-control").show();
+	delete_container.children(".deleting-control").hide();
+}
+
+function resetColumnDelete(column_container) {
+	var delete_container = column_container.find("> .header > .edit-overlay > .delete");
+	delete_container.children(".default-control").show();
+	delete_container.children(".deleting-control").hide();
+}	

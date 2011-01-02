@@ -12,6 +12,8 @@
         span.default-control
           a.delete-button(href='#') Delete
         span.deleting-control
+          a.delete-confirm-button(href="#") Confirm Delete
+          span \ - 
           a.cancel-button(href='#') Cancel
       span \ - 
       span.edit
@@ -21,9 +23,6 @@
           a.done-button(href='#') Done
       span \ ]
     .clear
-.confirm-delete
-  span Confirm feed deletion: 
-  a.delete-button(href="#") Delete
 .preview
 .body
   - each item in items
