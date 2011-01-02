@@ -47,10 +47,11 @@ $(document).ready(function() {
 	
 	addColumnListeners($(".column"));
 	addFeedListeners($(".feed"));
+	refreshColumnDeleteOptions($(".column"));
 });
 
 /*
- * Functions that add listeners
+ * Functions that refresh elements on the page
  */
 
 function addColumnListeners(columns) {
@@ -62,8 +63,11 @@ function addColumnListeners(columns) {
 	
 	var delete_container = columns.find("> .header > .edit-overlay > .delete"); 
 	delete_container.find("> .default-control > .delete-button").click(columnDeleteClicked);
+	
+	delete_container.find("> .deleting-control > .move-left-button").click(columnMoveFeedsLeftClicked);
+	delete_container.find("> .deleting-control > .move-right-button").click(columnMoveFeedsRightClicked);
+	delete_container.find("> .deleting-control > .delete-button").click(columnDeleteWithFeedsClicked);
 	delete_container.find("> .deleting-control > .cancel-button").click(columnDeleteCancelClicked);
-	delete_container.find("> .deleting-control > .delete-confirm-button").click(columnDeleteConfirmClicked);
 	
 	columns.hover(columnHoverIn, columnHoverOut);
 }
@@ -81,6 +85,15 @@ function addFeedListeners(feeds) {
 	delete_container.find("> .deleting-control > .delete-confirm-button").click(feedDeleteConfirmClicked);
 	
 	feeds.children(".header").hover(feedHeaderHoverIn, feedHeaderHoverOut);
+}
+
+function refreshColumnDeleteOptions(columns) {
+	var deleting_controls = columns.find("> .header > .edit-overlay > .delete > .deleting-control");
+	
+	deleting_controls.children(".move-left-button").removeClass("disabled").attr("href", "#");
+	deleting_controls.children(".move-right-button").removeClass("disabled").attr("href", "#");
+	deleting_controls.first().children(".move-left-button").addClass("disabled").removeAttr("href");
+	deleting_controls.last().children(".move-right-button").addClass("disabled").removeAttr("href");;
 }
 
 /*
@@ -135,6 +148,7 @@ function addColumnClicked(e) {
 	
 	equallyWidenColumns();
 	addColumnListeners(new_column);
+	refreshColumnDeleteOptions($(".column"));
 }
 
 function feedEditClicked(e) {
@@ -237,7 +251,7 @@ function columnDeleteCancelClicked(e) {
 	resetColumnDelete(column_container);
 }
 
-function columnDeleteConfirmClicked(e) {
+function columnDeleteWithFeedsClicked(e) {
 	var column_container = $(this).parents(".column");
 	
 	// Fix column contents' width while animating the column away
@@ -245,6 +259,14 @@ function columnDeleteConfirmClicked(e) {
 	column_container.find("> div").css("width", column_width+"px");
 	
 	resizeColumnDynamically(column_container, 0);
+}
+
+function columnMoveFeedsLeftClicked(e) {
+	
+}
+
+function columnMoveFeedsRightClicked(e) {
+	
 }
 
 function columnHoverIn(e) {
