@@ -14,7 +14,7 @@ var querystring = require('querystring');
 var Util = function()
 {
 	// returns POST variables as a JSON object.
-	function getPOST(req, callback)
+	this.getPOST = function(req, callback)
 	{
 		var returned = false;
 		if( req.method == 'POST') {
@@ -36,7 +36,7 @@ var Util = function()
 	}
 	
 	// takes request object, returns cookie if it found one that is valid.
-	function checkCookie(req, res, callback)
+	this.checkCookie = function(req, res, callback)
 	{
 		// if no cookies are passed, redirect to login.
 		if( typeof(req.headers.cookie) == 'undefined' )
