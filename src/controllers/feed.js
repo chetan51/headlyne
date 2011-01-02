@@ -49,7 +49,7 @@ var FeedController = function()
 			}
 		
 			// STUBBED
-			POST.feed_url = "http://feeds.reuters.com/reuters/companyNews?format=xml";
+			//POST.feed_url = "http://feeds.reuters.com/reuters/companyNews?format=xml";
 
 			// now get the feed teaser
 			Ni.library('FeedServer').getFeedTeaser(
@@ -104,7 +104,7 @@ var FeedController = function()
 			}
 		
 			// STUBBED
-			POST.webpage_url = "http://www.futilitycloset.com/2010/12/31/mail-snail/";
+			//POST.webpage_url = "http://www.futilitycloset.com/2010/12/31/mail-snail/";
 
 			// now get the full page
 			dbg.log('accessing library for full page...');
