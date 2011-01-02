@@ -38,13 +38,13 @@ var FeedController = function()
 			// check if there are any errors...
 			if(err) {
 				res_obj.error = err;
-				res.ok(res_obj);
+				res.ok(JSON.stringify(res_obj));
 				return;
 			}
 			
 			if(typeof(POST.feed_url) == 'undefined') {
 				res_obj.error = new Error('No feed URL provided.');
-				res.ok(res_obj);
+				res.ok(JSON.stringify(res_obj));
 				return;
 			}
 		
@@ -61,7 +61,7 @@ var FeedController = function()
 					if (err) {
 						dbg.log('preview error: '+err.message);
 						res_obj.error = err;
-						res.ok(res_obj);
+						res.ok(JSON.stringify(res_obj));
 						return;
 					}
 					
@@ -88,18 +88,18 @@ var FeedController = function()
 		};
 
 		// get POST variables, then proceed.
-		getPOST(req, function(err, POST)
+		Util.getPOST(req, function(err, POST)
 		{
 			// check if there are any errors...
 			if(err) {
 				res_obj.error = err;
-				res.ok(res_obj);
+				res.ok(JSON.stringify(res_obj));
 				return;
 			}
 			
 			if(typeof(POST.webpage_url) == 'undefined') {
 				res_obj.error = new Error('No feed provided');
-				res.ok(res_obj);
+				res.ok(JSON.stringify(res_obj));
 				return;
 			}
 		
@@ -107,13 +107,15 @@ var FeedController = function()
 			POST.webpage_url = "http://www.futilitycloset.com/2010/12/31/mail-snail/";
 
 			// now get the full page
+			dbg.log('accessing library for full page...');
 			Ni.library('FeedServer').getFullContent(
-				POST.feed_url,
+				POST.webpage_url,
 				function(err, webpage)
 				{
 					if(err) {
+						dbg.log('Error occured: '+err.message);
 						res_obj.error = err;
-						res.ok(res_obj);
+						res.ok(JSON.stringify(res_obj));
 						return;
 					}
 
@@ -124,7 +126,8 @@ var FeedController = function()
 					);
 
 					res_obj.page = page;
-					res.ok(res_obj);
+					dbg.log('Page served'+res_obj);
+					res.ok(JSON.stringify(res_obj));
 				}
 			);
 		});
