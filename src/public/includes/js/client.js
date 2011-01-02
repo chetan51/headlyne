@@ -261,7 +261,7 @@ function columnMoveFeedsLeftClicked(e) {
 	var feeds = column_container.find("> .content > .feed").clone();
 	feeds.hide();
 	feeds.appendTo(left_column_container.children(".content"));
-	feeds.show("slide", "left", "fast");
+	feeds.show("slide", {direction: "right"}, "fast");
 	
 	removeColumn(column_container);
 }
@@ -273,7 +273,7 @@ function columnMoveFeedsRightClicked(e) {
 	var feeds = column_container.find("> .content > .feed").clone();
 	feeds.hide();
 	feeds.appendTo(right_column_container.children(".content"));
-	feeds.show("slide", "right", "fast");
+	feeds.show("slide", {direction: "left"}, "fast");
 	
 	removeColumn(column_container);
 }
