@@ -148,10 +148,15 @@ function feedEditClicked(e) {
 			var bodies_form = preview_container.find(".display > .bodies > form");
 			if (title_selection == "item") {
 				titles_form.find(".item > .control > .input").click();
-				bodies_form.find(".item > .control > .input").click();
 			}
 			else if (title_selection == "webpage") {
 				titles_form.find(".webpage > .control > .input").click();
+			}
+			
+			if (body_selection == "item") {
+				bodies_form.find(".item > .control > .input").click();
+			}
+			else if (body_selection == "webpage") {
 				bodies_form.find(".webpage > .control > .input").click();
 			}
 		},
