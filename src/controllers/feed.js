@@ -10,6 +10,7 @@ var sys = require('sys');
 var jade = require('jade');
 var Step = require('step');
 var url = require('url');
+var Util = require('../utilities/Util');
 
 /*
  *  The feed controller
@@ -21,28 +22,6 @@ var FeedController = function()
 		res.error("No feed selected.");
 	}
 
-	// temporary location for function -- should be globally usable!!
-	function getPOST(req, callback)
-	{
-		var returned = false;
-		if( req.method == 'POST') {
-			req.addListener('data', function(chunk)
-			{
-				try{
-					POST = querystring.parse(chunk);
-				} catch(e) {
-					returned = true;
-					callback(e);
-				}
-			});
-			req.addListener('end', function()
-			{
-				if(!returned)
-					callback(null, POST);
-			});
-		} else callback(new Error('No POST data'));
-	}
-
 	this.preview = function(req, res, next)
 	{
 		// object to be filled and returned.
@@ -52,7 +31,7 @@ var FeedController = function()
 		};
 
 		// get POST variables, then proceed.
-		getPOST(req, function(err, POST)
+		Util.getPOST(req, function(err, POST)
 		{
 			// check if there are any errors...
 			if(err) {
