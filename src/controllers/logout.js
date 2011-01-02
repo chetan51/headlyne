@@ -6,13 +6,13 @@
 /*
  *  Module dependencies
  */
-var Ni = require('ni');
+var Ni  = require('ni');
 var url = require('url');
+var dbg = require('../../src/libraries/Debugger.js');
 
 /*
  *  The logout controller
  */
-
 var LogoutController = function()
 {
 	this.index = function(req, res, next)
@@ -20,7 +20,7 @@ var LogoutController = function()
 		// if no cookies are passed, simply redirect to login.
 		if( typeof(req.headers.cookie) == 'undefined' )
 		{
-			console.log('redirect: logout to login, no cookie');
+			dbg.log('redirect: logout to login, no cookie');
 			res.writeHead(302, [
 				['Location', '/login']
 			]);
@@ -31,13 +31,13 @@ var LogoutController = function()
 		var cookie;
 		try {
 			cookie = JSON.parse(req.headers.cookie);
-			console.log(cookie);
+			dbg.log(cookie);
 			
 			if( !Ni.library('UserAuth').validate_cookie(cookie) )
 				throw new Error('invalid cookie');
 
 		} catch (e) {
-			console.log('redirect: logout to login, bad cookie');
+			dbg.log('redirect: logout to login, bad cookie');
 			res.writeHead( 302, [
 				['Location', '/login'],
 				['Set-Cookie', 
@@ -55,7 +55,7 @@ var LogoutController = function()
 				{
 					// no errors -- attach a null cookie, direct to
 					// login page, and get moving.
-					console.log('redirect: logout to login, successful');
+					dbg.log('redirect: logout to login, successful');
 					res.writeHead( 302, [
 						['Location', '/login'],
 						['Set-Cookie', 

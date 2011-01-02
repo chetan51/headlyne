@@ -3,6 +3,7 @@
  **/
 var crypto  = require('crypto'),
     User    = require('../models/User'),
+    dbg     = require('./Debugger.js');
     Ni      = require('ni');
 
 
@@ -50,10 +51,10 @@ var UserAuth = function()
 		
 
 		if( session_object.cookie.expires > now ) {
-			console.log('\tSession is valid');
+			dbg.log('\tSession is valid');
 			return false;
 		} else {
-			console.log('\tSession has expired');
+			dbg.log('\tSession has expired');
 			return true;
 		}
 	}
@@ -142,6 +143,19 @@ var UserAuth = function()
 
 		return true;
 	}
+	
+	/**
+	 * Returns true if the session_cookie matches the user_cookie
+	 **/
+	this.match_cookie = function(session_cookie, user_cookie)
+	{
+		if( session_cookie.id         != user_cookie.id ) return false;
+		if( session_cookie.persistent != user_cookie.persistent ) return false;
+		if( session_cookie.expires    != user_cookie.expires ) return false;
+		if( session_cookie.data.user  != user_cookie.data.user ) return false;
+
+		return true;
+	}
 
 	/**
 	 * Check if the session provided is a valid one or not.
@@ -187,19 +201,8 @@ var UserAuth = function()
 					return;
 				}
 				
-				user.session.cookie.expires = parseInt(user.session.cookie.expires);
-
-				session_cookie.expires = parseInt(session_cookie.expires);
-
 				// otherwise, check if the objects match.
-				var hasher1 = crypto.createHash('sha256');
-				var hasher2 = crypto.createHash('sha256');
-				hasher1.update(JSON.stringify(session_cookie));
-				hasher2.update(JSON.stringify(user.session.cookie));
-				var input_cookie_hash = hasher1.digest('hex');
-				var expected_hash = hasher2.digest('hex');
-
-				if( input_cookie_hash != expected_hash)
+				if( !self.match_cookie(session_cookie, user.session.cookie) )
 					callback(new Error('Invalid Session Cookie'));
 				else {
 					// session objects match, and not expired.

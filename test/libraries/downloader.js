@@ -17,6 +17,8 @@ var mock_server      = null;
 
 var base_url = "http://" + mock_server_host + ":" + mock_server_port;
 
+Ni.config('root', __dirname + "/../mocks/mock_app");
+
 /*
  *  Tests
  */

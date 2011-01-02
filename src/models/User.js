@@ -7,6 +7,7 @@
  **/
 var crypto         = require('crypto');
 var DatabaseDriver = require('../libraries/DatabaseDriver.js');
+var dbg            = require('../../src/libraries/Debugger.js');
 
 /**
  * The User model
@@ -63,7 +64,7 @@ var User = function()
 							}
 							else {
 								//delete user['password_hash'];
-								//console.log(user);
+								dbg.log('saved user: '+user);
 								callback(null, user);
 							}
 						}

@@ -16,6 +16,7 @@ var http            = require('http'),
  *	Configurations
  **/
 Ni.config('log_enabled', false);
+Ni.config('root', __dirname + "/../mocks/mock_app");
 
 /**
  *	Constants and mocks

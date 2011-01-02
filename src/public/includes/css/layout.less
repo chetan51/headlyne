@@ -69,7 +69,19 @@
 	vertical-align: top;
 	width: 33%;
 	
-	.content {
+	> .header {
+		min-height: 25px;
+		
+		> .edit-overlay {
+			text-align: center;
+		}
+	}
+	
+	> .confirm-delete {
+		text-align: center;
+	}
+	
+	> .content {
 		padding: 10px;
 		min-height: 50px;
 	}
@@ -97,7 +109,7 @@
 			margin-bottom: 5px;
 		}
 
-		> .url {
+		> .settings {
 			display: none;
 		}
 		
