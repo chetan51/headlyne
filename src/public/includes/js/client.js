@@ -10,6 +10,7 @@ $(document).ready(function() {
 	var header_containers = feed_containers.children(".header");
 	header_containers.hide();
 	feed_containers.children(".preview").hide();
+	feed_containers.children(".confirm-delete").hide();
 	
 	var edit_overlays = header_containers.children(".edit-overlay");
 	edit_overlays.hide();
@@ -54,9 +55,17 @@ function addColumnListeners(columns) {
 }
 
 function addFeedListeners(feeds) {
-	var edit_container = feeds.find(".header > .edit-overlay > .edit-delete > .edit");
+	var edit_delete_container = feeds.find(".header > .edit-overlay > .edit-delete"); 
+
+	var edit_container = edit_delete_container.children(".edit");
 	edit_container.find(".default-control > .edit-button").click(feedEditClicked);
 	edit_container.find(".editing-control > .done-button").click(feedDoneClicked);
+	edit_container.find(".editing-control > .done-button").click(feedDoneClicked);
+	
+	var delete_container = edit_delete_container.children(".delete");
+	delete_container.find(".default-control > .delete-button").click(feedDeleteClicked);
+	delete_container.find(".deleting-control > .cancel-button").click(feedDeleteCancelClicked);
+	feeds.find(".confirm-delete > .delete-button").click(feedDeleteConfirmClicked);
 	
 	feeds.children(".header").hover(feedHeaderHoverIn, feedHeaderHoverOut);
 }
@@ -174,6 +183,29 @@ function feedDoneClicked(e) {
 	
 	$(this).parents(".feed").children(".preview").hide("slide", {direction: "up"}, "fast");
 	equallyWidenColumns();
+}
+
+function feedDeleteClicked(e) {
+	var feed_container = $(this).parents(".feed");
+	feed_container.children(".confirm-delete").show();
+	
+	var delete_container = feed_container.find(".header > .edit-overlay > .edit-delete > .delete");
+	delete_container.children(".default-control").hide();
+	delete_container.children(".deleting-control").show();
+}
+
+function feedDeleteCancelClicked(e) {
+	var feed_container = $(this).parents(".feed");
+	feed_container.children(".confirm-delete").hide();
+	
+	var delete_container = feed_container.find(".header > .edit-overlay > .edit-delete > .delete");
+	delete_container.children(".default-control").show();
+	delete_container.children(".deleting-control").hide();
+}
+
+function feedDeleteConfirmClicked(e) {
+	var feed_container = $(this).parents(".feed");
+	feed_container.hide("fast");
 }
 
 function feedHeaderHoverIn(e) {
