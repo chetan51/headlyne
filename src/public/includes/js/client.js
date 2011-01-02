@@ -47,10 +47,11 @@ $(document).ready(function() {
 	
 	addColumnListeners($(".column"));
 	addFeedListeners($(".feed"));
+	refreshColumnDeleteOptions($(".column"));
 });
 
 /*
- * Functions that add listeners
+ * Functions that refresh elements on the page
  */
 
 function addColumnListeners(columns) {
@@ -59,11 +60,6 @@ function addColumnListeners(columns) {
 		connectWith: ".column > .content",
 		handle: $(".feed > .header")
 	});
-	
-	var delete_container = columns.find("> .header > .edit-overlay > .delete"); 
-	delete_container.find("> .default-control > .delete-button").click(columnDeleteClicked);
-	delete_container.find("> .deleting-control > .cancel-button").click(columnDeleteCancelClicked);
-	delete_container.find("> .deleting-control > .delete-confirm-button").click(columnDeleteConfirmClicked);
 	
 	columns.hover(columnHoverIn, columnHoverOut);
 }
@@ -81,6 +77,24 @@ function addFeedListeners(feeds) {
 	delete_container.find("> .deleting-control > .delete-confirm-button").click(feedDeleteConfirmClicked);
 	
 	feeds.children(".header").hover(feedHeaderHoverIn, feedHeaderHoverOut);
+}
+
+function refreshColumnDeleteOptions(columns) {
+	var delete_container = columns.find("> .header > .edit-overlay > .delete"); 
+	delete_container.find("> .default-control > .delete-button").click(columnDeleteClicked);
+	
+	var deleting_controls = columns.find("> .header > .edit-overlay > .delete > .deleting-control");
+	
+	deleting_controls.children(".move-left-button").unbind("click");
+	deleting_controls.children(".move-right-button").unbind("click");
+	deleting_controls.children(".move-left-button").removeClass("disabled").attr("href", "#").click(columnMoveFeedsLeftClicked);
+	deleting_controls.children(".move-right-button").removeClass("disabled").attr("href", "#").click(columnMoveFeedsRightClicked);
+	
+	deleting_controls.first().children(".move-left-button").addClass("disabled").removeAttr("href").unbind("click");
+	deleting_controls.last().children(".move-right-button").addClass("disabled").removeAttr("href").unbind("click");
+	
+	deleting_controls.children(".delete-button").click(columnDeleteWithFeedsClicked);
+	deleting_controls.children(".cancel-button").click(columnDeleteCancelClicked);
 }
 
 /*
@@ -135,6 +149,7 @@ function addColumnClicked(e) {
 	
 	equallyWidenColumns();
 	addColumnListeners(new_column);
+	refreshColumnDeleteOptions($(".column"));
 }
 
 function feedEditClicked(e) {
@@ -237,14 +252,37 @@ function columnDeleteCancelClicked(e) {
 	resetColumnDelete(column_container);
 }
 
-function columnDeleteConfirmClicked(e) {
+function columnDeleteWithFeedsClicked(e) {
 	var column_container = $(this).parents(".column");
+	removeColumn(column_container);
+}
+
+function columnMoveFeedsLeftClicked(e) {
+	var column_container = $(this).parents(".column");
+	var left_column_container = column_container.prev();
 	
-	// Fix column contents' width while animating the column away
-	var column_width = column_container.width();
-	column_container.find("> div").css("width", column_width+"px");
+	var feeds = column_container.find("> .content > .feed").clone();
+	feeds.hide();
+	addFeedListeners(feeds);
+	feeds.appendTo(left_column_container.children(".content"));
+	feeds.show("slide", {direction: "right"}, "fast");
 	
-	resizeColumnDynamically(column_container, 0);
+	removeColumn(column_container);
+	addColumnListeners(left_column_container);
+}
+
+function columnMoveFeedsRightClicked(e) {
+	var column_container = $(this).parents(".column");
+	var right_column_container = column_container.next();
+	
+	var feeds = column_container.find("> .content > .feed").clone();
+	feeds.hide();
+	addFeedListeners(feeds);
+	feeds.appendTo(right_column_container.children(".content"));
+	feeds.show("slide", {direction: "left"}, "fast");
+	
+	removeColumn(column_container);
+	addColumnListeners(right_column_container);
 }
 
 function columnHoverIn(e) {
@@ -267,14 +305,10 @@ function equallyWidenColumns() {
 	$(".column").animate({"width" : width + "%"}, "fast");
 }
 
-function resizeColumnDynamically(column, width_percent) {
+function resizeColumnDynamically(column, width_percent, callback) {
 	var other_columns_width_percent = (99 - width_percent) / ($(".column").length - 1);
 	
-	column.animate({"width" : width_percent+"%"}, "fast", function() {
-		if (width_percent == 0) {
-			column.remove();
-		}
-	});
+	column.animate({"width" : width_percent+"%"}, "fast", callback);
 	$(".column").not(column).animate({"width" : other_columns_width_percent+"%"}, "fast");
 }
 
@@ -293,3 +327,14 @@ function resetColumnDelete(column_container) {
 	delete_container.children(".default-control").show();
 	delete_container.children(".deleting-control").hide();
 }	
+
+function removeColumn(column_container) {
+	// Fix column contents' width while animating the column away
+	var column_width = column_container.width();
+	column_container.find("> div").css("width", column_width+"px");
+	
+	resizeColumnDynamically(column_container, 0, function() {
+		column_container.remove();
+		refreshColumnDeleteOptions($(".column"));
+	});
+}
