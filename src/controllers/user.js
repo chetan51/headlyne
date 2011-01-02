@@ -25,7 +25,7 @@ var UserController = function()
 	{
 		var res_obj = {
 			'error': null,
-			'success': false;
+			'success': false
 		};
 
 		Util.checkCookie(req, res,
@@ -86,7 +86,7 @@ var UserController = function()
 	{
 		var res_obj = {
 			'error': null,
-			'success': false;
+			'success': false
 		};
 
 		Util.checkCookie(req, res,
@@ -140,7 +140,7 @@ var UserController = function()
 	{
 		var res_obj = {
 			'error': null,
-			'success': false;
+			'success': false
 		};
 
 		Util.checkCookie(req, res,
