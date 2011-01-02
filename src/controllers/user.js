@@ -28,15 +28,16 @@ var UserController = function()
 			'success': false
 		};
 
-		Util.checkCookie(req, res,
-			function(err, cookie)
-			{
-				if(err) {
-					console.log(err.message);
-					res_obj.error = err;
-					res.ok(res_obj);
-					return;
-				}
+		var cookie={}; cookie.data={}; cookie.data.user = 'username';
+//		Util.checkCookie(req, res,
+//			function(err, cookie)
+//			{
+//				if(err) {
+//					console.log(err.message);
+//					res_obj.error = err;
+//					res.ok(JSON.stringify(res_obj));
+//					return;
+//				}
 				
 				// if valid, get POST variable
 				Util.getPOST(req, function(err, POST)
@@ -44,7 +45,7 @@ var UserController = function()
 					if(err) {
 						console.log(err.message);
 						res_obj.error = err;
-						res.ok(res_obj);
+						res.ok(JSON.stringify(res_obj));
 						return;
 					}
 					if(	typeof(POST.feed_url)        == 'undefined' ||
@@ -53,7 +54,7 @@ var UserController = function()
 						typeof(POST.body_selection)  == 'undefined' ) {
 
 						res_obj.error = new Error('POST variables not found.');
-						res.ok(res_obj);
+						res.ok(JSON.stringify(res_obj));
 						return;
 					}
 					
@@ -68,18 +69,18 @@ var UserController = function()
 							if(err) {
 								console.log(err.message);
 								res_obj.error = err;
-								res.ok(res_obj);
+								res.ok(JSON.stringify(res_obj));
 								return;
 							}
 							
 							// return success = true
 							res_obj.success = true;
-							res.ok(res_obj);
+							res.ok(JSON.stringify(res_obj));
 						}
 					);
 				});
-			}
-		);
+//			}
+//		);
 	}
 	
 	this.sort = function(req, res, next)
@@ -95,7 +96,7 @@ var UserController = function()
 				if(err) {
 					console.log(err.message);
 					res_obj.error = err;
-					res.ok(res_obj);
+					res.ok(JSON.stringify(res_obj));
 					return;
 				}
 				
@@ -105,12 +106,12 @@ var UserController = function()
 					if(err) {
 						console.log(err.message);
 						res_obj.error = err;
-						res.ok(res_obj);
+						res.ok(JSON.stringify(res_obj));
 						return;
 					}
 					if( typeof(POST.feed_array) == 'undefined' ) {
 						res_obj.error = new Error('POST variables not found.');
-						res.ok(res_obj);
+						res.ok(JSON.stringify(res_obj));
 						return;
 					}
 					
@@ -122,13 +123,13 @@ var UserController = function()
 							if(err) {
 								console.log(err.message);
 								res_obj.error = err;
-								res.ok(res_obj);
+								res.ok(JSON.stringify(res_obj));
 								return;
 							}
 							
 							// return success = true
 							res_obj.success = true;
-							res.ok(res_obj);
+							res.ok(JSON.stringify(res_obj));
 						}
 					);
 				});
@@ -149,7 +150,7 @@ var UserController = function()
 				if(err) {
 					console.log(err.message);
 					res_obj.error = err;
-					res.ok(res_obj);
+					res.ok(JSON.stringify(res_obj));
 					return;
 				}
 				
@@ -159,12 +160,12 @@ var UserController = function()
 					if(err) {
 						console.log(err.message);
 						res_obj.error = err;
-						res.ok(res_obj);
+						res.ok(JSON.stringify(res_obj));
 						return;
 					}
 					if( typeof(POST.feed_url) == 'undefined' ) {
 						res_obj.error = new Error('POST variables not found.');
-						res.ok(res_obj);
+						res.ok(JSON.stringify(res_obj));
 						return;
 					}
 					
@@ -176,13 +177,13 @@ var UserController = function()
 							if(err) {
 								console.log(err.message);
 								res_obj.error = err;
-								res.ok(res_obj);
+								res.ok(JSON.stringify(res_obj));
 								return;
 							}
 							
 							// return success = true
 							res_obj.success = true;
-							res.ok(res_obj);
+							res.ok(JSON.stringify(res_obj));
 						}
 					);
 				});
