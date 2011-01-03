@@ -2,17 +2,6 @@
  * Initialization
  */
 $(document).ready(function() {
-	// Set up overlays
-	var triggers = $(".modalInput").overlay({
-		// some mask tweaks suitable for modal dialogs
-		mask: {
-			color: '#000000',
-			loadSpeed: 200,
-			opacity: 0.9
-		},
-		closeOnClick: true
-	});
-	
 	// Set up event listeners
 	$("#collapse-expand > #collapse-control > #collapse-button").click(expandOrCollapseClicked);
 	$("#collapse-expand > #expand-control > #expand-button").click(expandOrCollapseClicked);
@@ -54,11 +43,23 @@ function addFeedListeners(feeds) {
 	delete_container.find("> .deleting-control > .cancel-button").click(feedDeleteCancelClicked);
 	delete_container.find("> .deleting-control > .delete-confirm-button").click(feedDeleteConfirmClicked);
 	
-	var feeditem_body_container = feeds.find("> .body > .item > .body");
+	var feeditem_container = feeds.find("> .body > .item");
+	var feeditem_body_container = feeditem_container.find("> .body");
 	var snippet_container = feeditem_body_container.children(".snippet");
 	snippet_container.click(snippetClicked);
 	var article_container = feeditem_body_container.children(".full-article");
 	article_container.click(fullArticleClicked);
+	var feeditem_title = feeditem_container.find("> .header > .title");
+	feeditem_title.click(feedItemTitleClicked);
+	feeditem_title.overlay({  // reader overlay
+		// some mask tweaks suitable for modal dialogs
+		mask: {
+			color: '#000000',
+			loadSpeed: 200,
+			opacity: 0.9
+		},
+		closeOnClick: true
+	});
 	
 	feeds.children(".header").hover(feedHeaderHoverIn, feedHeaderHoverOut);
 }
@@ -231,30 +232,17 @@ function feedHeaderHoverOut(e) {
 
 function snippetClicked(e) {
 	var feeditem_container = $(this).parents(".item");
-	var webpage_url = feeditem_container.find("> .header > .url").text();
 	var snippet_container = feeditem_container.find("> .body > .snippet");
 	var article_container = feeditem_container.find("> .body > .full-article");
-
-	$.ajax({
-		url: "/feed/webpage",
-		type: 'POST',
-		data: {
-			webpage_url: webpage_url
-		},
-		datatype: 'json',
-		success: function(data) {
-			if (data.error || !data.page) {
-				fullArticleError(article_container);
-			}
-			else {
-				snippet_container.slideUp("fast");
-				article_container.html(data.page);
-				article_container.slideDown("fast");
-			}
-		},
-		error: function() {
-			// Test if this is hit when server is off
+	
+	loadFullArticle(feeditem_container, function(err, data) {
+		if (err || data.error || !data.page) {
 			fullArticleError(article_container);
+		}
+		else {
+			snippet_container.slideUp("fast");
+			article_container.html(data.page);
+			article_container.slideDown("fast");
 		}
 	});
 }
@@ -266,6 +254,25 @@ function fullArticleClicked(e) {
 	
 	article_container.slideUp("fast");
 	snippet_container.slideDown("fast");
+}
+
+function feedItemTitleClicked(e) {
+	var feeditem_container = $(this).parents(".item");
+	
+	var reader_title_container = $("#reader > .content > .title");
+	var reader_body_container = $("#reader > .content > .body");
+	var feeditem_title = feeditem_container.find(".header > .title").text();
+	reader_title_container.html(feeditem_title);
+	reader_body_container.html("Loading...");
+	
+	loadFullArticle(feeditem_container, function(err, data) {
+		if (err || data.error || !data.page) {
+			readerError();
+		}
+		else {
+			reader_body_container.html(data.page);
+		}
+	});
 }
 
 function columnDeleteClicked(e) {
@@ -346,13 +353,17 @@ function hideFeedPreviews() {
 
 function previewError(preview_container) {
 	preview_container.hide();
-	preview_container.html("An error was encountered while loading feed preview. Please refresh the page and try again.");
+	preview_container.html("There was an error while loading the feed preview. Please refresh the page and try again.");
 	preview_container.slideDown("fast");
 }
 
 function fullArticleError(article_container) {
-	article_container.html("An error was encountered while loading full article. Please refresh the page and try again.<br><br>");
+	article_container.html("There was an error while loading the article. Please refresh the page and try again.<br><br>");
 	article_container.slideDown("fast");
+}
+
+function readerError() {
+	$("#reader > .content > .body").html("There was an error while loading the article. Please refresh the page and try again.");
 }
 
 function resetFeedDelete(feed_container) {
@@ -375,5 +386,24 @@ function removeColumn(column_container) {
 	resizeColumnDynamically(column_container, 0, function() {
 		column_container.remove();
 		refreshColumnDeleteOptions($(".column"));
+	});
+}
+
+function loadFullArticle(feeditem_container, callback) {
+	var webpage_url = feeditem_container.find("> .header > .url").text();
+
+	$.ajax({
+		url: "/feed/webpage",
+		type: 'POST',
+		data: {
+			webpage_url: webpage_url
+		},
+		datatype: 'json',
+		success: function(data) {
+			callback(null, data);
+		},
+		error: function() {
+			callback(new Error("Error loading full article"));
+		}
 	});
 }
