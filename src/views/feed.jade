@@ -35,6 +35,8 @@
           - if (item.webpage)
             - if (item.webpage.title)
               h2.title= item.webpage.title
+        - if (item.link)
+          .url= item.link
       .body
         - if (body_selection == "item")
           - if (item.description)
@@ -43,3 +45,4 @@
           - if (item.webpage)
             - if (item.webpage.snippet)
               div.snippet!= item.webpage.snippet
+        .full-article

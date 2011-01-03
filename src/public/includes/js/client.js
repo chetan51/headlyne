@@ -76,6 +76,9 @@ function addFeedListeners(feeds) {
 	delete_container.find("> .deleting-control > .cancel-button").click(feedDeleteCancelClicked);
 	delete_container.find("> .deleting-control > .delete-confirm-button").click(feedDeleteConfirmClicked);
 	
+	var snippet_container = feeds.find("> .body > .item > .body > .snippet");
+	snippet_container.click(snippetClicked);
+	
 	feeds.children(".header").hover(feedHeaderHoverIn, feedHeaderHoverOut);
 }
 
@@ -238,12 +241,44 @@ function feedDeleteConfirmClicked(e) {
 
 function feedHeaderHoverIn(e) {
 	$(this).children(".edit-overlay").show();
-}	
+}
 
 function feedHeaderHoverOut(e) {
 	$(this).children(".edit-overlay").hide();
 	resetFeedDelete(feed_container);
-}	
+}
+
+function snippetClicked(e) {
+	var feeditem_container = $(this).parents(".item");
+	var webpage_url = feeditem_container.find("> .header > .url").text();
+	var snippet_container = feeditem_container.find("> .body > .snippet");
+	var article_container = feeditem_container.find("> .body > .full-article");
+
+	$.ajax({
+		url: "/feed/webpage",
+		type: 'POST',
+		data: {
+			webpage_url: webpage_url
+		},
+		datatype: 'json',
+		success: function(data) {
+			if (data.error || !data.page) {
+				//feedBodyExpandError(article_container);
+				alert("error");
+			}
+			else {
+				snippet_container.slideUp("fast");
+				article_container.html(data.page);
+				article_container.slideDown("fast");
+			}
+		},
+		error: function() {
+			// Test if this is hit when server is off
+			//previewError(preview_container);
+			alert("lol");
+		}
+	});
+}
 
 function columnDeleteClicked(e) {
 	var column_container = $(this).parents(".column");

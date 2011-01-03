@@ -158,8 +158,14 @@
 		> .item {
 			margin-bottom: 15px;
 			
+			> .header {
+				> .url {
+					display: none;
+				}
+			}
+			
 			> .body {
-				> .snippet {
+				> .snippet, > .full-article {
 					pre {
 						white-space: pre-wrap;       /* css-3 */
 						white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
@@ -172,6 +178,10 @@
 						max-width:100%;
 						height:auto;
 					}
+				}
+				
+				> .full-article {
+					display: none;
 				}
 			}
 		}
