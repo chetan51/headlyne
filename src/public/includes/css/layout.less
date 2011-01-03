@@ -8,47 +8,27 @@
 /* Divs
 -------------------------------------------------------------- */
 
-.modal {
-		background-color:#fff;
-		display:none;
-		width:350px;
-		padding:15px;
-		text-align:left;
-		border:2px solid #333;
-		
-		opacity:0.8;
-		-moz-border-radius:6px;
-		-webkit-border-radius:6px;
-		-moz-box-shadow: 0 0 50px #ccc;
-		-webkit-box-shadow: 0 0 50px #ccc;
-	}
-	
-	.modal h2 {
-		margin:0px;
-		padding:10px 0 10px 45px;
-		border-bottom:1px solid #333;
-		font-size:20px;
-	}
-	
-	.modal .close {
-		background-image:url(/includes/img/buttons/close.png);
-		position:absolute;
-		right:-15px;
-		top:-15px;
-		cursor:pointer;
-		height:35px;
-		width:35px;
-	}		
-	
 #navbar {
 	padding-left: 5px;
 	border-bottom: 1px dotted;
+	
+	#expand-control {
+		display: none;
+	}
+	
+	#edit-page {
+		#editing-control {
+			display: none;
+		}
+	}
 }
+
 #folio {
 	text-align: center;
 	margin-top: 30px;
 	margin-bottom: 15px;
 }
+
 #footer {
 	text-align: center;
 	border-top: 1px dotted;
@@ -70,6 +50,7 @@
 	width: 33%;
 	
 	> .header {
+		display: none;
 		min-height: 25px;
 		
 		> .edit-overlay {
@@ -101,6 +82,7 @@
 	margin-bottom: 10px;
 	
 	> .header {
+		display: none;
 		border: 1px solid;
 		text-align: center;
 		position: relative;
@@ -143,6 +125,7 @@
 	}
 	
 	> .preview {
+		display: none;
 		margin-top: 10px;
 		
 		> .display {
@@ -202,3 +185,35 @@
 .disabled {
 	color: #aaa;
 }
+
+.modal {
+		background-color:#fff;
+		display:none;
+		width:350px;
+		padding:15px;
+		text-align:left;
+		border:2px solid #333;
+		
+		opacity:0.8;
+		-moz-border-radius:6px;
+		-webkit-border-radius:6px;
+		-moz-box-shadow: 0 0 50px #ccc;
+		-webkit-box-shadow: 0 0 50px #ccc;
+	}
+	
+	.modal h2 {
+		margin:0px;
+		padding:10px 0 10px 45px;
+		border-bottom:1px solid #333;
+		font-size:20px;
+	}
+	
+	.modal .close {
+		background-image:url(/includes/img/buttons/close.png);
+		position:absolute;
+		right:-15px;
+		top:-15px;
+		cursor:pointer;
+		height:35px;
+		width:35px;
+	}		
