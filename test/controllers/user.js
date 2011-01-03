@@ -6,6 +6,7 @@ var http            = require('http'),
     Step            = require('step'),
     rest            = require('restler'),
     Ni              = require('ni'),
+    querystring     = require('querystring'),
     ServerGenerator = require('../mocks/ServerGenerator.js'),
     DatabaseFaker   = require('../mocks/DatabaseFaker.js'),
     UserModel       = require('../../src/models/User.js'),
@@ -28,7 +29,7 @@ var mock_server      = null,
 /**
  * Helper functions
  **/
-function makeUser(callback)
+function getAUser(callback)
 {
 	UserModel.save(
 		'username',
@@ -43,7 +44,14 @@ function makeUser(callback)
 				return;
 			}
 			// user saved.
-			callback(null);
+			UserAuth.authenticate(
+				'username',
+				'password',
+				function(err, is_new, cookie)
+				{
+					callback(err, cookie);
+				}
+			);
 		}
 	);
 }
@@ -119,42 +127,67 @@ exports['edit'] = nodeunit.testCase(
 	'basic-add': function(test) {
 		test.expect(6);
 
-		makeUser( function(err)
+		getAUser( function(err, cookie)
 		{
 			if(err) throw err;
 
 			// request to edit a new feed.
-			rest.post('http://localhost:7500/user/edit', {
-				data: {
-					feed_url: 'some_url',
-					num_feed_items: 3,
-					title_selection: 'webpage',
-					body_selection: 'webpage'
-				},
-			}).addListener('complete', function(data, response) {
-				// check response.
-				dbg.log('Received: '+data.slice(0, 66)+'...');
-				var data_obj = JSON.parse(data);
-				test.equal(data_obj.error, null);
-				test.equal(data_obj.success, true);
-				// check database.
-				getUserFeeds( function(err, feeds)
-				{
-					if(err) throw err;
-					test.equal(feeds.length, 1);
-					test.equal(feeds[0].length, 1);
-					test.equal(feeds[0][0].url, 'some_url');
-					test.equal(feeds[0][0].num_feed_items, 3);
-					test.done();
+			var client = http.createClient(7500, 'localhost');
+
+			// the request to make:
+			var post_req = {
+				feed_url: 'some_url',
+				num_feed_items: 3,
+				title_selection: 'webpage',
+				body_selection: 'webpage'
+			};
+			var data_send = querystring.stringify(post_req);
+			// headers for the request
+			var headers = {
+				'Host': 'localhost',
+				'Cookie': JSON.stringify(cookie),
+			//	'Content-Type': 'text/plain',
+			//	'Content-Length': data_send.length
+			};
+			
+			var request = client.request('POST', '/user/edit', headers);
+			
+			var data_recv='';
+			request.on('response', function(response) {
+				response.on('data', function(chunk) {
+					data_recv += chunk;
 				});
+				response.on('end', function() {
+					// check response.
+					dbg.log('Received: '+data_recv.slice(0, 66)+'...');
+					var data_obj = JSON.parse(data_recv);
+					test.equal(data_obj.error, null);
+					test.equal(data_obj.success, true);
+					// check database.
+					getUserFeeds( function(err, feeds)
+					{
+						if(err) throw err;
+						test.equal(feeds.length, 1);
+						test.equal(feeds[0].length, 1);
+						test.equal(feeds[0][0].url, 'some_url');
+						test.equal(feeds[0][0].num_feed_items, 3);
+						test.done();
+					});
+				});
+				response.on('error', function(err){ console.log('ERR: '+err); });
 			});
+
+			request.on('error', function(err){ console.log('ERR: '+err); });
+			
+			request.end(data_send);
+			dbg.log('Sent request with '+data_send);
 		});
 	},
 
 	'basic-edit': function(test) {
 		test.expect(6);
 
-		makeUser( function(err)
+		getAUser( function(err, cookie)
 		{
 			if(err) throw err;
 
@@ -166,32 +199,57 @@ exports['edit'] = nodeunit.testCase(
 				function(err, callback)
 				{
 					if(err) throw err;
-
+					
 					// request to edit the feed.
-					rest.post('http://localhost:7500/user/edit', {
-						data: {
-							feed_url: 'some_url',
-							num_feed_items: 3,
-							title_selection: 'webpage',
-							body_selection: 'webpage'
-						},
-					}).addListener('complete', function(data, response) {
-						// check response.
-						dbg.log('Received: '+data.slice(0, 66)+'...');
-						var data_obj = JSON.parse(data);
-						test.equal(data_obj.error, null);
-						test.equal(data_obj.success, true);
-						// check database.
-						getUserFeeds( function(err, feeds)
+					var client = http.createClient(7500, 'localhost');
+					
+					// the request to make:
+					var post_req = {
+						feed_url: 'some_url',
+						num_feed_items: 3,
+						title_selection: 'webpage',
+						body_selection: 'webpage'
+					};
+					var data_send = querystring.stringify(post_req);
+					// headers for the request
+					var headers = {
+						'Host': 'localhost',
+						'Cookie': JSON.stringify(cookie),
+					//	'Content-Type': 'text/plain',
+					//	'Content-Length': data_send.length
+					};
+					
+					var request = client.request('POST', '/user/edit', headers);
+					
+					var data_recv='';
+					request.on('response', function(response) {
+						response.on('data', function(chunk) {
+							data_recv += chunk;
+						});
+						response.on('end', function()
 						{
-							if(err) throw err;
-							test.equal(feeds.length, 3);
-							test.equal(feeds[2].length, 1);
-							test.equal(feeds[2][0].url, 'some_url');
-							test.equal(feeds[2][0].num_feed_items, 3);
-							test.done();
+							// check response.
+							dbg.log('Received: '+data_recv.slice(0, 66)+'...');
+							var data_obj = JSON.parse(data_recv);
+							test.equal(data_obj.error, null);
+							test.equal(data_obj.success, true);
+							// check database.
+							getUserFeeds( function(err, feeds)
+							{
+								if(err) throw err;
+								test.equal(feeds.length, 3);
+								test.equal(feeds[2].length, 1);
+								test.equal(feeds[2][0].url, 'some_url');
+								test.equal(feeds[2][0].num_feed_items, 3);
+								test.done();
+							});
 						});
 					});
+
+					request.on('error', function(err){ console.log('ERR: '+err); });
+					
+					request.end(data_send);
+					dbg.log('Sent request with '+data_send);
 				}
 			);
 		});

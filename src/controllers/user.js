@@ -28,19 +28,28 @@ var UserController = function()
 			'success': false
 		};
 
-		var cookie={}; cookie.data={}; cookie.data.user = 'username';
-//		Util.checkCookie(req, res,
-//			function(err, cookie)
-//			{
-//				if(err) {
-//					console.log(err.message);
-//					res_obj.error = err;
-//					res.ok(JSON.stringify(res_obj));
-//					return;
-//				}
-				
-				// if valid, get POST variable
-				Util.getPOST(req, function(err, POST)
+		// get POST variable
+		Util.getPOST(req, function(err, POST)
+		{
+			if(err) {
+				console.log(err.message);
+				res_obj.error = err;
+				res.ok(JSON.stringify(res_obj));
+				return;
+			}
+			if(	typeof(POST.feed_url)        == 'undefined' ||
+				typeof(POST.num_feed_items)  == 'undefined' ||
+				typeof(POST.title_selection)  == 'undefined' ||
+				typeof(POST.body_selection)  == 'undefined' ) {
+					res_obj.error = new Error('POST variables not found.');
+				res.ok(JSON.stringify(res_obj));
+				return;
+			}
+
+			// now, check if the cookie is valid.
+//			var cookie={}; cookie.data={}; cookie.data.user = 'username';
+			Util.checkCookie(req, null,
+				function(err, cookie)
 				{
 					if(err) {
 						console.log(err.message);
@@ -48,16 +57,8 @@ var UserController = function()
 						res.ok(JSON.stringify(res_obj));
 						return;
 					}
-					if(	typeof(POST.feed_url)        == 'undefined' ||
-						typeof(POST.num_feed_items)  == 'undefined' ||
-						typeof(POST.title_selection)  == 'undefined' ||
-						typeof(POST.body_selection)  == 'undefined' ) {
-
-						res_obj.error = new Error('POST variables not found.');
-						res.ok(JSON.stringify(res_obj));
-						return;
-					}
 					
+					// do the actual editing!
 					Ni.model('User').editFeed(
 						cookie.data.user,
 						POST.feed_url,
@@ -78,9 +79,9 @@ var UserController = function()
 							res.ok(JSON.stringify(res_obj));
 						}
 					);
-				});
-//			}
-//		);
+				}
+			);
+		});
 	}
 	
 	this.sort = function(req, res, next)
