@@ -48,7 +48,7 @@ var UserController = function()
 
 			// now, check if the cookie is valid.
 //			var cookie={}; cookie.data={}; cookie.data.user = 'username';
-			Util.checkCookie(req, null,
+			Util.checkCookie(req, res,
 				function(err, cookie)
 				{
 					if(err) {
@@ -91,27 +91,28 @@ var UserController = function()
 			'success': false
 		};
 
-		Util.checkCookie(req, res,
-			function(err, cookie)
-			{
-				if(err) {
-					console.log(err.message);
-					res_obj.error = err;
-					res.ok(JSON.stringify(res_obj));
-					return;
-				}
-				
-				// if valid, get POST variable
-				Util.getPOST(req, function(err, POST)
+		// get POST variable
+		Util.getPOST(req, function(err, POST)
+		{
+			if(err) {
+				console.log(err.message);
+				res_obj.error = err;
+				res.ok(JSON.stringify(res_obj));
+				return;
+			}
+			if( typeof(POST.feed_array) == 'undefined' ) {
+				res_obj.error = new Error('POST variables not found.');
+				res.ok(JSON.stringify(res_obj));
+				return;
+			}
+
+			// now check cookie
+			Util.checkCookie(req, res,
+				function(err, cookie)
 				{
 					if(err) {
 						console.log(err.message);
 						res_obj.error = err;
-						res.ok(JSON.stringify(res_obj));
-						return;
-					}
-					if( typeof(POST.feed_array) == 'undefined' ) {
-						res_obj.error = new Error('POST variables not found.');
 						res.ok(JSON.stringify(res_obj));
 						return;
 					}
@@ -145,27 +146,28 @@ var UserController = function()
 			'success': false
 		};
 
-		Util.checkCookie(req, res,
-			function(err, cookie)
-			{
-				if(err) {
-					console.log(err.message);
-					res_obj.error = err;
-					res.ok(JSON.stringify(res_obj));
-					return;
-				}
-				
-				// if valid, get POST variable
-				Util.getPOST(req, function(err, POST)
+		// get POST variable
+		Util.getPOST(req, function(err, POST)
+		{
+			if(err) {
+				console.log(err.message);
+				res_obj.error = err;
+				res.ok(JSON.stringify(res_obj));
+				return;
+			}
+			if( typeof(POST.feed_url) == 'undefined' ) {
+				res_obj.error = new Error('POST variables not found.');
+				res.ok(JSON.stringify(res_obj));
+				return;
+			}
+
+			// now get cookie
+			Util.checkCookie(req, res,
+				function(err, cookie)
 				{
 					if(err) {
 						console.log(err.message);
 						res_obj.error = err;
-						res.ok(JSON.stringify(res_obj));
-						return;
-					}
-					if( typeof(POST.feed_url) == 'undefined' ) {
-						res_obj.error = new Error('POST variables not found.');
 						res.ok(JSON.stringify(res_obj));
 						return;
 					}
