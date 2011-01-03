@@ -168,38 +168,43 @@ function feedEditClicked(e) {
 	preview_container.slideDown("fast", function() {
 		$.ajax({
 			url: "/feed/preview",
+			type: 'POST',
 			data: {
-				url: feed_url
+				feed_url: feed_url
 			},
+			datatype: 'json',
 			success: function(data) {
-				preview_container.hide();
-				preview_container.html(data);
-				preview_container.slideDown("fast");
-				
-				resizeColumnDynamically(this_column, 50);
-				
-				// Mark selected settings
-				var titles_form = preview_container.find("> .display > .titles > form");
-				var bodies_form = preview_container.find("> .display > .bodies > form");
-				if (title_selection == "item") {
-					titles_form.find("> .item > .control > .input").click();
+				if (data.error || !data.preview) {
+					previewError(preview_container);
 				}
-				else if (title_selection == "webpage") {
-					titles_form.find("> .webpage > .control > .input").click();
-				}
-				
-				if (body_selection == "item") {
-					bodies_form.find("> .item > .control > .input").click();
-				}
-				else if (body_selection == "webpage") {
-					bodies_form.find("> .webpage > .control > .input").click();
+				else {
+					preview_container.hide();
+					preview_container.html(data.preview);
+					preview_container.slideDown("fast");
+					
+					resizeColumnDynamically(this_column, 50);
+					
+					// Mark selected settings
+					var titles_form = preview_container.find("> .display > .titles > form");
+					var bodies_form = preview_container.find("> .display > .bodies > form");
+					if (title_selection == "item") {
+						titles_form.find("> .item > .control > .input").click();
+					}
+					else if (title_selection == "webpage") {
+						titles_form.find("> .webpage > .control > .input").click();
+					}
+					
+					if (body_selection == "item") {
+						bodies_form.find("> .item > .control > .input").click();
+					}
+					else if (body_selection == "webpage") {
+						bodies_form.find("> .webpage > .control > .input").click();
+					}
 				}
 			},
 			error: function() {
 				// Test if this is hit when server is off
-				preview_container.hide();
-				preview_container.html("An error was encountered.");
-				preview_container.slideDown("fast");
+				previewError(preview_container);
 			}
 		});
 	});
@@ -314,6 +319,12 @@ function resizeColumnDynamically(column, width_percent, callback) {
 
 function hideFeedPreviews() {
 	$(".feed > .preview").hide("slide", {direction: "up"}, "fast");
+}
+
+function previewError(preview_container) {
+	preview_container.hide();
+	preview_container.html("An error was encountered.");
+	preview_container.slideDown("fast");
 }
 
 function resetFeedDelete(feed_container) {
