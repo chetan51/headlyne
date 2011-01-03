@@ -54,7 +54,14 @@
 		min-height: 25px;
 		
 		> .edit-overlay {
+			display: none;
 			text-align: center;
+			
+			> .delete {
+				.deleting-control {
+					display: none;
+				}
+			}
 		}
 	}
 	
@@ -96,6 +103,7 @@
 		}
 		
 		> .edit-overlay {
+			display: none;
 			background: #eee;
 			width: 100%;
 			height: 100%;
@@ -120,6 +128,18 @@
 				right: 5px;
 				font-size: 14px;
 				font-size: 16px !important;
+				
+				> .delete {
+					> .deleting-control {
+						display: none;
+					}
+				}
+
+				> .edit {
+					> .editing-control {
+						display: none;
+					}
+				}
 			}
 		}
 	}

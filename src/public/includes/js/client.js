@@ -2,28 +2,6 @@
  * Initialization
  */
 $(document).ready(function() {
-	// Hide elements
-	$("#edit-page #editing-control").hide();
-	$("#collapse-expand #expand-control").hide();
-	
-	var feed_containers = $(".feed");
-	var header_containers = feed_containers.children(".header");
-	header_containers.hide();
-	feed_containers.children(".preview").hide();
-	
-	var edit_overlays = header_containers.children(".edit-overlay");
-	edit_overlays.hide();
-	edit_overlays.find("> .edit-delete > .delete > .deleting-control").hide();
-	edit_overlays.find("> .edit-delete > .edit > .editing-control").hide();
-	
-	var column_containers = $(".column");
-	var header_containers = column_containers.children(".header");
-	header_containers.hide();
-	
-	var edit_overlays = header_containers.children(".edit-overlay");
-	edit_overlays.hide();
-	edit_overlays.find("> .delete > .deleting-control").hide();
-	
 	// Set up overlays
 	var triggers = $(".modalInput").overlay({
 		// some mask tweaks suitable for modal dialogs
