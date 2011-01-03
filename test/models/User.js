@@ -180,7 +180,7 @@ exports['get'] = nodeunit.testCase(
 	}
 });
 
-exports['addFeed'] = nodeunit.testCase(
+exports['placeFeed'] = nodeunit.testCase(
 {
 
 	setUp: function (callback) {
@@ -226,7 +226,7 @@ exports['addFeed'] = nodeunit.testCase(
 					console.log(err.message);
 					test.done();
 				} else {
-					UserModel.addFeed(
+					UserModel.placeFeed(
 						'my_user',
 						'the_feeds_url',
 						0, 0,
@@ -255,7 +255,7 @@ exports['addFeed'] = nodeunit.testCase(
 	{
 		test.expect(1);
 		
-		UserModel.addFeed(
+		UserModel.placeFeed(
 			'my_user',
 			'the_feeds_url',
 			0, 0,
@@ -287,7 +287,7 @@ exports['addFeed'] = nodeunit.testCase(
 					Step(
 						function addFirst()
 						{
-							UserModel.addFeed(
+							UserModel.placeFeed(
 								'my_user',
 								'the_feeds_url',
 								0, 0,
@@ -300,7 +300,7 @@ exports['addFeed'] = nodeunit.testCase(
 							if( err ) {
 								throw err;
 							} else {
-								UserModel.addFeed(
+								UserModel.placeFeed(
 									'my_user',
 									'second_feeds_url',
 									2, 3,
@@ -314,7 +314,7 @@ exports['addFeed'] = nodeunit.testCase(
 							if( err ) {
 								throw err;
 							} else {
-								UserModel.addFeed(
+								UserModel.placeFeed(
 									'my_user',
 									'third_feeds_url',
 									0, 0,
@@ -328,7 +328,7 @@ exports['addFeed'] = nodeunit.testCase(
 							if( err ) {
 								throw err;
 							} else {
-								UserModel.addFeed(
+								UserModel.placeFeed(
 									'my_user',
 									'fourth_feeds_url',
 									1, 0,
@@ -363,7 +363,7 @@ exports['addFeed'] = nodeunit.testCase(
 	}
 });
 
-exports['updateFeed'] = nodeunit.testCase(
+exports['editFeed'] = nodeunit.testCase(
 {
 
 	setUp: function (callback) {
@@ -396,7 +396,7 @@ exports['updateFeed'] = nodeunit.testCase(
 
 	'basic': function(test)
 	{
-		test.expect(3);
+		test.expect(2);
 		UserModel.save(
 			'my_user',
 			'my_pass',
@@ -409,7 +409,7 @@ exports['updateFeed'] = nodeunit.testCase(
 					console.log(err.message);
 					test.done();
 				} else {
-					UserModel.addFeed(
+					UserModel.placeFeed(
 						'my_user',
 						'the_feeds_url',
 						0, 0,
@@ -419,20 +419,20 @@ exports['updateFeed'] = nodeunit.testCase(
 								throw err;
 							} else {
 								console.log(first_feed);
-								UserModel.updateFeed(
+								UserModel.editFeed(
 									'my_user',
 									'the_feeds_url',
-									2, 3,
+									0,
+									'body',
+									'webpage',
 									function(err, feeds)
 									{
-										console.log(feeds);
 										var count=0;
 										for(i in feeds)
 											for(j in feeds[i])
 												count++;
 										test.equal(count, 1);
-										test.equal(feeds[0].length, 0);
-										test.equal(feeds[3].length, 1);
+										test.equal(feeds[0].length, 1);
 										test.done();
 									}
 								);
@@ -492,7 +492,7 @@ exports['removeFeed'] = nodeunit.testCase(
 					console.log(err.message);
 					test.done();
 				} else {
-					UserModel.addFeed(
+					UserModel.placeFeed(
 						'my_user',
 						'the_feeds_url',
 						0, 0,
@@ -538,7 +538,7 @@ exports['removeFeed'] = nodeunit.testCase(
 					console.log(err.message);
 					test.done();
 				} else {
-					UserModel.addFeed(
+					UserModel.placeFeed(
 						'my_user',
 						'the_feeds_url',
 						0, 0,

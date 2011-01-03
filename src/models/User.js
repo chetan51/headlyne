@@ -84,7 +84,7 @@ var User = function()
 	 * 	                  first_name
 	 * 	                  last_name
 	 * 	                  email_id
-	 * 	                  feeds{}
+	 * 	                  feeds[]
 	 * 	                  session{}
 	 * 	              }
 	 **/
@@ -255,6 +255,13 @@ var User = function()
 					callback(err);
 					return;
 				}
+
+				if( typeof(user_object) == 'undefined' ||
+				    typeof(user_object.username_hash) == 'undefined' )
+				{
+					callback(new Error('invalid user-object'));
+					return;
+				}
 				
 				DatabaseDriver.update(
 					collection,
@@ -274,17 +281,23 @@ var User = function()
 	}
 
 	/**
-	 * Updates feed placement for a user.
+	 * Edits feed for a user.
 	 *
 	 * 	Arguments:
 	 * 		username,
 	 * 		feed_url,
-	 * 		row,
-	 * 		column
+	 * 		num_feed_items,
+	 * 		title_selection,
+	 * 		body_selection
 	 *
 	 * 	Returns:      list of feeds.
 	 **/
-	this.updateFeed = function(username, feed_url, row, column, callback)
+	this.editFeed = function( username,
+	                          feed_url,
+	                          num_feed_items,
+	                          title_selection,
+	                          body_selection,
+	                          callback)
 	{
 		self.get(
 			username,
@@ -296,7 +309,7 @@ var User = function()
 				}
 				
 				// the user exists, find the old entry.
-				var to_move;
+				var row=-1, col=-1;
 				for( i in user.feeds )
 				{
 					for( j in user.feeds[i] )
@@ -305,39 +318,49 @@ var User = function()
 							'url' in user.feeds[i][j] &&
 							user.feeds[i][j].url == feed_url ) {
 
-							to_move = user.feeds[i].splice(j, 1);
+							col = i;
+							row = j;
 						}
 					}
 				}
 				
-				// now, add it in the right place.
-
-				// add columns if necessary
-				if( user.feeds.length <= column )
-				{
-					while(user.feeds.length <= column)
-					{
-						user.feeds.splice(
-							user.feeds.length, // add at end
-							0,
-							[] // splice an empty array
-						);
+				// if the feed was not found...
+				if( row == -1 ) {
+					row=0;
+					col=0;
+					
+					// add columns if necessary
+					if( user.feeds.length == 0 ) {
+						user.feeds.splice(col,0,[]); // splice an empty array
 					}
+					
+					// add url in correct column.
+					user.feeds[col].splice(
+						row,
+						0,
+						{
+							'url'            : feed_url,
+							'num_feed_items' : 0,
+							'title_selection': null,
+							'body_selection' : null
+						}
+					);
 				}
-				
-				// add url in correct column.
-				user.feeds[column].splice(
-					row,
-					0,
-					to_move[0]
-				);
-				
+
+				// now, update its content.
+				user.feeds[col][row].num_feed_items  =  num_feed_items;
+				user.feeds[col][row].title_selection = title_selection;
+				user.feeds[col][row].body_selection  =  body_selection;
+
 				// update the user.
 				self.userUpdateHelper(
 					user,
 					function(err, user2)
 					{
-						callback(err, user2.feeds);
+						if(err) callback(err);
+						else {
+							callback(err, user2.feeds);
+						}
 					}
 				);
 			}
@@ -345,7 +368,7 @@ var User = function()
 	}
 
 	/**
-	 * Adds a feed for a user.
+	 * Place a feed for a user.
 	 * 
 	 * 	Arguments:
 	 * 		username,
@@ -355,7 +378,7 @@ var User = function()
 	 *
 	 * 	Returns:      list of feeds.
 	 **/
-	this.addFeed = function(username, feed_url, row, column, callback)
+	this.placeFeed = function(username, feed_url, row, column, callback)
 	{
 		self.get(
 			username,
@@ -366,7 +389,23 @@ var User = function()
 					return;
 				}
 
-				// The user exists, add the new entry.
+				// The user exists.
+				
+				// remove the old entry.
+				for( i in user.feeds )
+				{
+					for( j in user.feeds[i] )
+					{
+						if(
+							'url' in user.feeds[i][j] &&
+							user.feeds[i][j].url == feed_url ) {
+				
+							user.feeds[i].splice(j, 1);
+						}
+					}
+				}
+
+				// add the new entry:
 
 				// add columns if necessary
 				if( user.feeds.length <= column )
@@ -385,7 +424,12 @@ var User = function()
 				user.feeds[column].splice(
 					row,
 					0,
-					{'url':feed_url}
+					{
+						'url'            : feed_url,
+						'num_feed_items' : 0,
+						'title_selection': null,
+						'body_selection' : null
+					}
 				);
 				
 				// update the user.
@@ -393,7 +437,39 @@ var User = function()
 					user,
 					function(err, user2)
 					{
-						callback(err, user2.feeds);
+						if(err) callback(err);
+						else {
+							callback(err, user2.feeds);
+						}
+					}
+				);
+			}
+		);
+	}
+
+	this.updateFeeds = function(username, feeds_array, callback)
+	{
+		self.get(
+			username,
+			function(err, user)
+			{
+				if(err != null) {
+					callback(err);
+					return;
+				}
+
+				// The user exists.
+				user.feeds = feeds_array;
+				
+				// update the user.
+				self.userUpdateHelper(
+					user,
+					function(err, user2)
+					{
+						if(err) callback(err);
+						else {
+							callback(err, user2.feeds);
+						}
 					}
 				);
 			}
@@ -430,7 +506,10 @@ var User = function()
 					user,
 					function(err, user2)
 					{
-						callback(err, user2.feeds);
+						if(err) callback(err);
+						else {
+							callback(err, user2.feeds);
+						}
 					}
 				);
 			}
@@ -484,7 +563,10 @@ var User = function()
 					user,
 					function(err, user2)
 					{
-						callback(err, user2.feeds);
+						if(err) callback(err);
+						else {
+							callback(err, user2.feeds);
+						}
 					}
 				);
 			}

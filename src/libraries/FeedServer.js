@@ -23,6 +23,34 @@ var Downloader     = require('./Downloader.js'),
 var FeedServer = function()
 {    
 	var self = this;
+
+	/**
+	 * Gets the content for a webpage given a URL
+	 *
+	 * 	Arguments:
+	 * 		webpage_url
+	 *
+	 * 	Returns (via callback):
+	 * 		err
+	 * 		webpage {
+	 * 			url
+	 * 			url_hash
+	 * 			title
+	 * 			snippet
+	 * 			body
+	 * 		}
+	 **/
+	this.getFullContent = function(webpage_url, callback)
+	{
+		var fake_item = {}; fake_item.link = webpage_url;
+		self.getWebPageForFeedItem(
+			fake_item,
+			function(err, webpage)
+			{
+				callback(err, webpage);
+			}
+		);
+	}
 	
 	/**
 	 *	Gets feed and items for feed for previewing to the user.
@@ -56,6 +84,7 @@ var FeedServer = function()
 							url,
 							num_feed_items,
 							function(err, feed_teaser) {
+								dbg.log('fire back from feedTeaser');
 								callback_updated(err, feed_teaser);
 							}
 						);
@@ -82,6 +111,7 @@ var FeedServer = function()
 							url,
 							num_feed_items,
 							function(err, feed_teaser) {
+								dbg.log('get feed teaser callback fired');
 								callback_updated(err, feed_teaser);
 							}
 						);
@@ -160,7 +190,10 @@ var FeedServer = function()
 									url,
 									feed,
 									num_feed_items,
-									callback
+									function(err, teaser)
+									{
+										callback(err, teaser);
+									}
 								);
 							}
 						}
@@ -210,6 +243,8 @@ var FeedServer = function()
 					num_feed_items,
 					saved_webpages
 				);
+				
+				dbg.log('generated teaser');
 					
 				if (err) {
 					callback(err);
