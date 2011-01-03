@@ -34,7 +34,7 @@ var UserController = function()
 			if(err) {
 				console.log(err.message);
 				res_obj.error = err;
-				res.ok(JSON.stringify(res_obj));
+				res.json(res_obj);
 				return;
 			}
 			if(	typeof(POST.feed_url)        == 'undefined' ||
@@ -42,7 +42,7 @@ var UserController = function()
 				typeof(POST.title_selection)  == 'undefined' ||
 				typeof(POST.body_selection)  == 'undefined' ) {
 					res_obj.error = new Error('POST variables not found.');
-				res.ok(JSON.stringify(res_obj));
+				res.json(res_obj);
 				return;
 			}
 
@@ -54,7 +54,7 @@ var UserController = function()
 					if(err) {
 						console.log(err.message);
 						res_obj.error = err;
-						res.ok(JSON.stringify(res_obj));
+						res.json(res_obj);
 						return;
 					}
 					
@@ -70,13 +70,13 @@ var UserController = function()
 							if(err) {
 								console.log(err.message);
 								res_obj.error = err;
-								res.ok(JSON.stringify(res_obj));
+								res.json(res_obj);
 								return;
 							}
 							
 							// return success = true
 							res_obj.success = true;
-							res.ok(JSON.stringify(res_obj));
+							res.json(res_obj);
 						}
 					);
 				}
@@ -97,12 +97,12 @@ var UserController = function()
 			if(err) {
 				console.log(err.message);
 				res_obj.error = err;
-				res.ok(JSON.stringify(res_obj));
+				res.json(res_obj);
 				return;
 			}
 			if( typeof(POST.feed_array) == 'undefined' ) {
 				res_obj.error = new Error('POST variables not found.');
-				res.ok(JSON.stringify(res_obj));
+				res.json(res_obj);
 				return;
 			}
 
@@ -113,7 +113,7 @@ var UserController = function()
 					if(err) {
 						console.log(err.message);
 						res_obj.error = err;
-						res.ok(JSON.stringify(res_obj));
+						res.json(res_obj);
 						return;
 					}
 					
@@ -125,13 +125,13 @@ var UserController = function()
 							if(err) {
 								console.log(err.message);
 								res_obj.error = err;
-								res.ok(JSON.stringify(res_obj));
+								res.json(res_obj);
 								return;
 							}
 							
 							// return success = true
 							res_obj.success = true;
-							res.ok(JSON.stringify(res_obj));
+							res.json(res_obj);
 						}
 					);
 				});
@@ -152,12 +152,12 @@ var UserController = function()
 			if(err) {
 				console.log(err.message);
 				res_obj.error = err;
-				res.ok(JSON.stringify(res_obj));
+				res.json(res_obj);
 				return;
 			}
 			if( typeof(POST.feed_url) == 'undefined' ) {
 				res_obj.error = new Error('POST variables not found.');
-				res.ok(JSON.stringify(res_obj));
+				res.json(res_obj);
 				return;
 			}
 
@@ -168,7 +168,7 @@ var UserController = function()
 					if(err) {
 						console.log(err.message);
 						res_obj.error = err;
-						res.ok(JSON.stringify(res_obj));
+						res.json(res_obj);
 						return;
 					}
 					
@@ -180,13 +180,13 @@ var UserController = function()
 							if(err) {
 								console.log(err.message);
 								res_obj.error = err;
-								res.ok(JSON.stringify(res_obj));
+								res.json(res_obj);
 								return;
 							}
 							
 							// return success = true
 							res_obj.success = true;
-							res.ok(JSON.stringify(res_obj));
+							res.json(res_obj);
 						}
 					);
 				});
