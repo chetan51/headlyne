@@ -241,8 +241,7 @@ function snippetClicked(e) {
 		datatype: 'json',
 		success: function(data) {
 			if (data.error || !data.page) {
-				//feedBodyExpandError(article_container);
-				alert("error");
+				fullArticleError(article_container);
 			}
 			else {
 				snippet_container.slideUp("fast");
@@ -252,8 +251,7 @@ function snippetClicked(e) {
 		},
 		error: function() {
 			// Test if this is hit when server is off
-			//previewError(preview_container);
-			alert("lol");
+			fullArticleError(article_container);
 		}
 	});
 }
@@ -336,8 +334,13 @@ function hideFeedPreviews() {
 
 function previewError(preview_container) {
 	preview_container.hide();
-	preview_container.html("An error was encountered.");
+	preview_container.html("An error was encountered while loading feed preview. Please refresh the page and try again.");
 	preview_container.slideDown("fast");
+}
+
+function fullArticleError(article_container) {
+	article_container.html("An error was encountered while loading full article. Please refresh the page and try again.<br><br>");
+	article_container.slideDown("fast");
 }
 
 function resetFeedDelete(feed_container) {

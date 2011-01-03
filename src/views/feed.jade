@@ -38,6 +38,7 @@
         - if (item.link)
           .url= item.link
       .body
+        .full-article
         - if (body_selection == "item")
           - if (item.description)
             div.snippet!= item.description
@@ -45,4 +46,3 @@
           - if (item.webpage)
             - if (item.webpage.snippet)
               div.snippet!= item.webpage.snippet
-        .full-article
