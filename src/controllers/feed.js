@@ -38,13 +38,13 @@ var FeedController = function()
 			// check if there are any errors...
 			if(err) {
 				res_obj.error = err;
-				res.ok(JSON.stringify(res_obj));
+				res.json(res_obj);
 				return;
 			}
 			
 			if(typeof(POST.feed_url) == 'undefined') {
 				res_obj.error = new Error('No feed URL provided.');
-				res.ok(JSON.stringify(res_obj));
+				res.json(res_obj);
 				return;
 			}
 		
@@ -61,7 +61,7 @@ var FeedController = function()
 					if (err) {
 						dbg.log('preview error: '+err.message);
 						res_obj.error = err;
-						res.ok(JSON.stringify(res_obj));
+						res.json(res_obj);
 						return;
 					}
 					
@@ -72,7 +72,7 @@ var FeedController = function()
 					);
 
 					res_obj.preview = preview;
-					res.ok(JSON.stringify(res_obj));
+					res.json(res_obj);
 					dbg.log('preview sent');
 				}
 			);
@@ -93,13 +93,13 @@ var FeedController = function()
 			// check if there are any errors...
 			if(err) {
 				res_obj.error = err;
-				res.ok(JSON.stringify(res_obj));
+				res.json(res_obj);
 				return;
 			}
 			
 			if(typeof(POST.webpage_url) == 'undefined') {
 				res_obj.error = new Error('No feed provided');
-				res.ok(JSON.stringify(res_obj));
+				res.json(res_obj);
 				return;
 			}
 		
@@ -115,7 +115,7 @@ var FeedController = function()
 					if(err) {
 						dbg.log('Error occured: '+err.message);
 						res_obj.error = err;
-						res.ok(JSON.stringify(res_obj));
+						res.json(res_obj);
 						return;
 					}
 
@@ -127,7 +127,7 @@ var FeedController = function()
 
 					res_obj.page = page;
 					dbg.log('Page served'+res_obj);
-					res.ok(JSON.stringify(res_obj));
+					res.json(res_obj);
 				}
 			);
 		});
