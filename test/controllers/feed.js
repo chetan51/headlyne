@@ -89,17 +89,15 @@ exports['preview'] = nodeunit.testCase(
 				feed_url: 'http://feeds.reuters.com/reuters/companyNews?format=xml'
 			},
 		}).addListener('complete', function(data, response) {
-			dbg.log('Received: '+data.slice(0, 66)+'...');
-			var data_obj = JSON.parse(data);
-			test.equal(data_obj.error, null);
-			test.ok(data_obj.preview.length);
-			dbg.log(data_obj.preview);
+			test.equal(data.error, null);
+			test.ok(data.preview.length);
+			dbg.log(data.preview);
 			test.done();
 		});
 	}
 });
 
-exports['getWebPage'] = nodeunit.testCase(
+exports['webpage'] = nodeunit.testCase(
 {
 	setUp: function(callback) {
 		Step(
@@ -156,16 +154,14 @@ exports['getWebPage'] = nodeunit.testCase(
 		test.expect(2);
 		// request correct page.
 		// check response.
-		rest.post('http://localhost:7500/feed/getWebPage', {
+		rest.post('http://localhost:7500/feed/webpage', {
 			data: {
 				webpage_url: 'http://www.futilitycloset.com/2010/12/31/mail-snail/'
 			},
 		}).addListener('complete', function(data, response) {
-			dbg.log('Received: '+data.slice(0, 66)+'...');
-			var data_obj = JSON.parse(data);
-			test.equal(data_obj.error, null);
-			test.ok(data_obj.page.length);
-			dbg.log(data_obj.page);
+			test.equal(data.error, null);
+			test.ok(data.page.length);
+			dbg.log(data.page);
 			test.done();
 		});
 	}
