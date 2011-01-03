@@ -235,9 +235,6 @@ function snippetClicked(e) {
 	var snippet_container = feeditem_container.find("> .body > .snippet");
 	var article_container = feeditem_container.find("> .body > .full-article");
 	
-	article_container.html("Loading...<br><br>");
-	article_container.slideDown("fast");
-	
 	loadFullArticle(feeditem_container, function(err, data) {
 		if (err || data.error || !data.page) {
 			fullArticleError(article_container);
