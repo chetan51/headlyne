@@ -79,7 +79,7 @@ var FeedController = function()
 		});
 	}
 	
-	this.getWebPage = function(req, res, next)
+	this.webpage = function(req, res, next)
 	{
 		// object to be filled and returned.
 		var res_obj = {
