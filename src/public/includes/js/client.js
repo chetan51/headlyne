@@ -151,6 +151,8 @@ function addFeedClicked(e) {
 	var new_feed = $(".feed").last().clone();
 	
 	// Clear new feed
+	var body = new_feed.children(".body");
+	body.html("");
 	var header = new_feed.children(".header");
 	header.children(".title").html("New Feed");
 	var settings = header.children(".settings");
