@@ -158,7 +158,7 @@ var HomeController = function()
 					{locals:
 						{
 							base_url : "/",
-						title    : "Welcome to Headlyne",
+						title    : "Headlyne",
 						content  : page
 						}
 					}
@@ -170,6 +170,52 @@ var HomeController = function()
 				}
 			}
 		);
+	}
+	
+	this.login = function(req, res, next) {
+		var login = jade.render(
+			Ni.view('login').template,
+			{locals:
+				{
+				}
+			}
+		);
+		
+		var html = jade.render(
+			Ni.view('base').template,
+			{locals:
+				{
+					base_url : "/",
+					title    : "Login",
+					content  : login
+				}
+			}
+		);
+
+		res.ok(html);
+	}
+	
+	this.signup = function(req, res, next) {
+		var signup = jade.render(
+			Ni.view('signup').template,
+			{locals:
+				{
+				}
+			}
+		);
+		
+		var html = jade.render(
+			Ni.view('base').template,
+			{locals:
+				{
+					base_url : "/",
+					title    : "Sign Up",
+					content  : signup
+				}
+			}
+		);
+
+		res.ok(html);
 	}
 
 };
