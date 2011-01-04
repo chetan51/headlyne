@@ -15,6 +15,7 @@ $(document).ready(function() {
 	addColumnListeners($(".column"));
 	addFeedListeners($(".feed"));
 	refreshColumnDeleteOptions($(".column"));
+      enablePlaceholders();
 });
 
 /*
@@ -62,6 +63,8 @@ function addFeedListeners(feeds) {
 	});
 	
 	feeds.children(".header").hover(feedHeaderHoverIn, feedHeaderHoverOut);
+	
+      enablePlaceholders(feeds);
 }
 
 function refreshColumnDeleteOptions(columns) {
@@ -82,6 +85,22 @@ function refreshColumnDeleteOptions(columns) {
 	deleting_controls.children(".cancel-button").click(columnDeleteCancelClicked);
 }
 
+function enablePlaceholders(element) {
+	$('[placeholder]', element).focus(function() {
+	  var input = $(this);
+	  if (input.val() == input.attr('placeholder')) {
+	    input.val('');
+	    input.removeClass('placeholder');
+	  }
+	}).blur(function() {
+	  var input = $(this);
+	  if (input.val() == '' || input.val() == input.attr('placeholder')) {
+	    input.addClass('placeholder');
+	    input.val(input.attr('placeholder'));
+	  }
+	}).blur();
+}
+
 /*
  * Listeners
  */
@@ -100,9 +119,14 @@ function editClicked(e) {
 function doneClicked(e) {
 	hideFeedPreviews();
 	
-	var edit_containers = $(".feed").find("> .header > .edit-overlay > .edit-delete > .edit");
+	var feeds = $(".feed");
+	
+	var edit_containers = feeds.find("> .header > .edit-overlay > .edit-delete > .edit");
 	edit_containers.children(".default-control").show();
 	edit_containers.children(".editing-control").hide();
+	
+	var source_containers = feeds.children(".source");
+	source_containers.hide();
 	
 	editOrDoneClicked(e);
 }
@@ -121,7 +145,27 @@ function editOrDoneClicked(e) {
 
 function addFeedClicked(e) {
 	var new_feed = $(".feed").last().clone();
+	
+	// Clear new feed
+	var header = new_feed.children(".header");
+	header.children(".title").html("New Feed");
+	var settings = header.children(".settings");
+	settings.children(".title-selection").html("");
+	settings.children(".body-selection").html("");
+	var source = new_feed.children(".source");
+	var url_input = source.find(".url-control > .url-input");
+	url_input.val("");
+	
+	// Show new feed
+	new_feed.hide();
 	$(".column").last().children(".content").append(new_feed);
+	new_feed.slideDown("fast");
+	
+	// Set up new feed
+	var edit = header.find("> .edit-overlay > .edit-delete > .edit");
+	edit.children(".default-control").hide();
+	edit.children(".editing-control").show();
+	source.slideDown("fast");
 	
 	addFeedListeners(new_feed);
 	addColumnListeners($(".column"));
@@ -139,9 +183,10 @@ function addColumnClicked(e) {
 
 function feedEditClicked(e) {
 	var this_column = $(this).parents(".column");
+	var source_container = $(this).parents(".feed").children(".source");
 	var preview_container = $(this).parents(".feed").children(".preview");
 	var settings_container = $(this).parents(".feed").find("> .header > .settings");
-	var feed_url = settings_container.children(".url").text();
+	var feed_url = source_container.find("> .url-control > .url-input").val();
 	var title_selection = settings_container.children(".title-selection").text();
 	var body_selection = settings_container.children(".body-selection").text();
 	
@@ -149,56 +194,63 @@ function feedEditClicked(e) {
 	edit_container.children(".default-control").hide();
 	edit_container.children(".editing-control").show();
 	
-	preview_container.html("Loading feed preview...");
-	preview_container.slideDown("fast", function() {
-		$.ajax({
-			url: "/feed/preview",
-			type: 'POST',
-			data: {
-				feed_url: feed_url
-			},
-			datatype: 'json',
-			success: function(data) {
-				if (data.error || !data.preview) {
+	source_container.slideDown("fast");
+	
+	if (feed_url && feed_url != "") {
+		preview_container.html("Loading feed preview...");
+		preview_container.slideDown("fast", function() {
+			$.ajax({
+				url: "/feed/preview",
+				type: 'POST',
+				data: {
+					feed_url: feed_url
+				},
+				datatype: 'json',
+				success: function(data) {
+					if (data.error || !data.preview) {
+						previewError(preview_container);
+					}
+					else {
+						preview_container.hide();
+						preview_container.html(data.preview);
+						preview_container.slideDown("fast");
+						
+						resizeColumnDynamically(this_column, 50);
+						
+						// Mark selected settings
+						var titles_form = preview_container.find("> .display > .titles > form");
+						var bodies_form = preview_container.find("> .display > .bodies > form");
+						if (title_selection == "item") {
+							titles_form.find("> .item > .control > .input").click();
+						}
+						else if (title_selection == "webpage") {
+							titles_form.find("> .webpage > .control > .input").click();
+						}
+						
+						if (body_selection == "item") {
+							bodies_form.find("> .item > .control > .input").click();
+						}
+						else if (body_selection == "webpage") {
+							bodies_form.find("> .webpage > .control > .input").click();
+						}
+					}
+				},
+				error: function() {
+					// Test if this is hit when server is off
 					previewError(preview_container);
 				}
-				else {
-					preview_container.hide();
-					preview_container.html(data.preview);
-					preview_container.slideDown("fast");
-					
-					resizeColumnDynamically(this_column, 50);
-					
-					// Mark selected settings
-					var titles_form = preview_container.find("> .display > .titles > form");
-					var bodies_form = preview_container.find("> .display > .bodies > form");
-					if (title_selection == "item") {
-						titles_form.find("> .item > .control > .input").click();
-					}
-					else if (title_selection == "webpage") {
-						titles_form.find("> .webpage > .control > .input").click();
-					}
-					
-					if (body_selection == "item") {
-						bodies_form.find("> .item > .control > .input").click();
-					}
-					else if (body_selection == "webpage") {
-						bodies_form.find("> .webpage > .control > .input").click();
-					}
-				}
-			},
-			error: function() {
-				// Test if this is hit when server is off
-				previewError(preview_container);
-			}
+			});
 		});
-	});
+	}
 }
 
 function feedDoneClicked(e) {
 	var edit_container = $(this).parents(".feed").find("> .header > .edit-overlay > .edit-delete > .edit");
 	edit_container.children(".default-control").show();
 	edit_container.children(".editing-control").hide();
+	
+	var source_container = $(this).parents(".feed").children(".source");
+	source_container.slideUp("fast");
 	
 	$(this).parents(".feed").children(".preview").slideUp("fast");
 	equallyWidenColumns();

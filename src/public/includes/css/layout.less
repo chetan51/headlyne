@@ -144,20 +144,47 @@
 		}
 	}
 	
+	> .source {
+		display: none;
+		text-align: center;
+		padding-top: 5px;
+		padding-bottom: 5px;
+		border-bottom: 1px dotted;
+		
+		> .url-control {
+			display: inline-block !important;
+			width: 100%;
+			text-align: center;
+			
+			> .url-input {
+				width: 98%;
+				font-size: 14px;
+			}
+		}
+	}
+	
 	> .preview {
 		display: none;
 		margin-top: 10px;
 		
+		> .num-items {
+			text-align: center;
+			padding-bottom: 5px;
+			border-bottom: 1px dotted;
+		}
+		
 		> .display {
+			border-bottom: 1px dotted;
+			
 			> .titles, > .bodies {
 				> form {
 					> .item, > .webpage {
-						display: inline-block;
+						display: inline-block !important;
 						width: 50%;
 						vertical-align: top;
 						
 						> .control, > .title, > .body {
-							display: inline-block;
+							display: inline-block !important;
 						}
 						
 						> .control {
@@ -222,6 +249,10 @@
 }
 
 .disabled {
+	color: #aaa;
+}
+
+.placeholder {
 	color: #aaa;
 }
 

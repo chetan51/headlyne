@@ -1,7 +1,6 @@
 .header
   h3.title= title
   .settings
-    .url= url
     .title-selection= title_selection
     .body-selection= body_selection
   .edit-overlay
@@ -23,6 +22,9 @@
           a.done-button(href='#') Done
       span \ ]
     .clear
+.source
+  .url-control
+    input(type="text", value=url, placeholder="feed URL").url-input
 .preview
 .body
   - each item in items
