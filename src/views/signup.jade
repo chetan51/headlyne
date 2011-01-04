@@ -1,5 +1,5 @@
 .signup
-  form
+  form(action=base_url+"home/signup", method="post")
     .username-control
       input.username-input(type="text", placeholder="username", name="username")
     .email-control

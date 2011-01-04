@@ -158,8 +158,8 @@ var HomeController = function()
 					{locals:
 						{
 							base_url : "/",
-						title    : "Headlyne",
-						content  : page
+							title    : "Headlyne",
+							content  : page
 						}
 					}
 				);
@@ -177,6 +177,7 @@ var HomeController = function()
 			Ni.view('login').template,
 			{locals:
 				{
+					base_url : "/",
 				}
 			}
 		);
@@ -200,6 +201,7 @@ var HomeController = function()
 			Ni.view('signup').template,
 			{locals:
 				{
+					base_url : "/",
 				}
 			}
 		);

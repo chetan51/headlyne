@@ -1,5 +1,5 @@
 .login
-  form
+  form(action=base_url+"home/login", method="post")
     .username-control
       input.username-input(type="text", placeholder="username", name="username")
     .password-control
