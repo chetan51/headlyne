@@ -99,6 +99,9 @@ function enablePlaceholders(element) {
 	}).blur(function() {
 		var input = $(this);
 		if (input.val() == '' || input.val() == input.attr('placeholder')) {
+			if (input.attr('type') == "password") {
+				input.attr('type', "text");
+			}
 			input.addClass('placeholder');
 			input.val(input.attr('placeholder'));
 		}
