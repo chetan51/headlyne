@@ -33,24 +33,24 @@ function addColumnListeners(columns) {
 }
 
 function addFeedListeners(feeds) {
-	var edit_delete_container = feeds.find("> .header > .edit-overlay > .edit-delete"); 
+	var edit_delete_div = feeds.find("> .header > .edit-overlay > .edit-delete"); 
 
-	var edit_container = edit_delete_container.children(".edit");
-	edit_container.find("> .default-control > .edit-button").click(feedEditClicked);
-	edit_container.find("> .editing-control > .done-button").click(feedDoneClicked);
+	var edit_div = edit_delete_div.children(".edit");
+	edit_div.find("> .default-control > .edit-button").click(feedEditClicked);
+	edit_div.find("> .editing-control > .done-button").click(feedDoneClicked);
 	
-	var delete_container = edit_delete_container.children(".delete");
-	delete_container.find("> .default-control > .delete-button").click(feedDeleteClicked);
-	delete_container.find("> .deleting-control > .cancel-button").click(feedDeleteCancelClicked);
-	delete_container.find("> .deleting-control > .delete-confirm-button").click(feedDeleteConfirmClicked);
+	var delete_div = edit_delete_div.children(".delete");
+	delete_div.find("> .default-control > .delete-button").click(feedDeleteClicked);
+	delete_div.find("> .deleting-control > .cancel-button").click(feedDeleteCancelClicked);
+	delete_div.find("> .deleting-control > .delete-confirm-button").click(feedDeleteConfirmClicked);
 	
-	var feeditem_container = feeds.find("> .body > .item");
-	var feeditem_body_container = feeditem_container.find("> .body");
-	var snippet_container = feeditem_body_container.children(".snippet");
-	snippet_container.click(snippetClicked);
-	var article_container = feeditem_body_container.children(".full-article");
-	article_container.click(fullArticleClicked);
-	var feeditem_title = feeditem_container.find("> .header > .title");
+	var feeditem_div = feeds.find("> .body > .item");
+	var feeditem_body_div = feeditem_div.find("> .body");
+	var snippet_div = feeditem_body_div.children(".snippet");
+	snippet_div.click(snippetClicked);
+	var article_div = feeditem_body_div.children(".full-article");
+	article_div.click(fullArticleClicked);
+	var feeditem_title = feeditem_div.find("> .header > .title");
 	feeditem_title.click(feedItemTitleClicked);
 	feeditem_title.overlay({  // reader overlay
 		// some mask tweaks suitable for modal dialogs
@@ -68,8 +68,8 @@ function addFeedListeners(feeds) {
 }
 
 function refreshColumnDeleteOptions(columns) {
-	var delete_container = columns.find("> .header > .edit-overlay > .delete"); 
-	delete_container.find("> .default-control > .delete-button").click(columnDeleteClicked);
+	var delete_div = columns.find("> .header > .edit-overlay > .delete"); 
+	delete_div.find("> .default-control > .delete-button").click(columnDeleteClicked);
 	
 	var deleting_controls = columns.find("> .header > .edit-overlay > .delete > .deleting-control");
 	
@@ -121,12 +121,12 @@ function doneClicked(e) {
 	
 	var feeds = $(".feed");
 	
-	var edit_containers = feeds.find("> .header > .edit-overlay > .edit-delete > .edit");
-	edit_containers.children(".default-control").show();
-	edit_containers.children(".editing-control").hide();
+	var edit_divs = feeds.find("> .header > .edit-overlay > .edit-delete > .edit");
+	edit_divs.children(".default-control").show();
+	edit_divs.children(".editing-control").hide();
 	
-	var source_containers = feeds.children(".source");
-	source_containers.hide();
+	var source_divs = feeds.children(".source");
+	source_divs.hide();
 	
 	editOrDoneClicked(e);
 }
@@ -183,22 +183,22 @@ function addColumnClicked(e) {
 
 function feedEditClicked(e) {
 	var this_column = $(this).parents(".column");
-	var source_container = $(this).parents(".feed").children(".source");
-	var preview_container = $(this).parents(".feed").children(".preview");
-	var settings_container = $(this).parents(".feed").find("> .header > .settings");
-	var feed_url = source_container.find("> .url-control > .url-input").val();
-	var title_selection = settings_container.children(".title-selection").text();
-	var body_selection = settings_container.children(".body-selection").text();
+	var source_div = $(this).parents(".feed").children(".source");
+	var preview_div = $(this).parents(".feed").children(".preview");
+	var settings_div = $(this).parents(".feed").find("> .header > .settings");
+	var feed_url = source_div.find("> .url-control > .url-input").val();
+	var title_selection = settings_div.children(".title-selection").text();
+	var body_selection = settings_div.children(".body-selection").text();
 	
-	var edit_container = $(this).parents(".feed").find("> .header > .edit-overlay > .edit-delete > .edit");
-	edit_container.children(".default-control").hide();
-	edit_container.children(".editing-control").show();
+	var edit_div = $(this).parents(".feed").find("> .header > .edit-overlay > .edit-delete > .edit");
+	edit_div.children(".default-control").hide();
+	edit_div.children(".editing-control").show();
 	
-	source_container.slideDown("fast");
+	source_div.slideDown("fast");
 	
 	if (feed_url && feed_url != "") {
-		preview_container.html("Loading feed preview...");
-		preview_container.slideDown("fast", function() {
+		preview_div.html("Loading feed preview...");
+		preview_div.slideDown("fast", function() {
 			$.ajax({
 				url: "/feed/preview",
 				type: 'POST',
@@ -208,18 +208,18 @@ function feedEditClicked(e) {
 				datatype: 'json',
 				success: function(data) {
 					if (data.error || !data.preview) {
-						previewError(preview_container);
+						previewError(preview_div);
 					}
 					else {
-						preview_container.hide();
-						preview_container.html(data.preview);
-						preview_container.slideDown("fast");
+						preview_div.hide();
+						preview_div.html(data.preview);
+						preview_div.slideDown("fast");
 						
 						resizeColumnDynamically(this_column, 50);
 						
 						// Mark selected settings
-						var titles_form = preview_container.find("> .display > .titles > form");
-						var bodies_form = preview_container.find("> .display > .bodies > form");
+						var titles_form = preview_div.find("> .display > .titles > form");
+						var bodies_form = preview_div.find("> .display > .bodies > form");
 						if (title_selection == "item") {
 							titles_form.find("> .item > .control > .input").click();
 						}
@@ -237,7 +237,7 @@ function feedEditClicked(e) {
 				},
 				error: function() {
 					// Test if this is hit when server is off
-					previewError(preview_container);
+					previewError(preview_div);
 				}
 			});
 		});
@@ -245,32 +245,32 @@ function feedEditClicked(e) {
 }
 
 function feedDoneClicked(e) {
-	var edit_container = $(this).parents(".feed").find("> .header > .edit-overlay > .edit-delete > .edit");
-	edit_container.children(".default-control").show();
-	edit_container.children(".editing-control").hide();
+	var edit_div = $(this).parents(".feed").find("> .header > .edit-overlay > .edit-delete > .edit");
+	edit_div.children(".default-control").show();
+	edit_div.children(".editing-control").hide();
 	
-	var source_container = $(this).parents(".feed").children(".source");
-	source_container.slideUp("fast");
+	var source_div = $(this).parents(".feed").children(".source");
+	source_div.slideUp("fast");
 	
 	$(this).parents(".feed").children(".preview").slideUp("fast");
 	equallyWidenColumns();
 }
 
 function feedDeleteClicked(e) {
-	var feed_container = $(this).parents(".feed");
-	var delete_container = feed_container.find("> .header > .edit-overlay > .edit-delete > .delete");
-	delete_container.children(".default-control").hide();
-	delete_container.children(".deleting-control").show();
+	var feed_div = $(this).parents(".feed");
+	var delete_div = feed_div.find("> .header > .edit-overlay > .edit-delete > .delete");
+	delete_div.children(".default-control").hide();
+	delete_div.children(".deleting-control").show();
 }
 
 function feedDeleteCancelClicked(e) {
-	var feed_container = $(this).parents(".feed");
-	resetFeedDelete(feed_container);
+	var feed_div = $(this).parents(".feed");
+	resetFeedDelete(feed_div);
 }
 
 function feedDeleteConfirmClicked(e) {
-	var feed_container = $(this).parents(".feed");
-	feed_container.hide("fast");
+	var feed_div = $(this).parents(".feed");
+	feed_div.hide("fast");
 }
 
 function feedHeaderHoverIn(e) {
@@ -279,97 +279,97 @@ function feedHeaderHoverIn(e) {
 
 function feedHeaderHoverOut(e) {
 	$(this).children(".edit-overlay").hide();
-	resetFeedDelete(feed_container);
+	resetFeedDelete(feed_div);
 }
 
 function snippetClicked(e) {
-	var feeditem_container = $(this).parents(".item");
-	var snippet_container = feeditem_container.find("> .body > .snippet");
-	var article_container = feeditem_container.find("> .body > .full-article");
+	var feeditem_div = $(this).parents(".item");
+	var snippet_div = feeditem_div.find("> .body > .snippet");
+	var article_div = feeditem_div.find("> .body > .full-article");
 	
-	loadFullArticle(feeditem_container, function(err, data) {
+	loadFullArticle(feeditem_div, function(err, data) {
 		if (err || data.error || !data.page) {
-			fullArticleError(article_container);
+			fullArticleError(article_div);
 		}
 		else {
-			snippet_container.slideUp("fast");
-			article_container.html(data.page);
-			article_container.slideDown("fast");
+			snippet_div.slideUp("fast");
+			article_div.html(data.page);
+			article_div.slideDown("fast");
 		}
 	});
 }
 
 function fullArticleClicked(e) {
-	var feeditem_container = $(this).parents(".item");
-	var snippet_container = feeditem_container.find("> .body > .snippet");
-	var article_container = feeditem_container.find("> .body > .full-article");
+	var feeditem_div = $(this).parents(".item");
+	var snippet_div = feeditem_div.find("> .body > .snippet");
+	var article_div = feeditem_div.find("> .body > .full-article");
 	
-	article_container.slideUp("fast");
-	snippet_container.slideDown("fast");
+	article_div.slideUp("fast");
+	snippet_div.slideDown("fast");
 }
 
 function feedItemTitleClicked(e) {
-	var feeditem_container = $(this).parents(".item");
+	var feeditem_div = $(this).parents(".item");
 	
-	var reader_title_container = $("#reader > .content > .title");
-	var reader_body_container = $("#reader > .content > .body");
-	var feeditem_title = feeditem_container.find(".header > .title").text();
-	reader_title_container.html(feeditem_title);
-	reader_body_container.html("Loading...");
+	var reader_title_div = $("#reader > .content > .title");
+	var reader_body_div = $("#reader > .content > .body");
+	var feeditem_title = feeditem_div.find(".header > .title").text();
+	reader_title_div.html(feeditem_title);
+	reader_body_div.html("Loading...");
 	
-	loadFullArticle(feeditem_container, function(err, data) {
+	loadFullArticle(feeditem_div, function(err, data) {
 		if (err || data.error || !data.page) {
 			readerError();
 		}
 		else {
-			reader_body_container.html(data.page);
+			reader_body_div.html(data.page);
 		}
 	});
 }
 
 function columnDeleteClicked(e) {
-	var column_container = $(this).parents(".column");
-	var delete_container = column_container.find("> .header > .edit-overlay > .delete");
-	delete_container.children(".default-control").hide();
-	delete_container.children(".deleting-control").show();
+	var column_div = $(this).parents(".column");
+	var delete_div = column_div.find("> .header > .edit-overlay > .delete");
+	delete_div.children(".default-control").hide();
+	delete_div.children(".deleting-control").show();
 }
 
 function columnDeleteCancelClicked(e) {
-	var column_container = $(this).parents(".column");
-	resetColumnDelete(column_container);
+	var column_div = $(this).parents(".column");
+	resetColumnDelete(column_div);
 }
 
 function columnDeleteWithFeedsClicked(e) {
-	var column_container = $(this).parents(".column");
-	removeColumn(column_container);
+	var column_div = $(this).parents(".column");
+	removeColumn(column_div);
 }
 
 function columnMoveFeedsLeftClicked(e) {
-	var column_container = $(this).parents(".column");
-	var left_column_container = column_container.prev();
+	var column_div = $(this).parents(".column");
+	var left_column_div = column_div.prev();
 	
-	var feeds = column_container.find("> .content > .feed").clone();
+	var feeds = column_div.find("> .content > .feed").clone();
 	feeds.hide();
 	addFeedListeners(feeds);
-	feeds.appendTo(left_column_container.children(".content"));
+	feeds.appendTo(left_column_div.children(".content"));
 	feeds.show("slide", {direction: "right"}, "fast");
 	
-	removeColumn(column_container);
-	addColumnListeners(left_column_container);
+	removeColumn(column_div);
+	addColumnListeners(left_column_div);
 }
 
 function columnMoveFeedsRightClicked(e) {
-	var column_container = $(this).parents(".column");
-	var right_column_container = column_container.next();
+	var column_div = $(this).parents(".column");
+	var right_column_div = column_div.next();
 	
-	var feeds = column_container.find("> .content > .feed").clone();
+	var feeds = column_div.find("> .content > .feed").clone();
 	feeds.hide();
 	addFeedListeners(feeds);
-	feeds.appendTo(right_column_container.children(".content"));
+	feeds.appendTo(right_column_div.children(".content"));
 	feeds.show("slide", {direction: "left"}, "fast");
 	
-	removeColumn(column_container);
-	addColumnListeners(right_column_container);
+	removeColumn(column_div);
+	addColumnListeners(right_column_div);
 }
 
 function columnHoverIn(e) {
@@ -380,8 +380,8 @@ function columnHoverOut(e) {
 	var edit_overlay = $(this).find("> .header > .edit-overlay");
 	edit_overlay.hide();
 	
-	var column_container = $(this);
-	resetColumnDelete(column_container);
+	var column_div = $(this);
+	resetColumnDelete(column_div);
 }	
 
 /*
@@ -403,46 +403,46 @@ function hideFeedPreviews() {
 	$(".feed > .preview").hide("slide", {direction: "up"}, "fast");
 }
 
-function previewError(preview_container) {
-	preview_container.hide();
-	preview_container.html("There was an error while loading the feed preview. Please refresh the page and try again.");
-	preview_container.slideDown("fast");
+function previewError(preview_div) {
+	preview_div.hide();
+	preview_div.html("There was an error while loading the feed preview. Please refresh the page and try again.");
+	preview_div.slideDown("fast");
 }
 
-function fullArticleError(article_container) {
-	article_container.html("There was an error while loading the article. Please refresh the page and try again.<br><br>");
-	article_container.slideDown("fast");
+function fullArticleError(article_div) {
+	article_div.html("There was an error while loading the article. Please refresh the page and try again.<br><br>");
+	article_div.slideDown("fast");
 }
 
 function readerError() {
 	$("#reader > .content > .body").html("There was an error while loading the article. Please refresh the page and try again.");
 }
 
-function resetFeedDelete(feed_container) {
-	var delete_container = feed_container.find("> .header > .edit-overlay > .edit-delete > .delete");
-	delete_container.children(".default-control").show();
-	delete_container.children(".deleting-control").hide();
+function resetFeedDelete(feed_div) {
+	var delete_div = feed_div.find("> .header > .edit-overlay > .edit-delete > .delete");
+	delete_div.children(".default-control").show();
+	delete_div.children(".deleting-control").hide();
 }
 
-function resetColumnDelete(column_container) {
-	var delete_container = column_container.find("> .header > .edit-overlay > .delete");
-	delete_container.children(".default-control").show();
-	delete_container.children(".deleting-control").hide();
+function resetColumnDelete(column_div) {
+	var delete_div = column_div.find("> .header > .edit-overlay > .delete");
+	delete_div.children(".default-control").show();
+	delete_div.children(".deleting-control").hide();
 }	
 
-function removeColumn(column_container) {
+function removeColumn(column_div) {
 	// Fix column contents' width while animating the column away
-	var column_width = column_container.width();
-	column_container.find("> div").css("width", column_width+"px");
+	var column_width = column_div.width();
+	column_div.find("> div").css("width", column_width+"px");
 	
-	resizeColumnDynamically(column_container, 0, function() {
-		column_container.remove();
+	resizeColumnDynamically(column_div, 0, function() {
+		column_div.remove();
 		refreshColumnDeleteOptions($(".column"));
 	});
 }
 
-function loadFullArticle(feeditem_container, callback) {
-	var webpage_url = feeditem_container.find("> .header > .url").text();
+function loadFullArticle(feeditem_div, callback) {
+	var webpage_url = feeditem_div.find("> .header > .url").text();
 
 	$.ajax({
 		url: "/feed/webpage",
