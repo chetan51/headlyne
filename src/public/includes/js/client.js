@@ -148,32 +148,32 @@ function editOrDoneClicked(e) {
 }
 
 function addFeedClicked(e) {
-	var new_feed = $(".feed").last().clone();
+	var new_feed_div = $(".feed").last().clone();
 	
 	// Clear new feed
-	var body = new_feed.children(".body");
-	body.html("");
-	var header = new_feed.children(".header");
-	header.children(".title").html("New Feed");
-	var settings = header.children(".settings");
-	settings.children(".title-selection").html("");
-	settings.children(".body-selection").html("");
-	var source = new_feed.children(".source");
-	var url_input = source.find(".url-control > .url-input");
-	url_input.val("");
+	var body_div = new_feed_div.children(".body");
+	body_div.html("");
+	var header_div = new_feed_div.children(".header");
+	header_div.children(".title").html("New Feed");
+	var settings_div = header_div.children(".settings");
+	settings_div.children(".title-selection").html("");
+	settings_div.children(".body-selection").html("");
+	var source_div = new_feed_div.children(".source");
+	var url_input_div = source_div.find(".url-control > .url-input");
+	url_input_div.val("");
 	
 	// Show new feed
-	new_feed.hide();
-	$(".column").last().children(".content").append(new_feed);
-	new_feed.slideDown("fast");
+	new_feed_div.hide();
+	$(".column").last().children(".content").append(new_feed_div);
+	new_feed_div.slideDown("fast");
 	
 	// Set up new feed
-	var edit = header.find("> .edit-overlay > .edit-delete > .edit");
-	edit.children(".default-control").hide();
-	edit.children(".editing-control").show();
-	source.slideDown("fast");
+	var edit_div = header_div.find("> .edit-overlay > .edit-delete > .edit");
+	edit_div.children(".default-control").hide();
+	edit_div.children(".editing-control").show();
+	source_div.slideDown("fast");
 	
-	addFeedListeners(new_feed);
+	addFeedListeners(new_feed_div);
 	addColumnListeners($(".column"));
 }
 
