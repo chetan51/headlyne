@@ -154,7 +154,7 @@ function addFeedClicked(e) {
 	var body_div = new_feed_div.children(".body");
 	body_div.html("");
 	var header_div = new_feed_div.children(".header");
-	header_div.children(".title").html("New Feed");
+	header_div.children(".title").html("(New Feed)");
 	var settings_div = header_div.children(".settings");
 	settings_div.children(".title-selection").html("");
 	settings_div.children(".body-selection").html("");
