@@ -16,21 +16,26 @@ var Util = function()
 	// returns POST variables as a JSON object.
 	this.getPOST = function(req, callback)
 	{
+		var POST = '';
 		var returned = false;
 		if( req.method == 'POST') {
 			req.addListener('data', function(chunk)
 			{
+				POST += chunk;
+			});
+			req.addListener('end', function()
+			{
 				try{
-					POST = querystring.parse(chunk);
+					console.log(POST);
+					// POST = querystring.parse(POST);
+					POST = JSON.parse(POST);
+					console.log(POST);
+					if(!returned)
+						callback(null, POST);
 				} catch(e) {
 					returned = true;
 					callback(e);
 				}
-			});
-			req.addListener('end', function()
-			{
-				if(!returned)
-					callback(null, POST);
 			});
 		} else callback(new Error('No POST data'));
 	}

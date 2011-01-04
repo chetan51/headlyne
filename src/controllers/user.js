@@ -116,7 +116,7 @@ var UserController = function()
 						res.json(res_obj);
 						return;
 					}
-					
+					console.log('got '+POST.feed_array);
 					Ni.model('User').updateFeeds(
 						cookie.data.user,
 						POST.feed_array,
