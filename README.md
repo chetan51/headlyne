@@ -16,6 +16,7 @@
 *	[chetan51/restler](https://github.com/chetan51/restler) v1.0.0
 *	[node-htmlparser](https://github.com/tautologistics/node-htmlparser) v1.7.3
 *	[jade](https://github.com/visionmedia/jade) v0.6.0
+*	[cookie-node](https://github.com/jed/cookie-node) v0.1.4
 
 ## Infrastructure:
 *	app.js                : The driver for the webserver.

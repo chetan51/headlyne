@@ -1,7 +1,6 @@
 .header
   h3.title= title
   .settings
-    .url= url
     .title-selection= title_selection
     .body-selection= body_selection
   .edit-overlay
@@ -23,6 +22,9 @@
           a.done-button(href='#') Done
       span \ ]
     .clear
+.source
+  .url-control
+    input(type="text", value=url, placeholder="feed URL").url-input
 .preview
 .body
   - each item in items
@@ -30,12 +32,15 @@
       .header
         - if (title_selection == "item")
           - if (item.title)
-            h2.title= item.title
+            h2.title.modalInput(rel="#reader")= item.title
         - if (title_selection == "webpage")
           - if (item.webpage)
             - if (item.webpage.title)
-              h2.title= item.webpage.title
+              h2.title.modalInput(rel="#reader")= item.webpage.title
+        - if (item.link)
+          .url= item.link
       .body
+        .full-article
         - if (body_selection == "item")
           - if (item.description)
             div.snippet!= item.description

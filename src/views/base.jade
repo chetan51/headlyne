@@ -11,8 +11,9 @@ html
     link(href=base_url+"includes/css/layout.less", rel="stylesheet/less", type="text/css")
     // LESS
     script(src=base_url+"includes/js/less-1.0.35.min.js", type="text/javascript")
-    // jQuery Library + UI Tools
+    // jQuery Library + UI Tools + plugins
     script(src="http://cdn.jquerytools.org/1.2.5/full/jquery.tools.min.js", type="text/javascript")
+    script(src=base_url+"includes/js/jquery.defaultText.js", type="text/javascript")
     // jQuery UI
     link(href=base_url+"includes/css/ui-darkness/jquery-ui-1.8.7.custom.css", rel="stylesheet", type="text/css")
     script(src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.min.js", type="text/javascript")
@@ -38,9 +39,12 @@ html
             a(id="add-column-button", href='#') Add Column
             span \ ]
       #folio
-        h1.modalInput(rel="#test") The Headlyne Times
+        h1 The Headlyne Times
         #subtitle December 23, 2010
-	  div#test.modal hello
+    #reader.modal
+      .content
+        h2.title
+        .body
     #content!= content
     #footer
       #copyright Copyright 2010, Chetan Surpur and Manoj Mardithaya

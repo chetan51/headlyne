@@ -1,0 +1,8 @@
+.login
+  form(action=base_url+"home/login", method="post")
+    .username-control
+      input.username-input(type="text", placeholder="username", name="username")
+    .password-control
+      input.password-input(type="password", placeholder="password", name="password")
+    .submit-control
+      input.submit-button(type="submit", name="submit", value="Login")

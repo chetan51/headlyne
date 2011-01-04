@@ -12,7 +12,7 @@ var DatabaseDriver = require('../../src/libraries/DatabaseDriver.js'),
 /**
  * Constants
  **/
-var db_name = 'headlyne',
+var db_name = 'headlyne_test',
     db_addr = '127.0.0.1',
     db_port = 27017,
     db_user = 'username',
