@@ -6,6 +6,7 @@
  *  Module dependencies
  **/
 var sys = require('sys');
+var cookie_node = require('cookie');
 var querystring = require('querystring');
 
 /*
@@ -39,43 +40,31 @@ var Util = function()
 	this.checkCookie = function(req, res, callback)
 	{
 		// if no cookies are passed, redirect to login.
-		if( typeof(req.headers.cookie) == 'undefined' )
+		var cookie = req.getCookie('cookie');
+		if( !cookie )
 		{
-			res.writeHead(302, [
-				['Location', '/login']
-			]);
-			res.end();
 			callback(new Error('No cookie passed'));
 		}
+
 		// check if the cookie is a JSON object. otherwise, say cookie error.
-		var cookie;
+		var cookie_obj;
 		try {
-			cookie = JSON.parse(req.headers.cookie);
-			console.log(cookie);
+			cookie_obj = JSON.parse(cookie);
+			console.log(cookie_obj);
 		} catch (e) {
-			res.error('Your cookie is broken. Please clear cookies '+
-				'for this site and try again');
-			callback(new Error('Broken Cookie'));
+			callback(new Error('Cookie is broken.'));
 		}
 
 		// check if the cookie is valid.
 		Ni.library('UserAuth').checkAuth(
-			cookie,
+			cookie_obj,
 			function(err, is_valid)
 			{
 				if(err) {
-					res.writeHead(302, [
-						['Location', '/logout'],
-					]);
-					res.end();
 					callback(err);
 				} else if( !is_valid ) {
-					res.writeHead(302, [
-						['Location', '/login']
-					]); // redirect to login page.
-					res.end();
 					callback(new Error('Cookie not valid'));
-				} else	callback(null, cookie);
+				} else	callback(null, cookie_obj);
 			}
 		);
 	}

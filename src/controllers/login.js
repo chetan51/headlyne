@@ -8,6 +8,7 @@
  */
 var Ni          = require('ni'),
     url         = require('url'),
+    cookie_node = require('cookie'),
     querystring = require('querystring'),
     dbg         = require('../../src/libraries/Debugger.js');
 
@@ -42,7 +43,6 @@ var LoginController = function()
 						    err.message == 'Invalid Password' )
 						{
 							res.error('Invalid Username or Password');
-							return;
 						} else {
 							res.error('Uh oh, something went wrong. '+
 								'Please try again later');
@@ -50,19 +50,20 @@ var LoginController = function()
 					} else {
 						// no errors -- attach the cookie, direct to
 						// home page, and get moving.
-						var expiry_date = new Date(cookie.expires);
 						
-						dbg.log('redirect: login to home, logged in');
-						res.writeHead( 302, [
-							['Location', '/'],
-							['Set-Cookie', 
-								JSON.stringify(cookie)+';'+
-								'path=/;'+
-								'expires='+expiry_date.toUTCString()+';'
-							]
-						]);
+						res.setCookie(
+							'cookie',
+							JSON.stringify(cookie),
+							{
+								path    : '/',
+								expires : cookie.expires
+							}
+						);
+						res.writeHead(302, {
+							Location: '/'
+						});
 						res.end();
-
+						dbg.log('redirect: login to home, logged in');
 					}
 				}
 			);
