@@ -423,9 +423,15 @@ function updateFeedPreview(feed_div, callback) {
 	var source_div = feed_div.children(".source");
 	var preview_div = feed_div.children(".preview");
 	var settings_div = feed_div.find("> .header > .settings");
-	var feed_url = source_div.find("> .url-control > .url-input").val();
 	var title_selection = settings_div.children(".title-selection").text();
 	var body_selection = settings_div.children(".body-selection").text();
+	
+	// Get feed URL
+	var feed_url_input = source_div.find("> .url-control > .url-input");
+	var feed_url = null;
+	if (feed_url_input.val() != feed_url_input.attr('placeholder')) {
+		feed_url = feed_url_input.val();
+	}
 	
 	if (feed_url && feed_url != "") {
 		preview_div.html("Loading feed preview...");
