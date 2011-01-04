@@ -46,11 +46,7 @@ function addFeedListeners(feeds) {
 	
 	var source_div = feeds.children(".source");
 	var url_input = source_div.find(".url-control > .url-input");
-	url_input.blur(feedURLUpdated).keyup(function(e){
-		if (e.keyCode == 13) {
-			feedURLUpdated(e);
-		}
-	});
+	url_input.keyup(feedURLKeyup);
 	
 	var feeditem_div = feeds.find("> .body > .item");
 	var feeditem_body_div = feeditem_div.find("> .body");
@@ -191,12 +187,8 @@ function addColumnClicked(e) {
 
 function feedEditClicked(e) {
 	var this_column = $(this).parents(".column");
-	var source_div = $(this).parents(".feed").children(".source");
-	var preview_div = $(this).parents(".feed").children(".preview");
-	var settings_div = $(this).parents(".feed").find("> .header > .settings");
-	var feed_url = source_div.find("> .url-control > .url-input").val();
-	var title_selection = settings_div.children(".title-selection").text();
-	var body_selection = settings_div.children(".body-selection").text();
+	var feed_div = $(this).parents(".feed");
+	var source_div = feed_div.children(".source");
 	
 	var edit_div = $(this).parents(".feed").find("> .header > .edit-overlay > .edit-delete > .edit");
 	edit_div.children(".default-control").hide();
@@ -204,52 +196,11 @@ function feedEditClicked(e) {
 	
 	source_div.slideDown("fast");
 	
-	if (feed_url && feed_url != "") {
-		preview_div.html("Loading feed preview...");
-		preview_div.slideDown("fast", function() {
-			$.ajax({
-				url: "/feed/preview",
-				type: 'POST',
-				data: {
-					feed_url: feed_url
-				},
-				datatype: 'json',
-				success: function(data) {
-					if (data.error || !data.preview) {
-						previewError(preview_div);
-					}
-					else {
-						preview_div.hide();
-						preview_div.html(data.preview);
-						preview_div.slideDown("fast");
-						
-						resizeColumnDynamically(this_column, 50);
-						
-						// Mark selected settings
-						var titles_form = preview_div.find("> .display > .titles > form");
-						var bodies_form = preview_div.find("> .display > .bodies > form");
-						if (title_selection == "item") {
-							titles_form.find("> .item > .control > .input").click();
-						}
-						else if (title_selection == "webpage") {
-							titles_form.find("> .webpage > .control > .input").click();
-						}
-						
-						if (body_selection == "item") {
-							bodies_form.find("> .item > .control > .input").click();
-						}
-						else if (body_selection == "webpage") {
-							bodies_form.find("> .webpage > .control > .input").click();
-						}
-					}
-				},
-				error: function() {
-					// Test if this is hit when server is off
-					previewError(preview_div);
-				}
-			});
-		});
-	}
+	updateFeedPreview(feed_div, function(err) {
+		if (!err) {
+			resizeColumnDynamically(this_column, 50);
+		}
+	});
 }
 
 function feedDoneClicked(e) {
@@ -290,8 +241,21 @@ function feedHeaderHoverOut(e) {
 	resetFeedDelete(feed_div);
 }
 
-function feedURLUpdated(e) {
-	var feed_div = $(this).parents(".feed");
+function feedURLKeyup(e) {
+	if (e.keyCode == 13) {   // enter was pressed
+		var feed_div = $(this).parents(".feed");
+		var this_column = feed_div.parents(".column");
+		
+		updateFeedPreview(feed_div, function(err) {
+			if (!err) {
+				// Update feed metadata
+				var feed_title = feed_div.find("> .preview > .header > .title").text();
+				feed_div.find("> .header > .title").html(feed_title);
+				
+				resizeColumnDynamically(this_column, 50);
+			}
+		});
+	}
 }
 
 function snippetClicked(e) {
@@ -451,6 +415,64 @@ function removeColumn(column_div) {
 		column_div.remove();
 		refreshColumnDeleteOptions($(".column"));
 	});
+}
+
+function updateFeedPreview(feed_div, callback) {
+	var source_div = feed_div.children(".source");
+	var preview_div = feed_div.children(".preview");
+	var settings_div = feed_div.find("> .header > .settings");
+	var feed_url = source_div.find("> .url-control > .url-input").val();
+	var title_selection = settings_div.children(".title-selection").text();
+	var body_selection = settings_div.children(".body-selection").text();
+	
+	if (feed_url && feed_url != "") {
+		preview_div.html("Loading feed preview...");
+		preview_div.slideDown("fast", function() {
+			$.ajax({
+				url: "/feed/preview",
+				type: 'POST',
+				data: {
+					feed_url: feed_url
+				},
+				datatype: 'json',
+				success: function(data) {
+					if (data.error || !data.preview) {
+						previewError(preview_div);
+						callback(new Error("Error loading feed preview."));
+					}
+					else {
+						preview_div.hide();
+						preview_div.html(data.preview);
+						preview_div.slideDown("fast");
+						
+						// Mark selected settings
+						var titles_form = preview_div.find("> .display > .titles > form");
+						var bodies_form = preview_div.find("> .display > .bodies > form");
+						if (title_selection == "item") {
+							titles_form.find("> .item > .control > .input").click();
+						}
+						else if (title_selection == "webpage") {
+							titles_form.find("> .webpage > .control > .input").click();
+						}
+						
+						if (body_selection == "item") {
+							bodies_form.find("> .item > .control > .input").click();
+						}
+						else if (body_selection == "webpage") {
+							bodies_form.find("> .webpage > .control > .input").click();
+						}
+						
+						callback(null);
+					}
+				},
+				error: function() {
+					// Test if this is hit when server is off
+					previewError(preview_div);
+					callback(new Error("Unable to load feed preview."));
+				}
+			});
+		});
+	}
 }
 
 function loadFullArticle(feeditem_div, callback) {
