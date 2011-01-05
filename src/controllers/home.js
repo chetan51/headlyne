@@ -29,7 +29,7 @@ var HomeController = function()
 			if( err ) {
 				dbg.log('redirect: home to logout: '+err.message);
 				res.writeHead(302, [
-					['Location', '/logout']
+					['Location', '/home/logout']
 				]); // redirect to login page.
 				res.end();
 			} else {
@@ -143,11 +143,60 @@ var HomeController = function()
 	}
 	
 	this.login = function(req, res, next) {
+		var error_message = null;
+		
+		if(req.method == 'POST' && req.body) {
+			// Check login
+			var params = req.body;
+			
+			if(params.username == null || params.username == "") {
+				error_message = "Please enter your username.";
+			}
+			else if (params.password == null || params.password == "") {
+				error_message = "Please enter your password.";
+			} else {
+				Ni.library('UserAuth').authenticate(
+					params.username,
+					params.password,
+					function(err, is_new, cookie)
+					{
+						if(err != null) {
+							if( err.message == 'No such User' ||
+							    err.message == 'Invalid Password' )
+							{
+								error_message = "Invalid username or password.";
+							} else {
+								error_message = "Uh oh, something went wrong. "+
+									          "Please try again.";
+							}
+						} else {
+							// no errors -- attach the cookie, direct to
+							// home page, and get moving.
+							
+							res.setCookie(
+								'cookie',
+								JSON.stringify(cookie),
+								{
+									path    : '/',
+									expires : cookie.expires
+								}
+							);
+							
+							res.moved('/');
+							dbg.log('redirect: login to home, logged in');
+						}
+					}
+				);
+			}
+		}
+		
+		// Show login form
 		var login = jade.render(
 			Ni.view('login').template,
 			{locals:
 				{
-					base_url : "/",
+					base_url      : "/",
+		    			error_message : error_message
 				}
 			}
 		);
@@ -164,6 +213,41 @@ var HomeController = function()
 		);
 
 		res.ok(html);
+	}
+	
+	this.logout = function(req, res, next) {
+		Util.checkCookie(req, res, function(err, cookie)
+		{
+			if( err ) {
+				dbg.log('redirect: logout to login:');
+				dbg.log(err.message);
+				
+				res.clearCookie('cookie');
+				res.writeHead( 302, {
+					Location: '/home/login'
+				});
+				res.end();
+							/*res.writeHead( 200 );
+							res.write('logged out');
+							res.end();*/
+			} else {
+				dbg.log(cookie.data);
+				Ni.library('UserAuth').invalidate(
+						cookie.data.user,
+						function(err)
+						{
+							// no errors -- attach a null cookie, direct to
+							// login page, and get moving.
+							res.clearCookie('cookie');
+							res.writeHead( 302, {
+								Location: '/home/login'
+							});
+							dbg.log('redirect: logout to login.');
+							res.end();
+						}
+				);
+			}
+		});
 	}
 	
 	this.signup = function(req, res, next) {

@@ -6,3 +6,6 @@
       input.password-input(type="password", placeholder="password", name="password")
     .submit-control
       input.submit-button(type="submit", name="submit", value="Login")
+  .message
+    - if (error_message)
+      p.error= error_message

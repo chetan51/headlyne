@@ -97,6 +97,7 @@ Ni.boot(function() {
 			
 			var app = Connect.createServer(
 				Quip(),               
+				Connect.bodyDecoder(),
 				Ni.router,
 				Connect.staticProvider({
 					root: __dirname + '/public',
