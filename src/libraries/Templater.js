@@ -72,6 +72,13 @@ var Templater = function()
 	this.getSignupPage = function(view_parameters, callback)
 	{
 		view_parameters.base_url = "/";
+		
+		if (view_parameters.username == null) {
+			view_parameters.username = "";
+		}
+		if (view_parameters.email == null) {
+			view_parameters.email = "";
+		}
 
 		var signup = jade.render(
 			Ni.view('signup').template,
