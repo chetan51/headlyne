@@ -134,12 +134,12 @@ var UserAuth = function()
 	 **/
 	this.validate_cookie = function(session_cookie)
 	{
-		if( typeof(session_cookie) == 'undefined' || session_cookie == 'null') return false;
-		if( typeof(session_cookie.id) == 'undefined' || session_cookie.id == 'null') return false;
-		if( typeof(session_cookie.data) == 'undefined' || session_cookie.data == 'null') return false;
-		if( typeof(session_cookie.persistent) == 'undefined' || session_cookie.persistent == 'null') return false;
-		if( typeof(session_cookie.expires) == 'undefined' || session_cookie.expires == 'null') return false;
-		if( typeof(session_cookie.data.user) == 'undefined' || session_cookie.data.user == 'null') return false;
+		if( typeof(session_cookie) == 'undefined' || session_cookie == null) return false;
+		if( typeof(session_cookie.id) == 'undefined' || session_cookie.id == null) return false;
+		if( typeof(session_cookie.data) == 'undefined' || session_cookie.data == null) return false;
+		if( typeof(session_cookie.persistent) == 'undefined' || session_cookie.persistent == null) return false;
+		if( typeof(session_cookie.expires) == 'undefined' || session_cookie.expires == null) return false;
+		if( typeof(session_cookie.data.user) == 'undefined' || session_cookie.data.user == null) return false;
 
 		return true;
 	}
