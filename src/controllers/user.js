@@ -85,7 +85,7 @@ var UserController = function()
 		}
 	}
 	
-	this.sort = function(req, res, next)
+	this.update = function(req, res, next)
 	{
 		var res_obj = {
 			'error': null,

@@ -256,7 +256,7 @@ exports['edit'] = nodeunit.testCase(
 	}
 });
 
-exports['sort'] = nodeunit.testCase(
+exports['update'] = nodeunit.testCase(
 {
 	setUp: function(callback) {
 		Step(
@@ -348,7 +348,7 @@ exports['sort'] = nodeunit.testCase(
 			//	'Content-Length': data_send.length
 			};
 			
-			var request = client.request('POST', '/user/sort', headers);
+			var request = client.request('POST', '/user/update', headers);
 			
 			var data_recv='';
 			request.on('response', function(response) {
