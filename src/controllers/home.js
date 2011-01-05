@@ -220,15 +220,15 @@ var HomeController = function()
 			} else {
 				dbg.log(cookie.data);
 				Ni.library('UserAuth').invalidate(
-						cookie.data.user,
-						function(err)
-						{
-							// no errors -- attach a null cookie, direct to
-							// login page, and get moving.
-							res.clearCookie('cookie');
-							res.moved('/home/login');
-							dbg.log('redirect: logout to login.');
-						}
+					cookie.data.user,
+					function(err)
+					{
+						// no errors -- attach a null cookie, direct to
+						// login page, and get moving.
+						res.clearCookie('cookie');
+						res.moved('/home/login');
+						dbg.log('redirect: logout to login.');
+					}
 				);
 			}
 		});

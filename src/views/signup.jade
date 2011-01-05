@@ -1,9 +1,9 @@
 .signup
   form(action=base_url+"home/signup", method="post")
     .username-control
-      input.username-input(type="text", placeholder="username", name="username")
+      input.username-input(type="text", placeholder="username", name="username", value=username)
     .email-control
-      input.email-input(type="text", placeholder="email address", name="email")
+      input.email-input(type="text", placeholder="email address", name="email", value=email)
     .password-control
       input.password-input(type="password", placeholder="password", name="password")
     .confirm-password-control
