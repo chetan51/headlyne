@@ -90,22 +90,15 @@ function refreshColumnDeleteOptions(columns) {
 }
 
 function enablePlaceholders(element) {
-	$('[placeholder]', element).focus(function() {
-		var input = $(this);
-		if (input.val() == input.attr('placeholder')) {
-			input.val('');
-			input.removeClass('placeholder');
-		}
+	var inputs = $('[placeholder]', element);
+	inputs.focus(function() {
+		hidePlaceholder($(this));
 	}).blur(function() {
-		var input = $(this);
-		if (input.val() == '' || input.val() == input.attr('placeholder')) {
-			if (input.attr('type') == "password") {
-				input.attr('type', "text");
-			}
-			input.addClass('placeholder');
-			input.val(input.attr('placeholder'));
-		}
-	}).blur();
+		showPlaceholder($(this));
+	});
+	for (i in inputs) {
+		showPlaceholder(inputs[i]);
+	}
 	
 	// On any form submit, clear all placeholders
 	$('form').submit(function(e) {
@@ -115,6 +108,23 @@ function enablePlaceholders(element) {
 			return true;
 		}
 	});
+}
+
+function hidePlaceholder(input) {
+	if (input.val() == input.attr('placeholder')) {
+		input.val('');
+		input.removeClass('placeholder');
+	}
+}
+
+function showPlaceholder(input) {
+	if (input.val() == '' || input.val() == input.attr('placeholder')) {
+		if (input.attr('type') == "password") {
+			input.attr('type', "text");
+		}
+		input.addClass('placeholder');
+		input.val(input.attr('placeholder'));
+	}
 }
 
 /*
