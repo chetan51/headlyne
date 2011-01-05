@@ -106,6 +106,15 @@ function enablePlaceholders(element) {
 			input.val(input.attr('placeholder'));
 		}
 	}).blur();
+	
+	// On any form submit, clear all placeholders
+	$('form').submit(function(e) {
+		var input = $(this).find("input");
+		if (input.val() == input.attr('placeholder')) {
+			input.val("");
+			return true;
+		}
+	});
 }
 
 /*
