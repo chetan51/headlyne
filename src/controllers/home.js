@@ -14,6 +14,8 @@ var sys  = require('sys');
 var jade = require('jade');
 var Step = require('step');
 var dbg  = require('../../src/libraries/Debugger.js');
+var Util = require('../../src/utilities/Util.js');
+var cookie_node = require('cookie');
 
 /*
  *  The home controller
@@ -22,48 +24,16 @@ var HomeController = function()
 {
 	this.index = function(req, res, next)
 	{
-		// if no cookies are passed, redirect to login.
-		if( typeof(req.headers.cookie) == 'undefined' )
+		Util.checkCookie(req, res, function(err, cookie)
 		{
-			dbg.log('redirect: home to login, no cookie');
-			res.writeHead(302, [
-				['Location', '/login']
-			]);
-			res.end();
-			return;
-		}
-		// check if the cookie is a JSON object. otherwise, say cookie error.
-		var cookie;
-		try {
-			cookie = JSON.parse(req.headers.cookie);
-			dbg.log(cookie);
-		} catch (e) {
-			res.error('Your cookie is broken. Please clear cookies '+
-				'for this site and try again');
-			return;
-		}
-
-		// check if the cookie is valid.
-		Ni.library('UserAuth').checkAuth(
-			cookie,
-			function(err, is_valid)
-			{
-				if(err) {
-					dbg.log(err.message);
-					res.writeHead(302, [
-						['Location', '/logout'],
-					]);
-					res.end();
-					return;
-				}
-				if(!is_valid) {
-					dbg.log('redirect: home to logout, non-valid cookie');
-					res.writeHead(302, [
-						['Location', '/logout']
-					]); // redirect to login page.
-					res.end();
-				} else {
-					// if valid, serve the page requested.
+			if( err ) {
+				dbg.log('redirect: home to logout: '+err.message);
+				res.writeHead(302, [
+					['Location', '/logout']
+				]); // redirect to login page.
+				res.end();
+			} else {
+				// if valid, serve the page requested.
 		
 		Step(
 			function getFeeds() {
@@ -166,10 +136,10 @@ var HomeController = function()
 
 				res.ok(html);
 			}
-		);
-				}
+		); // close Step
+
 			}
-		);
+		}); // close checkCookie
 	}
 
 };
