@@ -77,15 +77,19 @@ var HomeController = function()
 			},
 
 			function displayFeeds(err, feed1, feed2, feed3, feed4) {
+				feed1.num_feed_items = 9;
 				feed1.title_selection = "item";
 				feed1.body_selection = "item";
 				
+				feed2.num_feed_items = 2;
 				feed2.title_selection = "webpage";
 				feed2.body_selection = "webpage";
 
+				feed3.num_feed_items = 4;
 				feed3.title_selection = "item";
 				feed3.body_selection = "item";
 				
+				feed4.num_feed_items = 2;
 				feed4.title_selection = "item";
 				feed4.body_selection = "webpage";
 				

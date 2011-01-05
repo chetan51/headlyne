@@ -121,7 +121,7 @@ var UserController = function()
 					
 					Ni.model('User').updateFeeds(
 						cookie.data.user,
-						req.body.feed_array,
+						JSON.parse(req.body.feed_array),
 						function(err, feeds)
 						{
 							if(err) {

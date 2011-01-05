@@ -26,7 +26,8 @@ function addColumnListeners(columns) {
 	// Set up sortable
 	columns.children(".content").sortable({
 		connectWith: ".column > .content",
-		handle: $(".feed > .header")
+		handle: $(".feed > .header"),
+		stop: feedPositionsUpdated
 	});
 	
 	columns.hover(columnHoverIn, columnHoverOut);
@@ -401,7 +402,7 @@ function columnMoveFeedsRightClicked(e) {
 
 function columnHoverIn(e) {
 	$(this).find("> .header > .edit-overlay").show();
-}	
+}
 
 function columnHoverOut(e) {
 	var edit_overlay = $(this).find("> .header > .edit-overlay");
@@ -409,7 +410,48 @@ function columnHoverOut(e) {
 	
 	var column_div = $(this);
 	resetColumnDelete(column_div);
-}	
+}
+
+function feedPositionsUpdated(e) {
+	var feed_map = [];
+	$(".column").each(function(column_index, column_div) {
+		feed_map[column_index] = [];
+		$(column_div).find("> .content > .feed").each(function(feed_index, feed_div) {
+			var source_div = $(feed_div).children(".source");
+			var settings_div = $(feed_div).find("> .header > .settings");
+			var feed_url = source_div.find("> .url-control > .url-input").val();
+			var num_feed_items = settings_div.children(".num-feed-items").text();
+			var title_selection = settings_div.children(".title-selection").text();
+			var body_selection = settings_div.children(".body-selection").text();
+			
+			var feed = {
+				url             : feed_url,
+				num_feed_items  : num_feed_items,
+				title_selection : title_selection,
+				body_selection  : body_selection
+			};
+			feed_map[column_index][feed_index] = feed;
+		});
+	});
+	
+	// Update backend
+	$.ajax({
+		url: "/user/sort",
+		type: 'POST',
+		data: {
+			feed_array : JSON.stringify(feed_map)
+		},
+		datatype: 'json',
+		success: function(data) {
+			if (data.error) {
+				alert("uh oh");
+			}
+		},
+		error: function() {
+			alert("uh oh");
+		}
+	});
+}
 
 /*
  * Helper functions
