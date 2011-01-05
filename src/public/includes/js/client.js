@@ -271,12 +271,12 @@ function feedDoneClicked(e) {
 		},
 		datatype: 'json',
 		success: function(data) {
-			if (data.error) {
-				alert("uh oh");
+			if (!data || data.error) {
+				updateAccountError();
 			}
 		},
 		error: function() {
-			alert("uh oh");
+			updateAccountError();
 		}
 	});
 }
@@ -457,12 +457,12 @@ function feedPositionsUpdated(e) {
 		},
 		datatype: 'json',
 		success: function(data) {
-			if (data.error) {
-				alert("uh oh");
+			if (!data || data.error) {
+				updateAccountError();
 			}
 		},
 		error: function() {
-			alert("uh oh");
+			updateAccountError();
 		}
 	});
 }
@@ -553,7 +553,7 @@ function updateFeedPreview(feed_div, callback) {
 				},
 				datatype: 'json',
 				success: function(data) {
-					if (data.error || !data.preview) {
+					if (!data || data.error || !data.preview) {
 						previewError(preview_div);
 						callback(new Error("Error loading feed preview."));
 					}
