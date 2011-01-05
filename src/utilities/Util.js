@@ -14,33 +14,6 @@ var querystring = require('querystring');
  */
 var Util = function()
 {
-	// returns POST variables as a JSON object.
-	this.getPOST = function(req, callback)
-	{
-		var POST = '';
-		var returned = false;
-		if( req.method == 'POST') {
-			req.addListener('data', function(chunk)
-			{
-				POST += chunk;
-			});
-			req.addListener('end', function()
-			{
-				try{
-					console.log(POST);
-					// POST = querystring.parse(POST);
-					POST = JSON.parse(POST);
-					console.log(POST);
-					if(!returned)
-						callback(null, POST);
-				} catch(e) {
-					returned = true;
-					callback(e);
-				}
-			});
-		} else callback(new Error('No POST data'));
-	}
-	
 	// takes request object, returns cookie if it found one that is valid.
 	this.checkCookie = function(req, res, callback)
 	{

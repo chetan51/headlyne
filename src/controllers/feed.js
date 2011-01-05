@@ -32,28 +32,28 @@ var FeedController = function()
 			'preview': ''
 		};
 
-		// get POST variables, then proceed.
-		Util.getPOST(req, function(err, POST)
-		{
-			// check if there are any errors...
-			if(err) {
-				res_obj.error = err;
+		if (req.method != 'POST') {
+				res_obj.error = new Error('Not POST request.');
 				res.json(res_obj);
 				return;
-			}
-			
-			if(typeof(POST.feed_url) == 'undefined') {
+		}
+		else if (req.body == null) {
+				res_obj.error = new Error('No POST data.');
+				res.json(res_obj);
+				return;
+		}
+		else if (req.body.feed_url == null) {
 				res_obj.error = new Error('No feed URL provided.');
 				res.json(res_obj);
 				return;
-			}
-		
+		}
+		else {
 			// STUBBED
 			//POST.feed_url = "http://feeds.reuters.com/reuters/companyNews?format=xml";
 
 			// now get the feed teaser
 			Ni.library('FeedServer').getFeedTeaser(
-				POST.feed_url,
+				req.body.feed_url,
 				1,
 				function() {},
 				function(err, teaser)
@@ -76,7 +76,7 @@ var FeedController = function()
 					dbg.log('preview sent');
 				}
 			);
-		});
+		}
 	}
 	
 	this.webpage = function(req, res, next)
@@ -87,29 +87,29 @@ var FeedController = function()
 			'page': ''
 		};
 
-		// get POST variables, then proceed.
-		Util.getPOST(req, function(err, POST)
-		{
-			// check if there are any errors...
-			if(err) {
-				res_obj.error = err;
+		if (req.method != 'POST') {
+				res_obj.error = new Error('Not POST request.');
 				res.json(res_obj);
 				return;
-			}
-			
-			if(typeof(POST.webpage_url) == 'undefined') {
-				res_obj.error = new Error('No feed provided');
+		}
+		else if (req.body == null) {
+				res_obj.error = new Error('No POST data.');
 				res.json(res_obj);
 				return;
-			}
-		
+		}
+		else if (req.body.webpage_url == null) {
+				res_obj.error = new Error('No webpage URL provided.');
+				res.json(res_obj);
+				return;
+		}
+		else {
 			// STUBBED
 			//POST.webpage_url = "http://www.futilitycloset.com/2010/12/31/mail-snail/";
 
 			// now get the full page
 			dbg.log('accessing library for full page...');
 			Ni.library('FeedServer').getFullContent(
-				POST.webpage_url,
+				req.body.webpage_url,
 				function(err, webpage)
 				{
 					if(err) {
@@ -130,7 +130,7 @@ var FeedController = function()
 					res.json(res_obj);
 				}
 			);
-		});
+		}
 	}
 };
 
