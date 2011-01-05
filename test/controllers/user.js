@@ -385,3 +385,169 @@ exports['sort'] = nodeunit.testCase(
 		});
 	}
 });
+
+exports['teaser'] = nodeunit.testCase(
+{
+	setUp: function(callback) {
+		Step(
+			function mockServerAndDatabase() {
+				var step = this;
+				
+				ServerGenerator.createServer(
+					mock_server_host,
+					mock_server_port,
+					step.parallel()
+				);
+				
+				DatabaseFaker.setUp(
+					['users', 'feeds', 'webpages'],
+					step.parallel()
+				);
+			},
+			function testResults(err, server) {
+				if (err) throw err;
+				mock_server = server;
+				callback();
+			}
+		);
+		
+		Ni.config('http_timeout',       30000);
+		Ni.config('feedparse_timeout',  5000);
+		Ni.config('feed_expiry_length', 30 * 60 * 1000);
+		Ni.config('max_redirect',       5);
+		Ni.config('session_lifetime',   14 * 24 * 60 * 60 * 1000);
+	},
+	 
+	tearDown: function(callback) {
+		Step(
+			function closeServerAndDatabase() {
+				var step = this;
+				
+				ServerGenerator.closeServer(
+					mock_server,
+					step.parallel()
+				);
+				
+				DatabaseFaker.tearDown(
+					['users', 'feeds', 'webpages'],
+					step.parallel()
+				);
+			},
+			function testResults(err) {
+				if (err) throw err;
+				callback();
+			}
+		);
+	},
+	
+	'basic': function(test) {
+		test.expect(1);
+
+		var ck, data_recv1='', data_recv2='';
+		Step(
+			function getUser()
+			{
+				getAUser(this);
+			},
+			function addFeed(err, cookie)
+			{
+				if(err) throw err;
+				
+				// add the feed to the user.
+				ck = cookie;
+				UserModel.placeFeed(
+					'username',
+					'http://feeds.feedburner.com/FutilityCloset',
+					0, 2,
+					this
+				);
+			},
+			function fillFeed(err)
+			{
+				if(err) throw err;
+				var _this = this;	
+				// request to edit the feed.
+				var client = http.createClient(7500, 'localhost');
+					
+				// the request to make:
+				var post_req = {
+					feed_url: 'http://feeds.feedburner.com/FutilityCloset',
+					num_feed_items: 3,
+					title_selection: 'webpage',
+					body_selection: 'webpage'
+				};
+				var data_send = JSON.stringify(post_req);
+				// headers for the request
+				var headers = {
+					'Host': 'localhost',
+					'Cookie': JSON.stringify(ck)
+				//	'Content-Type': 'text/plain',
+				//	'Content-Length': data_send.length
+				};
+				
+				var request = client.request('POST', '/user/edit', headers);
+				
+				request.on('response', function(response) {
+					response.on('data', function(chunk) {
+						data_recv1 += chunk;
+					});
+					response.on('end', _this);
+				});
+				request.on('error', function(err){ console.log('ERR: '+err); });
+				
+				request.end(data_send);
+				dbg.log('Sent request with '+data_send);
+			},
+			function sendData1(err)
+			{
+				dbg.log('Received: '+data_recv1.slice(0, 66)+'...');
+				var data_obj = JSON.parse(data_recv1);
+				if(data_obj.error != null) throw data_obj.error;
+				return data_obj;
+			},
+			function requestTeaser(err, response)
+			{
+				if(err) throw err;
+				
+				
+				// request to get teaser
+				var client = http.createClient(7500, 'localhost');
+					
+				// the request to make:
+				var post_req = {
+					feed_url: 'http://feeds.feedburner.com/FutilityCloset'
+				};
+				var data_send = JSON.stringify(post_req);
+				// headers for the request
+				var headers = {
+					'Host': 'localhost',
+					'Cookie': JSON.stringify(ck),
+				//	'Content-Type': 'text/plain',
+				//	'Content-Length': data_send.length
+				};
+				
+				var request = client.request('POST', '/user/teaser', headers);
+				
+				var data_recv='';
+				request.on('response', function(response) {
+					response.on('data', function(chunk) {
+						data_recv += chunk;
+					});
+					response.on('end', function()
+					{
+						dbg.log('Received: '+data_recv.slice(0, 66)+'...');
+						var data_obj = JSON.parse(data_recv);
+						
+						test.equal(data_obj.error, null);
+						console.log('Teaser: '+data_obj.teaser);
+						test.done();
+					});
+				});
+				request.on('error', function(err){ console.log('ERR: '+err); });
+				
+				request.end(data_send);
+				dbg.log('Sent request with '+data_send);
+			}
+		);
+	}
+});
