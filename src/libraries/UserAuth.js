@@ -18,7 +18,7 @@ var UserAuth = function()
 	var self = this;
 	
 	/*
-	 *	Validates credentials and logs user in.
+	 *	Validates credentials and authenticates user.
 	 *	
 	 *		Arguments: credentials {
 	 *		               username,
@@ -58,6 +58,19 @@ var UserAuth = function()
 		}
 	}
 
+	/*
+	 *	Validates input fields and registers new user.
+	 *	
+	 *		Arguments: input fields {
+	 *		               username,
+	 *		               email address,
+	 *		               password,
+	 *		               confirm password
+	 *		           }
+	 *		Returns (via callback): error
+	 *		                        registered?
+	 *		                        error message
+	 */
 	this.signup = function(params, callback) {
 		if (params.username == null || params.username == "") {
 			callback(null, false, "Please enter a username.");

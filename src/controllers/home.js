@@ -36,6 +36,7 @@ var HomeController = function()
 				res.end();
 			} else {
 				// if valid, serve the page requested.
+				console.log(cookie.data.user);
 		
 		Step(
 			function getFeeds() {
