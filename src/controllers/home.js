@@ -10,6 +10,7 @@
  */
 
 var Ni   = require('ni');
+var Templater = require('../../src/libraries/Templater.js');
 var sys  = require('sys');
 var jade = require('jade');
 var Step = require('step');
@@ -143,17 +144,34 @@ var HomeController = function()
 	}
 	
 	this.login = function(req, res, next) {
-		var error_message = null;
+		var login_view_parameters = {};
 		
 		if(req.method == 'POST' && req.body) {
 			// Check login
 			var params = req.body;
 			
 			if(params.username == null || params.username == "") {
-				error_message = "Please enter your username.";
+				login_view_parameters.error_message = "Please enter your username.";
+				
+				Templater.getLoginPage(
+					login_view_parameters,
+					function(err, html) {
+						if (err) throw err;
+						res.ok(html);
+					}
+				);
 			}
 			else if (params.password == null || params.password == "") {
-				error_message = "Please enter your password.";
+				login_view_parameters.username = params.username;
+				login_view_parameters.error_message = "Please enter your password.";
+				
+				Templater.getLoginPage(
+					login_view_parameters,
+					function(err, html) {
+						if (err) throw err;
+						res.ok(html);
+					}
+				);
 			} else {
 				Ni.library('UserAuth').authenticate(
 					params.username,
@@ -161,14 +179,23 @@ var HomeController = function()
 					function(err, is_new, cookie)
 					{
 						if(err != null) {
+							login_view_parameters.username = params.username;
+							
 							if( err.message == 'No such User' ||
 							    err.message == 'Invalid Password' )
 							{
-								error_message = "Invalid username or password.";
+								login_view_parameters.error_message = "Invalid username or password.";
 							} else {
-								error_message = "Uh oh, something went wrong. "+
-									          "Please try again.";
+								login_view_parameters.error_message = "Uh oh, something went wrong. Please try again.";
 							}
+		
+							Templater.getLoginPage(
+								login_view_parameters,
+								function(err, html) {
+									if (err) throw err;
+									res.ok(html);
+								}
+							);
 						} else {
 							// no errors -- attach the cookie, direct to
 							// home page, and get moving.
@@ -189,30 +216,15 @@ var HomeController = function()
 				);
 			}
 		}
-		
-		// Show login form
-		var login = jade.render(
-			Ni.view('login').template,
-			{locals:
-				{
-					base_url      : "/",
-		    			error_message : error_message
+		else {
+			Templater.getLoginPage(
+				login_view_parameters,
+				function(err, html) {
+					if (err) throw err;
+					res.ok(html);
 				}
-			}
-		);
-		
-		var html = jade.render(
-			Ni.view('base').template,
-			{locals:
-				{
-					base_url : "/",
-					title    : "Login",
-					content  : login
-				}
-			}
-		);
-
-		res.ok(html);
+			);
+		}		
 	}
 	
 	this.logout = function(req, res, next) {

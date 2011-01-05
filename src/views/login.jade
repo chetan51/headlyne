@@ -1,11 +1,11 @@
 .login
   form(action=base_url+"home/login", method="post")
     .username-control
-      input.username-input(type="text", placeholder="username", name="username")
+      input.username-input(type="text", placeholder="username", name="username", value=username)
     .password-control
       input.password-input(type="password", placeholder="password", name="password")
     .submit-control
       input.submit-button(type="submit", name="submit", value="Login")
   .message
-    - if (error_message)
+    - if (typeof(error_message) != 'undefined') // hack to fix weird bug
       p.error= error_message
