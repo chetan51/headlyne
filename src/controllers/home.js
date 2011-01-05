@@ -10,8 +10,6 @@
  */
 
 var Ni   = require('ni');
-var UserAuth = require('../../src/libraries/UserAuth.js');
-var Templater = require('../../src/libraries/Templater.js');
 var sys  = require('sys');
 var jade = require('jade');
 var Step = require('step');
@@ -154,13 +152,13 @@ var HomeController = function()
 			var params = req.body;
 			view_parameters = params;
 			
-			UserAuth.login(
+			Ni.library('UserAuth').login(
 				params,
 				function(err, logged_in, error_message, cookie) {
 					if (err) {
 						view_parameters.error_message = "Uh oh, something went wrong. Please try again.";
 						
-						Templater.getLoginPage(
+						Ni.library('Templater').getLoginPage(
 							view_parameters,
 							function(err, html) {
 								if (err) throw err;
@@ -172,7 +170,7 @@ var HomeController = function()
 						if (!logged_in) {
 							view_parameters.error_message = error_message;
 							
-							Templater.getLoginPage(
+							Ni.library('Templater').getLoginPage(
 								view_parameters,
 								function(err, html) {
 									if (err) throw err;
@@ -198,7 +196,7 @@ var HomeController = function()
 			);
 		}
 		else {
-			Templater.getLoginPage(
+			Ni.library('Templater').getLoginPage(
 				view_parameters,
 				function(err, html) {
 					if (err) throw err;
@@ -242,13 +240,13 @@ var HomeController = function()
 			var params = req.body;
 			view_parameters = params;
 			
-			UserAuth.signup(
+			Ni.library('UserAuth').signup(
 				params,
 				function(err, signed_up, error_message) {
 					if (err) {
 						view_parameters.error_message = "Uh oh, something went wrong. Please try again.";
 						
-						Templater.getSignupPage(
+						Ni.library('Templater').getSignupPage(
 							view_parameters,
 							function(err, html) {
 								if (err) throw err;
@@ -260,7 +258,7 @@ var HomeController = function()
 						if (!signed_up) {
 							view_parameters.error_message = error_message;
 							
-							Templater.getSignupPage(
+							Ni.library('Templater').getSignupPage(
 								view_parameters,
 								function(err, html) {
 									if (err) throw err;
@@ -278,7 +276,7 @@ var HomeController = function()
 			);
 		}
 		else {
-			Templater.getSignupPage(
+			Ni.library('Templater').getSignupPage(
 				view_parameters,
 				function(err, html) {
 					if (err) throw err;
