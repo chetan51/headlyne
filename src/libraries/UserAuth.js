@@ -71,6 +71,9 @@ var UserAuth = function()
 		else if (params.confirm_password == null || params.confirm_password == "") {
 			callback(null, false, "Please confirm the password.");
 		}
+		else if (params.password != params.confirm_password) {
+			callback(null, false, "Passwords do not match.");
+		}
 		else {
 			var	username    = params.username,
 				password    = params.password,
