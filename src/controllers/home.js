@@ -160,7 +160,7 @@ var HomeController = function()
 			var params = req.body;
 			view_parameters = params;
 			
-			Ni.library('UserAuth').login(
+			Ni.library('UserHandler').login(
 				params,
 				function(err, logged_in, error_message, cookie) {
 					if (err) {
@@ -248,7 +248,7 @@ var HomeController = function()
 			var params = req.body;
 			view_parameters = params;
 			
-			Ni.library('UserAuth').signup(
+			Ni.library('UserHandler').signup(
 				params,
 				function(err, signed_up, error_message) {
 					if (err) {
