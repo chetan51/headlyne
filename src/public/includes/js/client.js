@@ -227,15 +227,43 @@ function feedEditClicked(e) {
 }
 
 function feedDoneClicked(e) {
-	var edit_div = $(this).parents(".feed").find("> .header > .edit-overlay > .edit-delete > .edit");
+	var feed_div = $(this).parents(".feed");
+	var edit_div = feed_div.find("> .header > .edit-overlay > .edit-delete > .edit");
 	edit_div.children(".default-control").show();
 	edit_div.children(".editing-control").hide();
 	
-	var source_div = $(this).parents(".feed").children(".source");
+	var source_div = feed_div.children(".source");
 	source_div.slideUp("fast");
 	
-	$(this).parents(".feed").children(".preview").slideUp("fast");
+	feed_div.children(".preview").slideUp("fast");
 	equallyWidenColumns();
+	
+	var feed_url = source_div.find("> .url-control > .url-input").val();
+	var preview_div = feed_div.children(".preview");
+	var num_feed_items = preview_div.find("> .num-items > .input").val();
+	var title_selection = preview_div.find("> .display > .titles > form .input:checked").val();
+	var body_selection = preview_div.find("> .display > .bodies > form .input:checked").val();
+	
+	// Update backend
+	$.ajax({
+		url: "/user/edit",
+		type: 'POST',
+		data: {
+			feed_url        : feed_url,
+			num_feed_items  : num_feed_items,
+			title_selection : title_selection,
+			body_selection  : body_selection
+		},
+		datatype: 'json',
+		success: function(data) {
+			if (data.error) {
+				alert("uh oh");
+			}
+		},
+		error: function() {
+			alert("uh oh");
+		}
+	});
 }
 
 function feedDeleteClicked(e) {

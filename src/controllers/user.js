@@ -39,7 +39,7 @@ var UserController = function()
 				res.json(res_obj);
 				return;
 		}
-		else if ( req.body.webpage_url == null ||
+		else if ( req.body.feed_url == null ||
 		          req.body.num_feed_items == null ||
 			    req.body.title_selection == null ||
 			    req.body.body_selection == null ) {

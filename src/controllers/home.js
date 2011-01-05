@@ -36,7 +36,14 @@ var HomeController = function()
 				res.end();
 			} else {
 				// if valid, serve the page requested.
-				console.log(cookie.data.user);
+				Ni.model('User').get(
+					cookie.data.user,
+					function(err, user) {
+						if (err) throw err;
+						
+						console.log(user.feeds);
+					}
+				);
 		
 		Step(
 			function getFeeds() {

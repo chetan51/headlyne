@@ -21,13 +21,13 @@
     form
       .item
         .control
-          input.input(type="radio", name="titles")
+          input.input(type="radio", name="titles", value="item")
         .title
           - if (item.title)
             h2= item.title
       .webpage
         .control
-          input.input(type="radio", name="titles")
+          input.input(type="radio", name="titles", value="webpage")
         .title
           - if (item.webpage)
             - if (item.webpage.title)
@@ -36,13 +36,13 @@
     form
       .item
         .control
-          input.input(type="radio", name="bodies")
+          input.input(type="radio", name="bodies", value="item")
         .body
           - if (item.description)
             div!= item.description
       .webpage
         .control
-          input.input(type="radio", name="bodies")
+          input.input(type="radio", name="bodies", value="webpage")
         .body
           - if (item.webpage)
             - if (item.webpage.snippet)
