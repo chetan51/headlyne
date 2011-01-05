@@ -501,6 +501,10 @@ function readerError() {
 	$("#reader > .content > .body").html("There was an error while loading the article. Please refresh the page and try again.");
 }
 
+function updateAccountError() {
+	notify("<p>There was an error while updating your account. Please refresh and try again.</p>");
+}
+
 function resetFeedDelete(feed_div) {
 	var delete_div = feed_div.find("> .header > .edit-overlay > .edit-delete > .delete");
 	delete_div.children(".default-control").show();
@@ -604,5 +608,15 @@ function loadFullArticle(feeditem_div, callback) {
 		error: function() {
 			callback(new Error("Error loading full article"));
 		}
+	});
+}
+
+function notify(html) {
+	var notifications_div = $("#notifications");
+	var content_div = notifications_div.children(".content");
+	
+	notifications_div.slideUp("fast", function() {
+		content_div.html(html);
+		notifications_div.slideDown("fast");
 	});
 }
