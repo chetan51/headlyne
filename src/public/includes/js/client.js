@@ -95,18 +95,17 @@ function enablePlaceholders(element) {
 		hidePlaceholder($(this));
 	}).blur(function() {
 		showPlaceholder($(this));
+	}).load(function() {
+		showPlaceholder(inputs);
 	});
-	for (i in inputs) {
-		showPlaceholder(inputs[i]);
-	}
 	
 	// On any form submit, clear all placeholders
 	$('form').submit(function(e) {
 		var input = $(this).find("input");
 		if (input.val() == input.attr('placeholder')) {
 			input.val("");
-			return true;
 		}
+		return true;
 	});
 }
 
