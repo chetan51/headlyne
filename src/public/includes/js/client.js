@@ -12,6 +12,8 @@ $(document).ready(function() {
 	$("#add-feed-button").click(addFeedClicked);
 	$("#add-column-button").click(addColumnClicked);
 	
+	$("#notifications").click(notificationsClicked);
+	
 	addColumnListeners($(".column"));
 	addFeedListeners($(".feed"));
 	refreshColumnDeleteOptions($(".column"));
@@ -130,6 +132,10 @@ function showPlaceholder(input) {
 /*
  * Listeners
  */
+
+function notificationsClicked(e) {
+	$(this).slideUp("fast");
+}
 
 function expandOrCollapseClicked(e) {
 	$(".feed > .body > .item > .body").slideToggle("fast");
