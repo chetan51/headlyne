@@ -83,7 +83,7 @@ var UserController = function()
 					);
 				}
 			);
-		});
+		}
 	}
 	
 	this.sort = function(req, res, next)
@@ -137,9 +137,9 @@ var UserController = function()
 							res.json(res_obj);
 						}
 					);
-				});
-			}
-		);
+				}
+			);
+		}
 	}
 
 	this.remove = function(req, res, next)
@@ -193,9 +193,9 @@ var UserController = function()
 							res.json(res_obj);
 						}
 					);
-				});
-			}
-		);
+				}
+			);
+		}
 	}
 
 	this.teaser = function(req, res, next)
@@ -316,7 +316,7 @@ var UserController = function()
 					);
 				}
 			);
-		});
+		}
 	}
 };
 
