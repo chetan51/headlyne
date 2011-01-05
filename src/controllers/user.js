@@ -10,7 +10,6 @@ var sys  = require('sys');
 var jade = require('jade');
 var Step = require('step');
 var qs   = require('querystring');
-var Util = require('../utilities/Util');
 
 /*
  *  The user controller
@@ -50,7 +49,7 @@ var UserController = function()
 		else {
 			// now, check if the cookie is valid.
 //			var cookie={}; cookie.data={}; cookie.data.user = 'username';
-			Util.checkCookie(req, res,
+			Ni.helper('cookies').checkCookie(req, res,
 				function(err, cookie)
 				{
 					if(err) {
@@ -110,7 +109,7 @@ var UserController = function()
 		}
 		else {
 			// now check cookie
-			Util.checkCookie(req, res,
+			Ni.helper('cookies').checkCookie(req, res,
 				function(err, cookie)
 				{
 					if(err) {
@@ -166,7 +165,7 @@ var UserController = function()
 		}
 		else {
 			// now get cookie
-			Util.checkCookie(req, res,
+			Ni.helper('cookies').checkCookie(req, res,
 				function(err, cookie)
 				{
 					if(err) {
@@ -222,7 +221,7 @@ var UserController = function()
 		}
 		else {
 			// now check cookie
-			Util.checkCookie(req, res,
+			Ni.helper('cookies').checkCookie(req, res,
 				function(err, cookie)
 				{
 					if(err) {

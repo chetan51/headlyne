@@ -1,5 +1,5 @@
 /**
- * Util -- a module for utility functions.
+ * Module for operating on cookies.
  **/
 
 /**
@@ -10,9 +10,9 @@ var cookie_node = require('cookie');
 var querystring = require('querystring');
 
 /*
- *  The utility module
+ *  The cookies helper
  */
-var Util = function()
+var CookiesHelper = function()
 {
 	// takes request object, returns cookie if it found one that is valid.
 	this.checkCookie = function(req, res, callback)
@@ -51,4 +51,4 @@ var Util = function()
 /*
  *  Exports the module
  */
-module.exports = new Util();
+module.exports = new CookiesHelper();

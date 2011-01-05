@@ -14,7 +14,6 @@ var sys  = require('sys');
 var jade = require('jade');
 var Step = require('step');
 var dbg  = require('../../src/libraries/Debugger.js');
-var Util = require('../../src/utilities/Util.js');
 var cookie_node = require('cookie');
 
 /*
@@ -26,7 +25,7 @@ var HomeController = function()
 
 	this.index = function(req, res, next)
 	{
-		Util.checkCookie(req, res, function(err, cookie)
+		Ni.helper('cookies').checkCookie(req, res, function(err, cookie)
 		{
 			if( err ) {
 				dbg.log('redirect: home to logout: '+err.message);
@@ -215,7 +214,7 @@ var HomeController = function()
 	}
 	
 	this.logout = function(req, res, next) {
-		Util.checkCookie(req, res, function(err, cookie)
+		Ni.helper('cookies').checkCookie(req, res, function(err, cookie)
 		{
 			if( err ) {
 				dbg.log('redirect: logout to login:');

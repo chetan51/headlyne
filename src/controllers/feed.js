@@ -11,7 +11,6 @@ var sys = require('sys');
 var jade = require('jade');
 var Step = require('step');
 var url = require('url');
-var Util = require('../utilities/Util');
 var dbg = require('../libraries/Debugger');
 
 /*
