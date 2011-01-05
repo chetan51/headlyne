@@ -27,7 +27,6 @@ var UserAuth = function()
 	 *		Returns (via callback): error
 	 *		                        logged in?
 	 *		                        error message
-	 *		                        cookie
 	 */
 	this.login = function(params, callback) {
 		if (params.username == null || params.username == "") {
@@ -51,7 +50,16 @@ var UserAuth = function()
 							callback(err);
 						}
 					} else {    // logged in successfully
-						callback(null, true, null, cookie);
+						res.setCookie(
+							'cookie',
+							JSON.stringify(cookie),
+							{
+								path    : '/',
+								expires : cookie.expires
+							}
+						);
+						
+						callback(null, true);
 					}
 				}
 			);
@@ -78,9 +86,9 @@ var UserAuth = function()
 				last_name   = "",
 				email       = "";
 
-			if (params.first_name != 'undefined') first_name = params.first_name;
-			if (params.last_name != 'undefined') last_name = params.last_name;
-			if (params.email != 'undefined') email = params.email;
+			if( params.first_name != 'undefined') first_name = params.first_name;
+			if( params.last_name != 'undefined') last_name = params.last_name;
+			if( params.email != 'undefined') email = params.email;
 
 			Ni.model('User').save(
 				username,
@@ -103,7 +111,6 @@ var UserAuth = function()
 					}
 				}
 			);
-		}
 	}
 
 	this.session_gen = function(username, lifetime)

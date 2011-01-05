@@ -10,6 +10,7 @@
  */
 
 var Ni   = require('ni');
+var UserAuth = require('../../src/libraries/UserAuth.js');
 var Templater = require('../../src/libraries/Templater.js');
 var sys  = require('sys');
 var jade = require('jade');
@@ -23,6 +24,8 @@ var cookie_node = require('cookie');
  */
 var HomeController = function()
 {
+	var self = this;
+
 	this.index = function(req, res, next)
 	{
 		Util.checkCookie(req, res, function(err, cookie)
@@ -144,62 +147,40 @@ var HomeController = function()
 	}
 	
 	this.login = function(req, res, next) {
-		var login_view_parameters = {};
+		var view_parameters = {};
 		
 		if(req.method == 'POST' && req.body) {
 			// Check login
 			var params = req.body;
+			view_parameters = params;
 			
-			if(params.username == null || params.username == "") {
-				login_view_parameters.error_message = "Please enter your username.";
-				
-				Templater.getLoginPage(
-					login_view_parameters,
-					function(err, html) {
-						if (err) throw err;
-						res.ok(html);
-					}
-				);
-			}
-			else if (params.password == null || params.password == "") {
-				login_view_parameters.username = params.username;
-				login_view_parameters.error_message = "Please enter your password.";
-				
-				Templater.getLoginPage(
-					login_view_parameters,
-					function(err, html) {
-						if (err) throw err;
-						res.ok(html);
-					}
-				);
-			} else {
-				Ni.library('UserAuth').authenticate(
-					params.username,
-					params.password,
-					function(err, is_new, cookie)
-					{
-						if(err != null) {
-							login_view_parameters.username = params.username;
-							
-							if( err.message == 'No such User' ||
-							    err.message == 'Invalid Password' )
-							{
-								login_view_parameters.error_message = "Invalid username or password.";
-							} else {
-								login_view_parameters.error_message = "Uh oh, something went wrong. Please try again.";
+			UserAuth.login(
+				params,
+				function(err, logged_in, error_message, cookie) {
+					if (err) {
+						view_parameters.error_message = "Uh oh, something went wrong. Please try again.";
+						
+						Templater.getLoginPage(
+							view_parameters,
+							function(err, html) {
+								if (err) throw err;
+								res.ok(html);
 							}
-		
+						);
+					}
+					else {
+						if (!logged_in) {
+							view_parameters.error_message = error_message;
+							
 							Templater.getLoginPage(
-								login_view_parameters,
+								view_parameters,
 								function(err, html) {
 									if (err) throw err;
 									res.ok(html);
 								}
 							);
-						} else {
-							// no errors -- attach the cookie, direct to
-							// home page, and get moving.
-							
+						}
+						else {
 							res.setCookie(
 								'cookie',
 								JSON.stringify(cookie),
@@ -208,17 +189,17 @@ var HomeController = function()
 									expires : cookie.expires
 								}
 							);
-							
+						
 							res.moved('/');
 							dbg.log('redirect: login to home, logged in');
 						}
 					}
-				);
-			}
+				}
+			);
 		}
 		else {
 			Templater.getLoginPage(
-				login_view_parameters,
+				view_parameters,
 				function(err, html) {
 					if (err) throw err;
 					res.ok(html);
@@ -254,27 +235,57 @@ var HomeController = function()
 	}
 	
 	this.signup = function(req, res, next) {
-		var signup = jade.render(
-			Ni.view('signup').template,
-			{locals:
-				{
-					base_url : "/",
-				}
-			}
-		);
+		var view_parameters = {};
 		
-		var html = jade.render(
-			Ni.view('base').template,
-			{locals:
-				{
-					base_url : "/",
-					title    : "Sign Up",
-					content  : signup
+		if(req.method == 'POST' && req.body) {
+			// Check sign up
+			var params = req.body;
+			view_parameters = params;
+			
+			UserAuth.signup(
+				params,
+				function(err, signed_up, error_message) {
+					if (err) {
+						view_parameters.error_message = "Uh oh, something went wrong. Please try again.";
+						
+						Templater.getSignupPage(
+							view_parameters,
+							function(err, html) {
+								if (err) throw err;
+								res.ok(html);
+							}
+						);
+					}
+					else {
+						if (!signed_up) {
+							view_parameters.error_message = error_message;
+							
+							Templater.getSignupPage(
+								view_parameters,
+								function(err, html) {
+									if (err) throw err;
+									res.ok(html);
+								}
+							);
+						}
+						else {
+							// new user created. login the user and proceed.
+							req.body = params;
+							self.login(req, res, next);
+						}
+					}
 				}
-			}
-		);
-
-		res.ok(html);
+			);
+		}
+		else {
+			Templater.getSignupPage(
+				view_parameters,
+				function(err, html) {
+					if (err) throw err;
+					res.ok(html);
+				}
+			);
+		}
 	}
 
 };
