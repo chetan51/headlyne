@@ -29,24 +29,25 @@ var UserController = function()
 			'success': false
 		};
 
-		// get POST variable
-		Util.getPOST(req, function(err, POST)
-		{
-			if(err) {
-				console.log(err.message);
-				res_obj.error = err;
+		if (req.method != 'POST') {
+				res_obj.error = new Error('Not POST request.');
 				res.json(res_obj);
 				return;
-			}
-			if(	typeof(POST.feed_url)        == 'undefined' ||
-				typeof(POST.num_feed_items)  == 'undefined' ||
-				typeof(POST.title_selection)  == 'undefined' ||
-				typeof(POST.body_selection)  == 'undefined' ) {
-					res_obj.error = new Error('POST variables not found.');
+		}
+		else if (req.body == null) {
+				res_obj.error = new Error('No POST data.');
 				res.json(res_obj);
 				return;
-			}
-
+		}
+		else if ( req.body.webpage_url == null ||
+		          req.body.num_feed_items == null ||
+			    req.body.title_selection == null ||
+			    req.body.body_selection == null ) {
+				res_obj.error = new Error('POST variables not found.');
+				res.json(res_obj);
+				return;
+		}
+		else {
 			// now, check if the cookie is valid.
 //			var cookie={}; cookie.data={}; cookie.data.user = 'username';
 			Util.checkCookie(req, res,
@@ -62,10 +63,10 @@ var UserController = function()
 					// do the actual editing!
 					Ni.model('User').editFeed(
 						cookie.data.user,
-						POST.feed_url,
-						POST.num_feed_items,
-						POST.title_selection,
-						POST.body_selection,
+						req.body.feed_url,
+						req.body.num_feed_items,
+						req.body.title_selection,
+						req.body.body_selection,
 						function(err, feeds)
 						{
 							if(err) {
@@ -92,21 +93,22 @@ var UserController = function()
 			'success': false
 		};
 
-		// get POST variable
-		Util.getPOST(req, function(err, POST)
-		{
-			if(err) {
-				console.log(err.message);
-				res_obj.error = err;
+		if (req.method != 'POST') {
+				res_obj.error = new Error('Not POST request.');
 				res.json(res_obj);
 				return;
-			}
-			if( typeof(POST.feed_array) == 'undefined' ) {
-				res_obj.error = new Error('POST variables not found.');
+		}
+		else if (req.body == null) {
+				res_obj.error = new Error('No POST data.');
 				res.json(res_obj);
 				return;
-			}
-
+		}
+		else if (req.body.feed_array == null) {
+				res_obj.error = new Error('No feed array provided.');
+				res.json(res_obj);
+				return;
+		}
+		else {
 			// now check cookie
 			Util.checkCookie(req, res,
 				function(err, cookie)
@@ -120,7 +122,7 @@ var UserController = function()
 					
 					Ni.model('User').updateFeeds(
 						cookie.data.user,
-						POST.feed_array,
+						req.body.feed_array,
 						function(err, feeds)
 						{
 							if(err) {
@@ -147,21 +149,22 @@ var UserController = function()
 			'success': false
 		};
 
-		// get POST variable
-		Util.getPOST(req, function(err, POST)
-		{
-			if(err) {
-				console.log(err.message);
-				res_obj.error = err;
+		if (req.method != 'POST') {
+				res_obj.error = new Error('Not POST request.');
 				res.json(res_obj);
 				return;
-			}
-			if( typeof(POST.feed_url) == 'undefined' ) {
-				res_obj.error = new Error('POST variables not found.');
+		}
+		else if (req.body == null) {
+				res_obj.error = new Error('No POST data.');
 				res.json(res_obj);
 				return;
-			}
-
+		}
+		else if (req.body.feed_url == null) {
+				res_obj.error = new Error('No feed URL provided.');
+				res.json(res_obj);
+				return;
+		}
+		else {
 			// now get cookie
 			Util.checkCookie(req, res,
 				function(err, cookie)
@@ -175,7 +178,7 @@ var UserController = function()
 					
 					Ni.model('User').removeFeed(
 						cookie.data.user,
-						POST.feed_url,
+						req.body.feed_url,
 						function(err, feeds)
 						{
 							if(err) {
@@ -202,21 +205,22 @@ var UserController = function()
 			'teaser': ''
 		};
 
-		// get POST variable
-		Util.getPOST(req, function(err, POST)
-		{
-			if(err) {
-				console.log(err.message);
-				res_obj.error = err;
+		if (req.method != 'POST') {
+				res_obj.error = new Error('Not POST request.');
 				res.json(res_obj);
 				return;
-			}
-			if( typeof(POST.feed_url) == 'undefined' ) {
-				res_obj.error = new Error('POST variables not found.');
+		}
+		else if (req.body == null) {
+				res_obj.error = new Error('No POST data.');
 				res.json(res_obj);
 				return;
-			}
-
+		}
+		else if (req.body.feed_url == null) {
+				res_obj.error = new Error('No feed URL provided.');
+				res.json(res_obj);
+				return;
+		}
+		else {
 			// now check cookie
 			Util.checkCookie(req, res,
 				function(err, cookie)
@@ -249,7 +253,7 @@ var UserController = function()
 								{
 									if(
 										'url' in user.feeds[i][j] &&
-										user.feeds[i][j].url == POST.feed_url
+										user.feeds[i][j].url == req.body.feed_url
 									) {	
 										col = i;
 										row = j;
@@ -270,7 +274,7 @@ var UserController = function()
 
 							console.log('gen teaser'); 
 							Ni.library('FeedServer').getFeedTeaser(
-								POST.feed_url,
+								req.body.feed_url,
 								feed.num_feed_items,
 								function(){},
 								this
