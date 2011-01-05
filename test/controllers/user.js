@@ -146,7 +146,7 @@ exports['edit'] = nodeunit.testCase(
 			var headers = {
 				'Host': 'localhost',
 				'Cookie': JSON.stringify(cookie),
-			//	'Content-Type': 'text/plain',
+				'Content-Type': 'application/json',
 			//	'Content-Length': data_send.length
 			};
 			

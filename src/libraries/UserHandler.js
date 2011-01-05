@@ -2,8 +2,10 @@
  * Dependencies
  **/
 var crypto  = require('crypto'),
+    jade    = require('jade'),
+    Step    = require('step'),
     User    = require('../models/User'),
-    dbg     = require('./Debugger.js');
+    dbg     = require('./Debugger.js'),
     Ni      = require('ni');
 
 
@@ -120,6 +122,83 @@ var UserAuth = function()
 				}
 			);
 		}
+	}
+	
+	this.createTeaser = function(cookie, feed_url, callback)
+	{
+		var global_feed;
+		Step(
+			function getUser()
+			{
+				console.log('get user'); 
+				Ni.model('User').get(
+					cookie.data.user,
+					this
+				);
+			},
+			function findFeed(err, user)
+			{
+				console.log('find feed'); 
+				if(err) throw err; // rethrows error.
+				var row=-1, col=-1;
+				for( i in user.feeds )
+				{
+					for( j in user.feeds[i] )
+					{
+						if(
+							'url' in user.feeds[i][j] &&
+							user.feeds[i][j].url == feed_url
+						) {
+							col = i;
+							row = j;
+						}
+					}
+				}
+
+				if( col == -1 ) { // row == -1 also then.
+					throw new Error('Cannot find feed');
+				} else {
+					return user.feeds[col][row];
+				}
+			},
+			function generateTeaser(err, feed)
+			{
+				global_feed = feed;
+				if(err) throw err; // rethrows error
+
+				console.log('gen teaser'); 
+				Ni.library('FeedServer').getFeedTeaser(
+					feed_url,
+					feed.num_feed_items,
+					function(){},
+					this
+				);
+			},
+			function updateTeaser(err, teaser)
+			{
+				console.log('gen teaser: '+err);
+				if(err) throw err;
+				for( keys in global_feed ) {
+					console.log('key '+keys);
+					teaser[keys] = global_feed[keys];
+				}
+				return teaser;
+			},
+			function genPage(err, feed)
+			{
+				console.log('genpage '+err);
+				if(err) throw err;
+				var teaser = jade.render(
+					Ni.view('feed').template,
+					{locals: feed}
+				);
+				return teaser;
+			},
+			function fireCallback(err, teaser)
+			{
+				callback(err, teaser);
+			}
+		);
 	}
 };
 

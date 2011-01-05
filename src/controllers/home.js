@@ -35,15 +35,123 @@ var HomeController = function()
 				res.end();
 			} else {
 				// if valid, serve the page requested.
-				Ni.model('User').get(
-					cookie.data.user,
-					function(err, user) {
+				var global_user, global_feed_array;
+				Step(
+					function getUser()
+					{
+						dbg.log('getUser '+cookie.data.user);
+						Ni.model('User').get(
+							cookie.data.user,
+							this
+						);
+					},
+					function STUBuser(err, user)
+					{
+						global_user = user;
+
+						var new_feeds = [
+							[
+								{
+									url: 'http://feeds.feedburner.com/quotationspage/qotd',
+									num_feed_items: 9,
+									body_selection: 'item',
+									title_selection: 'item'
+								}
+							],
+							[
+								{
+									url: 'http://feeds.reuters.com/reuters/companyNews?format=xml',
+									num_feed_items: 2,
+									body_selection: 'webpage',
+									title_selection: 'webpage'
+								},
+								{
+									url: 'http://feeds.reuters.com/reuters/entertainment',
+									num_feed_items: 2,
+									body_selection: 'item',
+									title_selection: 'webpage'
+								},
+							],
+							[
+								{
+									url: 'http://feeds.feedburner.com/FutilityCloset',
+									num_feed_items: 3,
+									body_selection: 'webpage',
+									title_selection: 'item'
+								}
+							]
+						];
+						global_user.feeds = new_feeds;
+						Ni.model('User').updateFeeds(
+							cookie.data.user,
+							new_feeds,
+							this
+						);
+					},
+					function getTeasers(err, feed_array)
+					{
+						dbg.log('get teaser '+JSON.stringify(global_user));
 						if (err) throw err;
+						console.log(global_user.feeds);
 						
-						console.log(user.feeds);
+						global_feed_array = feed_array;
+						var count=0;
+						var group = this.group();
+						for(i in global_user.feeds) {
+							for(j in global_user.feeds[i]) {
+								count = count + 1;
+								Ni.library('UserHandler').createTeaser(
+									cookie,
+									global_user.feeds[i][j].url,
+									function(err, teaser)
+									{
+										global_feed_array[i][j] = teaser;
+										group();
+									}
+								);
+							}
+						}
+						if(!count)
+						{
+							throw new Error('No feeds saved!');
+						}
+					},
+					function(err, teasers)
+					{
+						dbg.log('got teasers');
+						console.log('returning obj '+err);
+						var res_obj = {};
+						if(err) {
+							var columns = [];
+							columns[0] = {};
+							// return teasers
+							var page = jade.render(
+								Ni.view('page').template,
+								{locals:
+									{
+									columns: columns
+									}
+								}
+							);
+							
+							var html = jade.render(
+								Ni.view('base').template,
+								{locals:
+									{
+										base_url : "/",
+										title    : "Headlyne",
+										content  : page
+									}
+								}
+							);
+							
+							res.ok(html);
+						} else {
+							res.ok(teasers);
+						}
 					}
 				);
-		
+		/*
 		Step(
 			function getFeeds() {
 				Ni.library('FeedServer').getFeedTeaser(
@@ -145,7 +253,7 @@ var HomeController = function()
 
 				res.ok(html);
 			}
-		); // close Step
+		); */// close Step
 
 			}
 		}); // close checkCookie

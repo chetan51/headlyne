@@ -41,6 +41,7 @@ var ServerGenerator = function() {
 			dbg.log('creating server');
 			var serv = Connect.createServer(
 				Quip(),
+				Connect.bodyDecoder(),
 				self.router,
 				Ni.router
 			);

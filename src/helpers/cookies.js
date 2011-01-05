@@ -17,7 +17,7 @@ var CookiesHelper = function()
 	// takes request object, returns cookie if it found one that is valid.
 	this.checkCookie = function(req, res, callback)
 	{
-		// if no cookies are passed, redirect to login.
+		// if no cookies are passed...
 		var cookie = req.getCookie('cookie');
 		if( !cookie )
 		{
