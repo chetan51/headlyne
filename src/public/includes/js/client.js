@@ -245,6 +245,14 @@ function feedDoneClicked(e) {
 	var title_selection = preview_div.find("> .display > .titles > form .input:checked").val();
 	var body_selection = preview_div.find("> .display > .bodies > form .input:checked").val();
 	
+	// Update settings container
+	var source_div = $(feed_div).children(".source");
+	var settings_div = $(feed_div).find("> .header > .settings");
+	settings_div.children(".num-feed-items").html(num_feed_items);
+	settings_div.children(".title-selection").text(title_selection);
+	settings_div.children(".body-selection").text(body_selection);
+			
+	
 	// Update backend
 	$.ajax({
 		url: "/user/edit",
