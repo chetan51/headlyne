@@ -42,20 +42,31 @@ var Templater = function()
 			{locals: view_parameters}
 		);
 		
+		var view_parameters = {};
+		
+		var account_navigation = null;
+		
 		if (logged_in) {
 			notifications = "";
+			
+			account_navigation = jade.render(
+				Ni.view('account_navigation_logged_in').template
+			);
 		}
 		else {
 			var notifications = jade.render(
 				Ni.view('welcome_notification').template
 			);
+			
+			account_navigation = jade.render(
+				Ni.view('account_navigation_not_logged_in').template
+			);
 		}
 		
+		view_parameters.account_navigation = account_navigation;
+		
 		self.getBase(
-			{
-				page          : page,
-				notifications : notifications
-			},
+			view_parameters,
 			logged_in,
 			function(err, html) {
 				if (err) callback(err);
@@ -64,6 +75,16 @@ var Templater = function()
 				}
 			}
 		);
+	}
+	
+	this.getPageNavigation(view_parameters, callback)
+	{
+		var page_navigation = null;
+		page_navigation = jade.render(
+			Ni.view('page_navigation').template
+		);
+		
+		callback(null, page_navigation);
 	}
 
 	/**
@@ -157,6 +178,8 @@ var Templater = function()
 	 * 		parameters for view {
 	 *              title,
 	 *              page,
+	 *              page-navigation,
+	 *              account-navigation,
 	 *              notifications
 	 * 		},
 	 * 		user logged in?
@@ -173,20 +196,19 @@ var Templater = function()
 		if (view_parameters.page == null) {
 			view_parameters.page = "";
 		}
+		if (view_parameters.page-navigation == null) {
+			view_parameters.page-navigation = "";
+		}
+		if (view_parameters.account-navigation == null) {
+			view_parameters.account-navigation = "";
+		}
 		if (view_parameters.notifications == null) {
 			view_parameters.notifications = "";
 		}
 		
 		var html = jade.render(
 			Ni.view('base').template,
-			{locals:
-				{
-					base_url      : Ni.config('base_url'),
-					title         : view_parameters.title,
-		    			notifications : view_parameters.notifications,
-					content       : view_parameters.page
-				}
-			}
+			{locals:view_parameters}
 		);
 		
 		callback(null, html);
