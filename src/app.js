@@ -31,6 +31,7 @@ var db_name = 'headlyne',
  **/
 Ni.config('root', __dirname);
 
+Ni.config('base_url',            "/");
 Ni.config('http_timeout',        30000);
 Ni.config('feedparse_timeout',   5000);
 Ni.config('feed_expiry_length',  30 * 60 * 1000);

@@ -16,6 +16,49 @@ var Ni   = require('ni'),
 var Templater = function()
 {    
 	var self = this;
+	
+	/**
+	 *	Generates an HTML view of the home page for a non logged-in user.
+	 *
+	 * 	Arguments:
+	 * 		parameters for view {
+	 *              feed_map
+	 * 		}
+	 *
+	 * 	Returns (via callback):
+	 * 		HTML view
+	 **/
+	this.getHomePageNonLoggedIn = function(view_parameters, callback)
+	{
+		view_parameters.base_url = Ni.config('base_url');
+		
+		if (view_parameters.feed_map == null) {
+			view_parameters.feed_map = [];
+		}
+		
+		var page = jade.render(
+			Ni.view('page').template,
+			{locals: view_parameters}
+		);
+		
+		var notifications = jade.render(
+			Ni.view('welcome_notification').template
+		);
+
+		var html = jade.render(
+			Ni.view('base').template,
+			{locals:
+				{
+					base_url      : Ni.config('base_url'),
+					title         : "Headlyne",
+		    			notifications : notifications,
+					content       : page
+				}
+			}
+		);
+		
+		callback(null, html);
+	}
 
 	/**
 	 *	Generates an HTML view of the login page.
@@ -31,7 +74,7 @@ var Templater = function()
 	 **/
 	this.getLoginPage = function(view_parameters, callback)
 	{
-		view_parameters.base_url = "/";
+		view_parameters.base_url = Ni.config('base_url');
 		
 		if (view_parameters.username == null) {
 			view_parameters.username = "";
@@ -71,7 +114,7 @@ var Templater = function()
 	 **/
 	this.getSignupPage = function(view_parameters, callback)
 	{
-		view_parameters.base_url = "/";
+		view_parameters.base_url = Ni.config('base_url');
 		
 		if (view_parameters.username == null) {
 			view_parameters.username = "";

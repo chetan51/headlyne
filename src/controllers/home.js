@@ -127,27 +127,14 @@ var HomeController = function()
 				columns[2].feeds[0] = teaser3;
 				columns[2].feeds[1] = teaser4;
 				
-				var page = jade.render(
-					Ni.view('page').template,
-					{locals:
-						{
-						columns: columns
-						}
+				Ni.library('Templater').getHomePageNonLoggedIn(
+					{feed_map: columns},
+					function(err, html) {
+						if (err) throw err;
+
+						res.ok(html);
 					}
 				);
-
-				var html = jade.render(
-					Ni.view('base').template,
-					{locals:
-						{
-							base_url : "/",
-							title    : "Headlyne",
-							content  : page
-						}
-					}
-				);
-
-				res.ok(html);
 			}
 		); // close Step
 

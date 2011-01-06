@@ -18,6 +18,7 @@ $(document).ready(function() {
 	addFeedListeners($(".feed"));
 	refreshColumnDeleteOptions($(".column"));
       enablePlaceholders();
+      initializeNotifications();
 });
 
 /*
@@ -126,6 +127,14 @@ function showPlaceholder(input) {
 		}
 		input.addClass('placeholder');
 		input.val(input.attr('placeholder'));
+	}
+}
+
+function initializeNotifications() {
+	var notifications_div = $("#notifications");
+	var body_div = notifications_div.find("> .content > .body");
+	if (body_div.text() && body_div.text() != "") {
+		notifications_div.slideDown("fast");
 	}
 }
 
@@ -613,10 +622,10 @@ function loadFullArticle(feeditem_div, callback) {
 
 function notify(html) {
 	var notifications_div = $("#notifications");
-	var content_div = notifications_div.children(".content");
+	var body_div = notifications_div.find("> .content > .body");
 	
 	notifications_div.slideUp("fast", function() {
-		content_div.html(html);
+		body_div.html(html);
 		notifications_div.slideDown("fast");
 	});
 }
