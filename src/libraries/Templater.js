@@ -42,28 +42,16 @@ var Templater = function()
 			{locals: view_parameters}
 		);
 		
-		if (logged_in) {
-			notifications = "";
-		}
-		else {
-			var notifications = jade.render(
-				Ni.view('welcome_notification').template
-			);
-		}
-
-		var html = jade.render(
-			Ni.view('base').template,
-			{locals:
-				{
-					base_url      : Ni.config('base_url'),
-					title         : "Headlyne",
-		    			notifications : notifications,
-					content       : page
+		self.getBase(
+			{page: page},
+			logged_in,
+			function(err, html) {
+				if (err) callback(err);
+				else {
+					callback(null, html);
 				}
 			}
 		);
-		
-		callback(null, html);
 	}
 
 	/**
@@ -91,18 +79,16 @@ var Templater = function()
 			{locals: view_parameters}
 		);
 		
-		var html = jade.render(
-			Ni.view('base').template,
-			{locals:
-				{
-					base_url : "/",
-					title    : "Login",
-					content  : login
+		self.getBase(
+			{page: login},
+			false,
+			function(err, html) {
+				if (err) callback(err);
+				else {
+					callback(null, html);
 				}
 			}
 		);
-		
-		callback(null, html);
 	}
 	
 	/**
@@ -134,13 +120,54 @@ var Templater = function()
 			{locals : view_parameters}
 		);
 		
+		self.getBase(
+			{page: signup},
+			false,
+			function(err, html) {
+				if (err) callback(err);
+				else {
+					callback(null, html);
+				}
+			}
+		);
+	}
+	
+	/**
+	 *	Generates an HTML view of base, with given content.
+	 *
+	 * 	Arguments:
+	 * 		parameters for view {
+	 *              page
+	 * 		},
+	 * 		user logged in?
+	 *
+	 * 	Returns (via callback):
+	 * 		HTML view
+	 **/
+	this.getBase = function(view_parameters, logged_in, callback) {
+		view_parameters.base_url = Ni.config('base_url');
+		
+		if (view_parameters.page == null) {
+			view_parameters.page = "";
+		}
+		
+		if (logged_in) {
+			notifications = "";
+		}
+		else {
+			var notifications = jade.render(
+				Ni.view('welcome_notification').template
+			);
+		}
+
 		var html = jade.render(
 			Ni.view('base').template,
 			{locals:
 				{
-					base_url : "/",
-					title    : "Sign Up",
-					content  : signup
+					base_url      : Ni.config('base_url'),
+					title         : "Headlyne",
+		    			notifications : notifications,
+					content       : view_parameters.page
 				}
 			}
 		);

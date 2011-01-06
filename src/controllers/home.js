@@ -27,17 +27,13 @@ var HomeController = function()
 	{
 		Ni.helper('cookies').checkCookie(req, res, function(err, cookie)
 		{
+			var logged_in = null;
+			
 			if( err ) {
-				Ni.library('Templater').getHomePage(
-					{},
-					false,
-					function(err, html) {
-						if (err) throw err;
-
-						res.ok(html);
-					}
-				);
+				logged_in = false;
 			} else {
+				logged_in = true;
+				
 				// if valid, serve the page requested.
 				Ni.model('User').get(
 					cookie.data.user,
@@ -134,7 +130,7 @@ var HomeController = function()
 					
 					Ni.library('Templater').getHomePage(
 						{feed_map: columns},
-						true,
+						logged_in,
 						function(err, html) {
 							if (err) throw err;
 
