@@ -651,7 +651,7 @@ function verifyLoggedInForChanges() {
 	}
 	else {
 		notify("<p>These changes will not be saved, but feel free to play around.</p>"
-		     + "<p>Log in or sign up to make this page yours.</p>");
+		     + "<p><a href=\"/home/login\">Log in</a> or <a href=\"/home/signup\">sign up</a> to make this page yours.</p>");
 		
 		return false;
 	}
