@@ -26,7 +26,8 @@ var Templater = function()
 	 *
 	 * 	Arguments:
 	 * 		parameters for view {
-	 *              feed_map
+	 *              feed_map,
+	 *              username
 	 * 		},
 	 * 		user logged in?
 	 *
@@ -46,8 +47,11 @@ var Templater = function()
 			{locals: view_parameters}
 		);
 		
+		var name = view_parameters.name;
+		
 		var view_parameters = {};
 		view_parameters.content = page;
+		view_parameters.name = name;
 		
 		var page_navigation = self.getPageNavigation(
 			view_parameters
@@ -229,6 +233,7 @@ var Templater = function()
 	 *
 	 * 	Arguments:
 	 * 		parameters for view {
+	 * 		    username
 	 * 		    user logged in?
 	 * 		}
 	 *
@@ -238,6 +243,10 @@ var Templater = function()
 	this.getAccountNavigation = function(view_parameters, logged_in)
 	{
 		view_parameters.base_url = Ni.config('base_url');
+		
+		if (view_parameters.name == null) {
+			view_parameters.name = "Anonymous";
+		}
 		
 		var account_navigation = null;
 		

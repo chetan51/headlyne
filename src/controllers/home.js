@@ -27,57 +27,83 @@ var HomeController = function()
 	{
 		Ni.helper('cookies').checkCookie(req, res, function(err, cookie)
 		{
-			var logged_in = null;
-			
 			if( err ) {
-				logged_in = false;
+				self._loadHomePage(
+					false,
+					null,
+					function(err, html) {
+						if (err) throw err;
+
+						res.ok(html);
+					}
+				);
 			} else {
 				logged_in = true;
 				
-				// if valid, serve the page requested.
 				Ni.model('User').get(
 					cookie.data.user,
 					function(err, user) {
 						if (err) throw err;
-						
-						console.log(user.feeds);
+						else {
+							name = user.first_name + " " + user.last_name;
+							console.log(user.feeds);
+							
+							self._loadHomePage(
+								true,
+								name,
+								function(err, html) {
+									if (err) throw err;
+
+									res.ok(html);
+								}
+							);
+						}
 					}
 				);
 			}
 		
-			Step(
-				function getFeeds() {
-					Ni.library('FeedServer').getFeedTeaser(
-						'http://feeds.feedburner.com/quotationspage/qotd',
-						9,
-						function() {},
-						this.parallel()
-					);
-					
-					Ni.library('FeedServer').getFeedTeaser(
-						'http://feeds.reuters.com/reuters/companyNews?format=xml',
-						2,
-						function() {},
-						this.parallel()
-					);
-					
-					Ni.library('FeedServer').getFeedTeaser(
-						'http://feeds.reuters.com/reuters/entertainment',
-						//'http://xkcd.com/rss.xml',
-						4,
-						function() {},
-						this.parallel()
-					);
-					
-					Ni.library('FeedServer').getFeedTeaser(
-						'http://feeds.feedburner.com/FutilityCloset',
-						2,
-						function() {},
-						this.parallel()
-					);
-				},
+		});
+	}
+	
+	this._loadHomePage = function(logged_in, name, callback)
+	{
+		Step(
+			function getFeeds() {
+				Ni.library('FeedServer').getFeedTeaser(
+					'http://feeds.feedburner.com/quotationspage/qotd',
+					9,
+					function() {},
+					this.parallel()
+				);
+				
+				Ni.library('FeedServer').getFeedTeaser(
+					'http://feeds.reuters.com/reuters/companyNews?format=xml',
+					2,
+					function() {},
+					this.parallel()
+				);
+				
+				Ni.library('FeedServer').getFeedTeaser(
+					'http://feeds.reuters.com/reuters/entertainment',
+					//'http://xkcd.com/rss.xml',
+					4,
+					function() {},
+					this.parallel()
+				);
+				
+				Ni.library('FeedServer').getFeedTeaser(
+					'http://feeds.feedburner.com/FutilityCloset',
+					2,
+					function() {},
+					this.parallel()
+				);
+			},
 
-				function displayFeeds(err, feed1, feed2, feed3, feed4) {
+			function displayFeeds(err, feed1, feed2, feed3, feed4) {
+				if (err) {
+					callback(err);
+				}
+				else {
 					feed1.num_feed_items = 9;
 					feed1.title_selection = "item";
 					feed1.body_selection = "item";
@@ -128,15 +154,19 @@ var HomeController = function()
 					columns[2].feeds[0] = teaser3;
 					columns[2].feeds[1] = teaser4;
 					
+					var view_parameters = {};
+					view_parameters.feed_map = columns;
+					view_parameters.name = name;
+
 					var home = Ni.library('Templater').getHomePage(
-						{feed_map: columns},
+						view_parameters,
 						logged_in
 					);
 					
-					res.ok(home);
+					callback(null, home);
 				}
-			); // close Step
-		}); // close checkCookie
+			}
+		);
 	}
 	
 	this.login = function(req, res, next) {
