@@ -321,15 +321,26 @@ function feedURLKeyup(e) {
 		var feed_div = $(this).parents(".feed");
 		var this_column = feed_div.parents(".column");
 		
-		updateFeedPreview(feed_div, function(err) {
-			if (!err) {
-				// Update feed metadata
-				var feed_title = feed_div.find("> .preview > .header > .title").text();
-				feed_div.find("> .header > .title").html(feed_title);
-				
-				resizeColumnDynamically(this_column, 50);
-			}
-		});
+		// Make sure feed doesn't already exist on page
+		var source_div = $(feed_div).children(".source");
+		var feed_url = source_div.find("> .url-control > .url-input").val();
+		
+		var page = this_column.parents(".page");
+		var same_feeds = page.find("> .column > .content > .feed > .source > .url-control > .url-input[value='" + feed_url + "']");
+		if (same_feeds.size() > 1) {
+			notify("That feed already exists on this page.");
+		}
+		else {
+			updateFeedPreview(feed_div, function(err) {
+				if (!err) {
+					// Update feed metadata
+					var feed_title = feed_div.find("> .preview > .header > .title").text();
+					feed_div.find("> .header > .title").html(feed_title);
+					
+					resizeColumnDynamically(this_column, 50);
+				}
+			});
+		}
 	}
 }
 
