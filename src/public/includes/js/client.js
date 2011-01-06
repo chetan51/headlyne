@@ -195,7 +195,10 @@ function doneClicked(e) {
 	
 	var feeds = $(".feed");
 	
-	var edit_divs = feeds.find("> .header > .edit-overlay > .edit-delete > .edit");
+	var edit_overlays = feeds.find("> .header > .edit-overlay");
+	edit_overlays.hide();
+	
+	var edit_divs = edit_overlays.find("> .edit-delete > .edit");
 	edit_divs.children(".default-control").show();
 	edit_divs.children(".editing-control").hide();
 	
