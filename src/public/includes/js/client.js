@@ -313,8 +313,12 @@ function feedHeaderHoverIn(e) {
 }
 
 function feedHeaderHoverOut(e) {
-	$(this).children(".edit-overlay").hide();
-	resetFeedDelete(feed_div);
+	var edit_overlay = $(this).children(".edit-overlay");
+	
+	if (edit_overlay.find("> .edit-delete > .edit > .editing-control").is(":hidden")) {    // not editing
+		edit_overlay.hide();
+		resetFeedDelete(feed_div);
+	}
 }
 
 function feedURLKeyup(e) {
