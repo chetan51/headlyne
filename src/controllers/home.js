@@ -61,7 +61,6 @@ var HomeController = function()
 					}
 				);
 			}
-		
 		});
 	}
 	

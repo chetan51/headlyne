@@ -111,6 +111,7 @@ var Templater = function()
 		view_parameters.account_navigation = account_navigation;
 		
 		view_parameters.title = "Login";
+		view_parameters.folio_title = "Login";
 		view_parameters.content = login;
 		
 		return self.getBase(view_parameters, false);
@@ -154,6 +155,7 @@ var Templater = function()
 		view_parameters.account_navigation = account_navigation;
 		
 		view_parameters.title = "Sign Up";
+		view_parameters.folio_title = "Sign Up";
 		view_parameters.content = signup;
 		
 		return self.getBase(view_parameters, false);
@@ -184,6 +186,13 @@ var Templater = function()
 		
 		if (view_parameters.title == null) {
 			view_parameters.title = "Headlyne";
+		}
+		if (view_parameters.folio_title == null) {
+			view_parameters.folio_title = "Headlyne";
+		}
+		if (view_parameters.folio_subtitle == null) {
+			var now = new Date();
+			view_parameters.folio_subtitle = now.format("dddd, mmmm dS, yyyy");
 		}
 		if (view_parameters.page == null) {
 			view_parameters.page = "";
