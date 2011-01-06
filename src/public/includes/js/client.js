@@ -124,23 +124,28 @@ function enablePlaceholdersForInputs(inputs) {
 
 function hidePlaceholder(input) {
 	if (input.val() == input.attr('placeholder')) {
+		var final_input = input;
+		
 		if (input.data('is_password')) {
 			var new_input = input.clone();
 			new_input.attr('type', "password");
-			new_input.val("");
 			
 			new_input.insertBefore(input);
 			input.remove();
 			new_input.focus();
+			
+			final_input = new_input;
 		}
 		
-		input.val('');
-		input.removeClass('placeholder');
+		final_input.val('');
+		final_input.removeClass('placeholder');
 	}
 }
 
 function showPlaceholder(input) {
 	if (input.val() == '' || input.val() == input.attr('placeholder')) {
+		var final_input = input;
+		
 		if (input.attr('type') == "password") {
 			var new_input = input.clone();
 			new_input.attr('type', "text");
@@ -149,10 +154,12 @@ function showPlaceholder(input) {
 			enablePlaceholdersForInputs(new_input);
 			new_input.insertBefore(input);
 			input.remove();
+			
+			final_input = new_input;
 		}
 		
-		input.addClass('placeholder');
-		input.val(input.attr('placeholder'));
+		final_input.addClass('placeholder');
+		final_input.val(input.attr('placeholder'));
 	}
 }
 
