@@ -407,6 +407,10 @@ function feedURLKeyup(e) {
 			notify("<p>That feed already exists on this page.</p>");
 		}
 		else {
+			// Save URL to settings div
+			var settings_div = feed_div.find("> .header > .settings");
+			settings_div.children(".url").html(feed_url);
+
 			updateFeedPreview(feed_div, function(err) {
 				if (!err) {
 					// Update feed metadata
