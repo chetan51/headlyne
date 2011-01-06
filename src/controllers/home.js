@@ -77,7 +77,7 @@ var HomeController = function()
 				
 				Ni.library('FeedServer').getFeedTeaser(
 					'http://feeds.reuters.com/reuters/companyNews?format=xml',
-					2,
+					4,
 					function() {},
 					this.parallel()
 				);
@@ -107,8 +107,8 @@ var HomeController = function()
 					feed1.title_selection = "item";
 					feed1.body_selection = "item";
 					
-					feed2.num_feed_items = 2;
-					feed2.title_selection = "webpage";
+					feed2.num_feed_items = 4;
+					feed2.title_selection = "item";
 					feed2.body_selection = "webpage";
 
 					feed3.num_feed_items = 4;
@@ -150,8 +150,8 @@ var HomeController = function()
 					
 					columns[2] = {};
 					columns[2].feeds = [];
-					columns[2].feeds[0] = teaser3;
-					columns[2].feeds[1] = teaser4;
+					columns[2].feeds[0] = teaser4;
+					columns[2].feeds[1] = teaser3;
 					
 					var view_parameters = {};
 					view_parameters.feed_map = columns;
