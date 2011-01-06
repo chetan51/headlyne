@@ -83,6 +83,7 @@ var FeedController = function()
 		// object to be filled and returned.
 		var res_obj = {
 			'error': null,
+			'feed_title': '',
 			'teaser_body': ''
 		};
 
@@ -138,6 +139,7 @@ var FeedController = function()
 						{feed: feed}
 					);
 
+					res_obj.feed_title  = feed.title;
 					res_obj.teaser_body = teaser_body;
 					res.json(res_obj);
 					dbg.log('teaser sent');

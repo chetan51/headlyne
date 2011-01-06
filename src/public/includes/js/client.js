@@ -348,6 +348,11 @@ function feedDoneClicked(e) {
 				}
 				else {
 					feed_div.children(".body").html(data.teaser_body);
+					
+					// Update feed metadata
+					var feed_title = data.feed_title;
+					feed_div.find("> .header > .title").html(feed_title);
+						
 					addFeedListeners(feed_div);
 				}
 			},
