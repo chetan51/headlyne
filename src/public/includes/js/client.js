@@ -93,28 +93,47 @@ function refreshColumnDeleteOptions(columns) {
 	deleting_controls.children(".cancel-button").click(columnDeleteCancelClicked);
 }
 
-function enablePlaceholders(element) {
-	var inputs = $('[placeholder]', element);
+function enablePlaceholders(root_element) {
+	var inputs = $('[placeholder]', root_element);
+	
+	enablePlaceholdersForInputs(inputs);
+	
+	// On any form submit, clear all placeholders
+	$('form').submit(function(e) {
+		var inputs = $(this).find("input");
+		inputs.each(function() {
+			if ($(this).val() && $(this).val() == $(this).attr('placeholder')) {
+				$(this).val("");
+			}
+		});
+		return true;
+	});
+}
+
+function enablePlaceholdersForInputs(inputs) {
 	inputs.focus(function() {
 		hidePlaceholder($(this));
 	}).blur(function() {
 		showPlaceholder($(this));
-	}).load(function() {
-		showPlaceholder(inputs);
 	});
 	
-	// On any form submit, clear all placeholders
-	$('form').submit(function(e) {
-		var input = $(this).find("input");
-		if (input.val() == input.attr('placeholder')) {
-			input.val("");
-		}
-		return true;
+	inputs.each(function() {
+		showPlaceholder($(this));
 	});
 }
 
 function hidePlaceholder(input) {
 	if (input.val() == input.attr('placeholder')) {
+		if (input.data('is_password')) {
+			var new_input = input.clone();
+			new_input.attr('type', "password");
+			new_input.val("");
+			
+			new_input.insertBefore(input);
+			input.remove();
+			new_input.focus();
+		}
+		
 		input.val('');
 		input.removeClass('placeholder');
 	}
@@ -123,8 +142,15 @@ function hidePlaceholder(input) {
 function showPlaceholder(input) {
 	if (input.val() == '' || input.val() == input.attr('placeholder')) {
 		if (input.attr('type') == "password") {
-			input.attr('type', "text");
+			var new_input = input.clone();
+			new_input.attr('type', "text");
+			new_input.data('is_password', true);
+			
+			enablePlaceholdersForInputs(new_input);
+			new_input.insertBefore(input);
+			input.remove();
 		}
+		
 		input.addClass('placeholder');
 		input.val(input.attr('placeholder'));
 	}
