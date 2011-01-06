@@ -267,7 +267,7 @@ function feedDoneClicked(e) {
 	settings_div.children(".title-selection").text(title_selection);
 	settings_div.children(".body-selection").text(body_selection);
 			
-	if (verifyLoggedInForChanges()) {
+	if (feed_url && feed_url != "" && verifyLoggedInForChanges()) {
 		// Update backend
 		$.ajax({
 			url: "/user/edit",
@@ -464,13 +464,15 @@ function feedPositionsUpdated(e) {
 			var title_selection = settings_div.children(".title-selection").text();
 			var body_selection = settings_div.children(".body-selection").text();
 			
-			var feed = {
-				url             : feed_url,
-				num_feed_items  : num_feed_items,
-				title_selection : title_selection,
-				body_selection  : body_selection
-			};
-			feed_map[column_index][feed_index] = feed;
+			if (feed_url && feed_url != "") {
+				var feed = {
+					url             : feed_url,
+					num_feed_items  : num_feed_items,
+					title_selection : title_selection,
+					body_selection  : body_selection
+				};
+				feed_map[column_index][feed_index] = feed;
+			}
 		});
 	});
 	
