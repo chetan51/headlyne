@@ -599,6 +599,7 @@ function removeColumn(column_div) {
 function updateFeedPreview(feed_div, callback) {
 	var preview_div = feed_div.children(".preview");
 	var settings_div = feed_div.find("> .header > .settings");
+	var num_feed_items = settings_div.children(".num-feed-items").text();
 	var title_selection = settings_div.children(".title-selection").text();
 	var body_selection = settings_div.children(".body-selection").text();
 	var feed_url = settings_div.children(".url").text();
@@ -624,8 +625,17 @@ function updateFeedPreview(feed_div, callback) {
 						preview_div.slideDown("fast");
 						
 						// Mark selected settings
+						var num_feed_items_input = preview_div.find("> .num-items > .input");
 						var titles_form = preview_div.find("> .display > .titles > form");
 						var bodies_form = preview_div.find("> .display > .bodies > form");
+						
+						if (num_feed_items && num_feed_items != "") {
+							num_feed_items_input.val(num_feed_items);
+						}
+						else {
+							num_feed_items_input.val("5");
+						}
+						
 						if (title_selection == "item") {
 							titles_form.find("> .item > .control > .input").click();
 						}
