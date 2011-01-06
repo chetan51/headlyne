@@ -292,7 +292,7 @@ function feedDoneClicked(e) {
 	feed_div.children(".preview").slideUp("fast");
 	equallyWidenColumns();
 	
-	var feed_url = source_div.find("> .url-control > .url-input").val();
+	var feed_url = inputValue(source_div.find("> .url-control > .url-input"));
 	var preview_div = feed_div.children(".preview");
 	var num_feed_items = preview_div.find("> .num-items > .input").val();
 	var title_selection = preview_div.find("> .display > .titles > form .input:checked").val();
@@ -367,7 +367,7 @@ function feedURLKeyup(e) {
 		
 		// Make sure feed doesn't already exist on page
 		var source_div = feed_div.children(".source");
-		var feed_url = source_div.find("> .url-control > .url-input").val();
+		var feed_url = inputValue(source_div.find("> .url-control > .url-input"));
 		
 		var page = this_column.parents(".page");
 		var same_feeds = page.find("> .column > .content > .feed > .source > .url-control > .url-input[value='" + feed_url + "']");
@@ -725,4 +725,13 @@ function scrollTo(element) {
 	$('html,body').animate({
 		scrollTop: $(element).offset().top
 	}, "fast");
+}
+
+function inputValue(input) {
+	if (input.val() == input.attr('placeholder')) {
+		return "";
+	}
+	else {
+		return input.val();
+	}
 }
