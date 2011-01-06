@@ -129,6 +129,7 @@ var HomeController = function()
 				
 				Ni.library('Templater').getHomePageNonLoggedIn(
 					{feed_map: columns},
+					false,
 					function(err, html) {
 						if (err) throw err;
 

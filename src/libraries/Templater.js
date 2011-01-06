@@ -18,17 +18,18 @@ var Templater = function()
 	var self = this;
 	
 	/**
-	 *	Generates an HTML view of the home page for a non logged-in user.
+	 *	Generates an HTML view of the home page.
 	 *
 	 * 	Arguments:
 	 * 		parameters for view {
 	 *              feed_map
-	 * 		}
+	 * 		},
+	 * 		user logged in?
 	 *
 	 * 	Returns (via callback):
 	 * 		HTML view
 	 **/
-	this.getHomePageNonLoggedIn = function(view_parameters, callback)
+	this.getHomePageNonLoggedIn = function(view_parameters, logged_in, callback)
 	{
 		view_parameters.base_url = Ni.config('base_url');
 		
@@ -41,9 +42,14 @@ var Templater = function()
 			{locals: view_parameters}
 		);
 		
-		var notifications = jade.render(
-			Ni.view('welcome_notification').template
-		);
+		if (logged_in) {
+			notifications = "";
+		}
+		else {
+			var notifications = jade.render(
+				Ni.view('welcome_notification').template
+			);
+		}
 
 		var html = jade.render(
 			Ni.view('base').template,
