@@ -42,8 +42,20 @@ var Templater = function()
 			{locals: view_parameters}
 		);
 		
+		if (logged_in) {
+			notifications = "";
+		}
+		else {
+			var notifications = jade.render(
+				Ni.view('welcome_notification').template
+			);
+		}
+		
 		self.getBase(
-			{page: page},
+			{
+				page          : page,
+				notifications : notifications
+			},
 			logged_in,
 			function(err, html) {
 				if (err) callback(err);
@@ -137,7 +149,8 @@ var Templater = function()
 	 *
 	 * 	Arguments:
 	 * 		parameters for view {
-	 *              page
+	 *              page,
+	 *              notifications
 	 * 		},
 	 * 		user logged in?
 	 *
@@ -150,23 +163,17 @@ var Templater = function()
 		if (view_parameters.page == null) {
 			view_parameters.page = "";
 		}
+		if (view_parameters.notifications == null) {
+			view_parameters.notifications = "";
+		}
 		
-		if (logged_in) {
-			notifications = "";
-		}
-		else {
-			var notifications = jade.render(
-				Ni.view('welcome_notification').template
-			);
-		}
-
 		var html = jade.render(
 			Ni.view('base').template,
 			{locals:
 				{
 					base_url      : Ni.config('base_url'),
 					title         : "Headlyne",
-		    			notifications : notifications,
+		    			notifications : view_parameters.notifications,
 					content       : view_parameters.page
 				}
 			}
