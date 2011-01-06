@@ -78,6 +78,12 @@ var UserAuth = function()
 		else if (params.email == null || params.email == "") {
 			callback(null, false, "Please enter your email address.");
 		}
+		else if (params.first_name == null || params.first_name == "") {
+			callback(null, false, "Please enter your first name.");
+		}
+		else if (params.last_name == null || params.last_name == "") {
+			callback(null, false, "Please enter your last name.");
+		}
 		else if (params.password == null || params.password == "") {
 			callback(null, false, "Please enter a password.");
 		}
@@ -88,22 +94,12 @@ var UserAuth = function()
 			callback(null, false, "Passwords do not match.");
 		}
 		else {
-			var	username    = params.username,
-				password    = params.password,
-				first_name  = "",
-				last_name   = "",
-				email       = "";
-
-			if (params.first_name != 'undefined') first_name = params.first_name;
-			if (params.last_name != 'undefined') last_name = params.last_name;
-			if (params.email != 'undefined') email = params.email;
-
 			Ni.model('User').save(
-				username,
-				password,
-				first_name,
-				last_name,
-				email,
+				params.username,
+				params.password,
+				params.first_name,
+				params.last_name,
+				params.email,
 				function(err, user)
 				{
 					if(err != null) {

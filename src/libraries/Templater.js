@@ -140,6 +140,12 @@ var Templater = function()
 		if (view_parameters.email == null) {
 			view_parameters.email = "";
 		}
+		if (view_parameters.first_name == null) {
+			view_parameters.first_name = "";
+		}
+		if (view_parameters.last_name == null) {
+			view_parameters.last_name = "";
+		}
 
 		var signup = jade.render(
 			Ni.view('signup').template,
