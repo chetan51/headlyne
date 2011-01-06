@@ -525,10 +525,10 @@ function columnHoverOut(e) {
 
 function feedPositionsUpdated(e) {
 	var feed_map = [];
-	$(".column").each(function(column_index, column_div) {
+	$(".column").each(function(column_index) {
 		feed_map[column_index] = [];
-		$(column_div).find("> .content > .feed").each(function(feed_index, feed_div) {
-			var settings_div = $(feed_div).find("> .header > .settings");
+		$(this).find("> .content > .feed").each(function(feed_index) {
+			var settings_div = $(this).find("> .header > .settings");
 			var feed_url = settings_div.children(".url").text();
 			var num_feed_items = settings_div.children(".num-feed-items").text();
 			var title_selection = settings_div.children(".title-selection").text();
