@@ -92,7 +92,10 @@ var Templater = function()
 		);
 		
 		self.getBase(
-			{page: login},
+			{
+				title : "Login",
+				page  : login
+			},
 			false,
 			function(err, html) {
 				if (err) callback(err);
@@ -133,7 +136,10 @@ var Templater = function()
 		);
 		
 		self.getBase(
-			{page: signup},
+			{
+				title : "Sign Up",
+				page  : signup
+			},
 			false,
 			function(err, html) {
 				if (err) callback(err);
@@ -149,6 +155,7 @@ var Templater = function()
 	 *
 	 * 	Arguments:
 	 * 		parameters for view {
+	 *              title,
 	 *              page,
 	 *              notifications
 	 * 		},
@@ -160,6 +167,9 @@ var Templater = function()
 	this.getBase = function(view_parameters, logged_in, callback) {
 		view_parameters.base_url = Ni.config('base_url');
 		
+		if (view_parameters.title == null) {
+			view_parameters.title = "Headlyne";
+		}
 		if (view_parameters.page == null) {
 			view_parameters.page = "";
 		}
@@ -172,7 +182,7 @@ var Templater = function()
 			{locals:
 				{
 					base_url      : Ni.config('base_url'),
-					title         : "Headlyne",
+					title         : view_parameters.title,
 		    			notifications : view_parameters.notifications,
 					content       : view_parameters.page
 				}
