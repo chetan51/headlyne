@@ -357,6 +357,7 @@ function fullArticleClicked(e) {
 	
 	article_div.slideUp("fast");
 	snippet_div.slideDown("fast");
+	scrollTo(feeditem_div.children(".header"));
 }
 
 function feedItemTitleClicked(e) {
@@ -628,4 +629,10 @@ function notify(html) {
 		body_div.html(html);
 		notifications_div.slideDown("fast");
 	});
+}
+
+function scrollTo(element) {
+	$('html,body').animate({
+		scrollTop: $(element).offset().top
+	}, "fast");
 }
