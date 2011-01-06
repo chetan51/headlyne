@@ -78,12 +78,12 @@ var FeedController = function()
 		}
 	}
 	
-	this.teaser = function(req, res, next)
+	this.teaser_body = function(req, res, next)
 	{
 		// object to be filled and returned.
 		var res_obj = {
 			'error': null,
-			'teaser': ''
+			'teaser_body': ''
 		};
 
 		if (req.method != 'POST') {
@@ -121,7 +121,7 @@ var FeedController = function()
 				req.body.feed_url,
 				req.body.num_feed_items,
 				function() {},
-				function(err, teaser)
+				function(err, feed)
 				{
 					if (err) {
 						dbg.log('preview error: '+err.message);
@@ -130,16 +130,15 @@ var FeedController = function()
 						return;
 					}
 					
-					teaser.num_feed_items  = req.body.num_feed_items;
-					teaser.title_selection = req.body.title_selection;
-					teaser.body_selection  = req.body.body_selection;
+					feed.num_feed_items  = req.body.num_feed_items;
+					feed.title_selection = req.body.title_selection;
+					feed.body_selection  = req.body.body_selection;
 					
-					var html = jade.render(
-						Ni.view('feed').template,
-						{locals: teaser}
+					var teaser_body = Ni.library('Templater').getFeedTeaserBody(
+						{feed: feed}
 					);
 
-					res_obj.teaser = html;
+					res_obj.teaser_body = teaser_body;
 					res.json(res_obj);
 					dbg.log('teaser sent');
 				}

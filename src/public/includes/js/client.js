@@ -314,7 +314,7 @@ function feedDoneClicked(e) {
 	if (feed_url && feed_url != "") {
 		// Update feed teaser
 		$.ajax({
-			url: "/feed/teaser",
+			url: "/feed/teaser_body",
 			type: 'POST',
 			data: {
 				feed_url        : feed_url,
@@ -328,7 +328,8 @@ function feedDoneClicked(e) {
 					feedTeaserError();
 				}
 				else {
-					feed_div.html(data.teaser);
+					feed_div.children(".body").html(data.teaser_body);
+					addFeedListeners(feed_div);
 				}
 			},
 			error: function() {
