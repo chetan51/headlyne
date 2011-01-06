@@ -28,11 +28,15 @@ var HomeController = function()
 		Ni.helper('cookies').checkCookie(req, res, function(err, cookie)
 		{
 			if( err ) {
-				dbg.log('redirect: home to logout: '+err.message);
-				res.writeHead(302, [
-					['Location', '/home/logout']
-				]); // redirect to login page.
-				res.end();
+				Ni.library('Templater').getHomePage(
+					{},
+					false,
+					function(err, html) {
+						if (err) throw err;
+
+						res.ok(html);
+					}
+				);
 			} else {
 				// if valid, serve the page requested.
 				Ni.model('User').get(
@@ -43,103 +47,102 @@ var HomeController = function()
 						console.log(user.feeds);
 					}
 				);
+			}
 		
-		Step(
-			function getFeeds() {
-				Ni.library('FeedServer').getFeedTeaser(
-					'http://feeds.feedburner.com/quotationspage/qotd',
-					9,
-					function() {},
-					this.parallel()
-				);
-				
-				Ni.library('FeedServer').getFeedTeaser(
-					'http://feeds.reuters.com/reuters/companyNews?format=xml',
-					2,
-					function() {},
-					this.parallel()
-				);
-				
-				Ni.library('FeedServer').getFeedTeaser(
-					'http://feeds.reuters.com/reuters/entertainment',
-					//'http://xkcd.com/rss.xml',
-					4,
-					function() {},
-					this.parallel()
-				);
-				
-				Ni.library('FeedServer').getFeedTeaser(
-					'http://feeds.feedburner.com/FutilityCloset',
-					2,
-					function() {},
-					this.parallel()
-				);
-			},
+			Step(
+				function getFeeds() {
+					Ni.library('FeedServer').getFeedTeaser(
+						'http://feeds.feedburner.com/quotationspage/qotd',
+						9,
+						function() {},
+						this.parallel()
+					);
+					
+					Ni.library('FeedServer').getFeedTeaser(
+						'http://feeds.reuters.com/reuters/companyNews?format=xml',
+						2,
+						function() {},
+						this.parallel()
+					);
+					
+					Ni.library('FeedServer').getFeedTeaser(
+						'http://feeds.reuters.com/reuters/entertainment',
+						//'http://xkcd.com/rss.xml',
+						4,
+						function() {},
+						this.parallel()
+					);
+					
+					Ni.library('FeedServer').getFeedTeaser(
+						'http://feeds.feedburner.com/FutilityCloset',
+						2,
+						function() {},
+						this.parallel()
+					);
+				},
 
-			function displayFeeds(err, feed1, feed2, feed3, feed4) {
-				feed1.num_feed_items = 9;
-				feed1.title_selection = "item";
-				feed1.body_selection = "item";
-				
-				feed2.num_feed_items = 2;
-				feed2.title_selection = "webpage";
-				feed2.body_selection = "webpage";
+				function displayFeeds(err, feed1, feed2, feed3, feed4) {
+					feed1.num_feed_items = 9;
+					feed1.title_selection = "item";
+					feed1.body_selection = "item";
+					
+					feed2.num_feed_items = 2;
+					feed2.title_selection = "webpage";
+					feed2.body_selection = "webpage";
 
-				feed3.num_feed_items = 4;
-				feed3.title_selection = "item";
-				feed3.body_selection = "item";
-				
-				feed4.num_feed_items = 2;
-				feed4.title_selection = "item";
-				feed4.body_selection = "webpage";
-				
-				var teaser1 = jade.render(
-					Ni.view('feed').template,
-					{locals: feed1}
-				);
-				
-				var teaser2 = jade.render(
-					Ni.view('feed').template,
-					{locals: feed2}
-				);
-				
-				var teaser3 = jade.render(
-					Ni.view('feed').template,
-					{locals: feed3}
-				);
-				
-				var teaser4 = jade.render(
-					Ni.view('feed').template,
-					{locals: feed4}
-				);
-				
-				var columns = [];
-				columns[0] = {};
-				columns[0].feeds = [];
-				columns[0].feeds[0] = teaser1;
-				
-				columns[1] = {};
-				columns[1].feeds = [];
-				columns[1].feeds[0] = teaser2;
-				
-				columns[2] = {};
-				columns[2].feeds = [];
-				columns[2].feeds[0] = teaser3;
-				columns[2].feeds[1] = teaser4;
-				
-				Ni.library('Templater').getHomePageNonLoggedIn(
-					{feed_map: columns},
-					false,
-					function(err, html) {
-						if (err) throw err;
+					feed3.num_feed_items = 4;
+					feed3.title_selection = "item";
+					feed3.body_selection = "item";
+					
+					feed4.num_feed_items = 2;
+					feed4.title_selection = "item";
+					feed4.body_selection = "webpage";
+					
+					var teaser1 = jade.render(
+						Ni.view('feed').template,
+						{locals: feed1}
+					);
+					
+					var teaser2 = jade.render(
+						Ni.view('feed').template,
+						{locals: feed2}
+					);
+					
+					var teaser3 = jade.render(
+						Ni.view('feed').template,
+						{locals: feed3}
+					);
+					
+					var teaser4 = jade.render(
+						Ni.view('feed').template,
+						{locals: feed4}
+					);
+					
+					var columns = [];
+					columns[0] = {};
+					columns[0].feeds = [];
+					columns[0].feeds[0] = teaser1;
+					
+					columns[1] = {};
+					columns[1].feeds = [];
+					columns[1].feeds[0] = teaser2;
+					
+					columns[2] = {};
+					columns[2].feeds = [];
+					columns[2].feeds[0] = teaser3;
+					columns[2].feeds[1] = teaser4;
+					
+					Ni.library('Templater').getHomePage(
+						{feed_map: columns},
+						true,
+						function(err, html) {
+							if (err) throw err;
 
-						res.ok(html);
-					}
-				);
-			}
-		); // close Step
-
-			}
+							res.ok(html);
+						}
+					);
+				}
+			); // close Step
 		}); // close checkCookie
 	}
 	

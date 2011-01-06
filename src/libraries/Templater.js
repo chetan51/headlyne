@@ -29,7 +29,7 @@ var Templater = function()
 	 * 	Returns (via callback):
 	 * 		HTML view
 	 **/
-	this.getHomePageNonLoggedIn = function(view_parameters, logged_in, callback)
+	this.getHomePage = function(view_parameters, logged_in, callback)
 	{
 		view_parameters.base_url = Ni.config('base_url');
 		
