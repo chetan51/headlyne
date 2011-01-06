@@ -208,11 +208,11 @@ var HomeController = function()
 		Ni.helper('cookies').checkCookie(req, res, function(err, cookie)
 		{
 			if( err ) {
-				dbg.log('redirect: logout to login:');
+				dbg.log('redirect: logout to home.');
 				dbg.log(err.message);
 				
 				res.clearCookie('cookie');
-				res.moved('/home/login');
+				res.moved('/');
 			} else {
 				dbg.log(cookie.data);
 				Ni.library('UserAuth').invalidate(
@@ -222,8 +222,8 @@ var HomeController = function()
 						// no errors -- attach a null cookie, direct to
 						// login page, and get moving.
 						res.clearCookie('cookie');
-						res.moved('/home/login');
-						dbg.log('redirect: logout to login.');
+						res.moved('/');
+						dbg.log('redirect: logout to home.');
 					}
 				);
 			}
