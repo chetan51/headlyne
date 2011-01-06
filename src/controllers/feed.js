@@ -78,6 +78,75 @@ var FeedController = function()
 		}
 	}
 	
+	this.teaser = function(req, res, next)
+	{
+		// object to be filled and returned.
+		var res_obj = {
+			'error': null,
+			'teaser': ''
+		};
+
+		if (req.method != 'POST') {
+				res_obj.error = new Error('Not POST request.');
+				res.json(res_obj);
+				return;
+		}
+		else if (req.body == null) {
+				res_obj.error = new Error('No POST data.');
+				res.json(res_obj);
+				return;
+		}
+		else if (req.body.feed_url == null) {
+				res_obj.error = new Error('No feed URL provided.');
+				res.json(res_obj);
+				return;
+		}
+		else if (req.body.num_feed_items == null) {
+				res_obj.error = new Error('No num feed items provided.');
+				res.json(res_obj);
+				return;
+		}
+		else if (req.body.title_selection == null) {
+				res_obj.error = new Error('No title selection provided.');
+				res.json(res_obj);
+				return;
+		}
+		else if (req.body.body_selection == null) {
+				res_obj.error = new Error('No body selection provided.');
+				res.json(res_obj);
+				return;
+		}
+		else {
+			Ni.library('FeedServer').getFeedTeaser(
+				req.body.feed_url,
+				req.body.num_feed_items,
+				function() {},
+				function(err, teaser)
+				{
+					if (err) {
+						dbg.log('preview error: '+err.message);
+						res_obj.error = err;
+						res.json(res_obj);
+						return;
+					}
+					
+					teaser.num_feed_items  = req.body.num_feed_items;
+					teaser.title_selection = req.body.title_selection;
+					teaser.body_selection  = req.body.body_selection;
+					
+					var html = jade.render(
+						Ni.view('feed').template,
+						{locals: teaser}
+					);
+
+					res_obj.teaser = html;
+					res.json(res_obj);
+					dbg.log('teaser sent');
+				}
+			);
+		}
+	}
+	
 	this.webpage = function(req, res, next)
 	{
 		// object to be filled and returned.
