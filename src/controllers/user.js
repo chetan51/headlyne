@@ -293,9 +293,8 @@ var UserController = function()
 						{
 							console.log('genpage '+err);
 							if(err) throw err;
-							var teaser = jade.render(
-								Ni.view('feed').template,
-								{locals: feed}
+							var teaser = Ni.library('Templater').getFeedTeaser(
+								{feed: feed}
 							);
 							return teaser;
 						},

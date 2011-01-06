@@ -280,6 +280,58 @@ var Templater = function()
 		
 		return account_navigation;
 	}
+	
+	/**
+	 *	Generates an HTML view of a feed teaser.
+	 *
+	 * 	Arguments:
+	 * 		parameters for view {
+	 * 		    feed
+	 * 		}
+	 *
+	 * 	Returns:
+	 * 		HTML view
+	 **/
+	this.getFeedTeaser = function(view_parameters)
+	{
+		var feed = view_parameters.feed;
+		
+		var teaser_body = self.getFeedTeaserBody(
+			{feed: feed}
+		);
+		
+		feed.body = teaser_body;
+		
+		var teaser = jade.render(
+			Ni.view('feed').template,
+			{locals: feed}
+		);
+		
+		return teaser;
+	}
+	
+	/**
+	 *	Generates an HTML view of a feed teaser's body.
+	 *
+	 * 	Arguments:
+	 * 		parameters for view {
+	 * 		    feed
+	 * 		}
+	 *
+	 * 	Returns:
+	 * 		HTML view
+	 **/
+	this.getFeedTeaserBody = function(view_parameters)
+	{
+		var feed = view_parameters.feed;
+		
+		var teaser_body = jade.render(
+			Ni.view('feed_body').template,
+			{locals: feed}
+		);
+		
+		return teaser_body;
+	}
 };
 
 /**

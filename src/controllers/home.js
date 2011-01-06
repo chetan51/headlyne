@@ -119,24 +119,17 @@ var HomeController = function()
 					feed4.title_selection = "item";
 					feed4.body_selection = "webpage";
 					
-					var teaser1 = jade.render(
-						Ni.view('feed').template,
-						{locals: feed1}
+					var teaser1 = Ni.library('Templater').getFeedTeaser(
+						{feed: feed1}
 					);
-					
-					var teaser2 = jade.render(
-						Ni.view('feed').template,
-						{locals: feed2}
+					var teaser2 = Ni.library('Templater').getFeedTeaser(
+						{feed: feed2}
 					);
-					
-					var teaser3 = jade.render(
-						Ni.view('feed').template,
-						{locals: feed3}
+					var teaser3 = Ni.library('Templater').getFeedTeaser(
+						{feed: feed3}
 					);
-					
-					var teaser4 = jade.render(
-						Ni.view('feed').template,
-						{locals: feed4}
+					var teaser4 = Ni.library('Templater').getFeedTeaser(
+						{feed: feed4}
 					);
 					
 					var columns = [];
