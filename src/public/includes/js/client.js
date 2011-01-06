@@ -329,7 +329,7 @@ function feedURLKeyup(e) {
 		var page = this_column.parents(".page");
 		var same_feeds = page.find("> .column > .content > .feed > .source > .url-control > .url-input[value='" + feed_url + "']");
 		if (same_feeds.size() > 1) {
-			notify("That feed already exists on this page.");
+			notify("<p>That feed already exists on this page.</p>");
 		}
 		else {
 			updateFeedPreview(feed_div, function(err) {
@@ -650,8 +650,8 @@ function verifyLoggedInForChanges() {
 		return true;
 	}
 	else {
-		notify("These changes will not be saved, but feel free to play around.<br>"
-		     + "Log in or sign up to make this page yours.<br>");
+		notify("<p>These changes will not be saved, but feel free to play around.</p>"
+		     + "<p>Log in or sign up to make this page yours.</p>");
 		
 		return false;
 	}
