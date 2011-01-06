@@ -1,4 +1,12 @@
 /*
+ * Defaults and constants
+ */
+
+var NUM_FEED_ITEMS  = 5,
+    TITLE_SELECTION = "item",
+    BODY_SELECTION  = "item";
+
+/*
  * Initialization
  */
 $(document).ready(function() {
@@ -303,6 +311,17 @@ function feedDoneClicked(e) {
 	var title_selection = preview_div.find("> .display > .titles > form .input:checked").val();
 	var body_selection = preview_div.find("> .display > .bodies > form .input:checked").val();
 	
+	// Set defaults if values weren't provided
+	if (num_feed_items == null || num_feed_items == "") {
+		num_feed_items = NUM_FEED_ITEMS;
+	}
+	if (title_selection == null || title_selection == "") {
+		title_selection = TITLE_SELECTION;
+	}
+	if (body_selection == null || body_selection == "") {
+		body_selection = BODY_SELECTION;
+	}
+	
 	// Update settings container
 	var source_div = $(feed_div).children(".source");
 	var settings_div = $(feed_div).find("> .header > .settings");
@@ -310,7 +329,7 @@ function feedDoneClicked(e) {
 	settings_div.children(".num-feed-items").html(num_feed_items);
 	settings_div.children(".title-selection").text(title_selection);
 	settings_div.children(".body-selection").text(body_selection);
-			
+	
 	if (feed_url && feed_url != "") {
 		// Update feed teaser
 		$.ajax({
@@ -413,10 +432,6 @@ function feedURLKeyup(e) {
 
 			updateFeedPreview(feed_div, function(err) {
 				if (!err) {
-					// Update feed metadata
-					var feed_title = feed_div.find("> .preview > .header > .title").text();
-					feed_div.find("> .header > .title").html(feed_title);
-					
 					resizeColumnDynamically(this_column, 50);
 				}
 			});
@@ -685,6 +700,10 @@ function updateFeedPreview(feed_div, callback) {
 						else if (body_selection == "webpage") {
 							bodies_form.find("> .webpage > .control > .input").click();
 						}
+						
+						// Update feed metadata
+						var feed_title = feed_div.find("> .preview > .header > .title").text();
+						feed_div.find("> .header > .title").html(feed_title);
 						
 						callback(null);
 					}
