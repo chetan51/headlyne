@@ -223,11 +223,16 @@ function addFeedClicked(e) {
 	// Clear new feed
 	var body_div = new_feed_div.children(".body");
 	body_div.html("");
+	
 	var header_div = new_feed_div.children(".header");
 	header_div.children(".title").html("(New Feed)");
+	
 	var settings_div = header_div.children(".settings");
+	settings_div.children(".url").html("");
+	settings_div.children(".num-feed-items").html("");
 	settings_div.children(".title-selection").html("");
 	settings_div.children(".body-selection").html("");
+	
 	var source_div = new_feed_div.children(".source");
 	var url_input_div = source_div.find(".url-control > .url-input");
 	url_input_div.val("");
@@ -296,6 +301,7 @@ function feedDoneClicked(e) {
 	// Update settings container
 	var source_div = $(feed_div).children(".source");
 	var settings_div = $(feed_div).find("> .header > .settings");
+	settings_div.children(".url").html(feed_url);
 	settings_div.children(".num-feed-items").html(num_feed_items);
 	settings_div.children(".title-selection").text(title_selection);
 	settings_div.children(".body-selection").text(body_selection);
@@ -360,7 +366,7 @@ function feedURLKeyup(e) {
 		var this_column = feed_div.parents(".column");
 		
 		// Make sure feed doesn't already exist on page
-		var source_div = $(feed_div).children(".source");
+		var source_div = feed_div.children(".source");
 		var feed_url = source_div.find("> .url-control > .url-input").val();
 		
 		var page = this_column.parents(".page");
@@ -490,9 +496,8 @@ function feedPositionsUpdated(e) {
 	$(".column").each(function(column_index, column_div) {
 		feed_map[column_index] = [];
 		$(column_div).find("> .content > .feed").each(function(feed_index, feed_div) {
-			var source_div = $(feed_div).children(".source");
 			var settings_div = $(feed_div).find("> .header > .settings");
-			var feed_url = source_div.find("> .url-control > .url-input").val();
+			var feed_url = settings_div.children(".url").text();
 			var num_feed_items = settings_div.children(".num-feed-items").text();
 			var title_selection = settings_div.children(".title-selection").text();
 			var body_selection = settings_div.children(".body-selection").text();
@@ -592,18 +597,11 @@ function removeColumn(column_div) {
 }
 
 function updateFeedPreview(feed_div, callback) {
-	var source_div = feed_div.children(".source");
 	var preview_div = feed_div.children(".preview");
 	var settings_div = feed_div.find("> .header > .settings");
 	var title_selection = settings_div.children(".title-selection").text();
 	var body_selection = settings_div.children(".body-selection").text();
-	
-	// Get feed URL
-	var feed_url_input = source_div.find("> .url-control > .url-input");
-	var feed_url = null;
-	if (feed_url_input.val() != feed_url_input.attr('placeholder')) {
-		feed_url = feed_url_input.val();
-	}
+	var feed_url = settings_div.children(".url").text();
 	
 	if (feed_url && feed_url != "") {
 		preview_div.html("Loading feed preview...");
