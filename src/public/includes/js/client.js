@@ -267,27 +267,28 @@ function feedDoneClicked(e) {
 	settings_div.children(".title-selection").text(title_selection);
 	settings_div.children(".body-selection").text(body_selection);
 			
-	
-	// Update backend
-	$.ajax({
-		url: "/user/edit",
-		type: 'POST',
-		data: {
-			feed_url        : feed_url,
-			num_feed_items  : num_feed_items,
-			title_selection : title_selection,
-			body_selection  : body_selection
-		},
-		datatype: 'json',
-		success: function(data) {
-			if (!data || data.error) {
+	if (verifyLoggedInForChanges()) {
+		// Update backend
+		$.ajax({
+			url: "/user/edit",
+			type: 'POST',
+			data: {
+				feed_url        : feed_url,
+				num_feed_items  : num_feed_items,
+				title_selection : title_selection,
+				body_selection  : body_selection
+			},
+			datatype: 'json',
+			success: function(data) {
+				if (!data || data.error) {
+					updateAccountError();
+				}
+			},
+			error: function() {
 				updateAccountError();
 			}
-		},
-		error: function() {
-			updateAccountError();
-		}
-	});
+		});
+	}
 }
 
 function feedDeleteClicked(e) {
@@ -469,23 +470,25 @@ function feedPositionsUpdated(e) {
 		});
 	});
 	
-	// Update backend
-	$.ajax({
-		url: "/user/sort",
-		type: 'POST',
-		data: {
-			feed_array : JSON.stringify(feed_map)
-		},
-		datatype: 'json',
-		success: function(data) {
-			if (!data || data.error) {
+	if (verifyLoggedInForChanges()) {
+		// Update backend
+		$.ajax({
+			url: "/user/sort",
+			type: 'POST',
+			data: {
+				feed_array : JSON.stringify(feed_map)
+			},
+			datatype: 'json',
+			success: function(data) {
+				if (!data || data.error) {
+					updateAccountError();
+				}
+			},
+			error: function() {
 				updateAccountError();
 			}
-		},
-		error: function() {
-			updateAccountError();
-		}
-	});
+		});
+	}
 }
 
 /*
@@ -632,14 +635,43 @@ function loadFullArticle(feeditem_div, callback) {
 	});
 }
 
+function isLoggedIn() {
+	var name_div = $("#navbar > .account-navigation > #name");
+	if (name_div.size() == 0) {
+		return false;
+	}
+	else {
+		return true;
+	}
+}
+
+function verifyLoggedInForChanges() {
+	if (isLoggedIn()) {
+		return true;
+	}
+	else {
+		notify("These changes will not be saved, but feel free to play around.<br>"
+		     + "Log in or sign up to make this page yours.<br>");
+		
+		return false;
+	}
+}
+
 function notify(html) {
 	var notifications_div = $("#notifications");
 	var body_div = notifications_div.find("> .content > .body");
 	
-	notifications_div.slideUp("fast", function() {
-		body_div.html(html);
-		notifications_div.slideDown("fast");
-	});
+	if (body_div.html() != html) {
+		notifications_div.slideUp("fast", function() {
+			body_div.html(html);
+			notifications_div.slideDown("fast");
+		});
+	}
+	else {
+		if (notifications_div.is(":hidden")) {
+			notifications_div.slideDown("fast");
+		}
+	}
 }
 
 function scrollTo(element) {
