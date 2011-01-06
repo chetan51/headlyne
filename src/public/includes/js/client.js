@@ -246,9 +246,11 @@ function addFeedClicked(e) {
 	new_feed_div.slideDown("fast");
 	
 	// Set up new feed
-	var edit_div = header_div.find("> .edit-overlay > .edit-delete > .edit");
+	var edit_overlay = header_div.children(".edit-overlay");
+	var edit_div = edit_overlay.find("> .edit-delete > .edit");
 	edit_div.children(".default-control").hide();
 	edit_div.children(".editing-control").show();
+	edit_overlay.show();
 	source_div.slideDown("fast");
 	
 	addFeedListeners(new_feed_div);
