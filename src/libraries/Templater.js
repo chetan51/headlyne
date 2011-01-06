@@ -18,6 +18,10 @@ var Templater = function()
 	var self = this;
 	
 	/**
+	 *    Pages
+	 **/
+	
+	/**
 	 *	Generates an HTML view of the home page.
 	 *
 	 * 	Arguments:
@@ -26,10 +30,10 @@ var Templater = function()
 	 * 		},
 	 * 		user logged in?
 	 *
-	 * 	Returns (via callback):
+	 * 	Returns:
 	 * 		HTML view
 	 **/
-	this.getHomePage = function(view_parameters, logged_in, callback)
+	this.getHomePage = function(view_parameters, logged_in)
 	{
 		view_parameters.base_url = Ni.config('base_url');
 		
@@ -43,50 +47,32 @@ var Templater = function()
 		);
 		
 		var view_parameters = {};
+		view_parameters.content = page;
 		
-		var account_navigation = null;
+		var page_navigation = self.getPageNavigation(
+			view_parameters
+		);
+		view_parameters.page_navigation = page_navigation;
+		
+		var account_navigation = self.getAccountNavigation(
+			view_parameters,
+			logged_in
+		);
+		view_parameters.account_navigation = account_navigation;
 		
 		if (logged_in) {
 			notifications = "";
-			
-			account_navigation = jade.render(
-				Ni.view('account_navigation_logged_in').template
-			);
 		}
 		else {
 			var notifications = jade.render(
 				Ni.view('welcome_notification').template
 			);
-			
-			account_navigation = jade.render(
-				Ni.view('account_navigation_not_logged_in').template
-			);
 		}
+		view_parameters.notifications = notifications;
 		
-		view_parameters.account_navigation = account_navigation;
-		
-		self.getBase(
-			view_parameters,
-			logged_in,
-			function(err, html) {
-				if (err) callback(err);
-				else {
-					callback(null, html);
-				}
-			}
-		);
+		return self.getBase(view_parameters, logged_in);
 	}
 	
-	this.getPageNavigation(view_parameters, callback)
-	{
-		var page_navigation = null;
-		page_navigation = jade.render(
-			Ni.view('page_navigation').template
-		);
-		
-		callback(null, page_navigation);
-	}
-
 	/**
 	 *	Generates an HTML view of the login page.
 	 *
@@ -96,10 +82,10 @@ var Templater = function()
 	 * 			error message
 	 * 		}
 	 *
-	 * 	Returns (via callback):
+	 * 	Returns:
 	 * 		HTML view
 	 **/
-	this.getLoginPage = function(view_parameters, callback)
+	this.getLoginPage = function(view_parameters)
 	{
 		view_parameters.base_url = Ni.config('base_url');
 		
@@ -112,19 +98,18 @@ var Templater = function()
 			{locals: view_parameters}
 		);
 		
-		self.getBase(
-			{
-				title : "Login",
-				page  : login
-			},
-			false,
-			function(err, html) {
-				if (err) callback(err);
-				else {
-					callback(null, html);
-				}
-			}
+		var view_parameters = {};
+		
+		var account_navigation = self.getAccountNavigation(
+			view_parameters,
+			false
 		);
+		view_parameters.account_navigation = account_navigation;
+		
+		view_parameters.title = "Login";
+		view_parameters.content = login;
+		
+		return self.getBase(view_parameters, false);
 	}
 	
 	/**
@@ -137,10 +122,10 @@ var Templater = function()
 	 * 			error message
 	 * 		}
 	 *
-	 * 	Returns (via callback):
+	 * 	Returns:
 	 * 		HTML view
 	 **/
-	this.getSignupPage = function(view_parameters, callback)
+	this.getSignupPage = function(view_parameters)
 	{
 		view_parameters.base_url = Ni.config('base_url');
 		
@@ -156,20 +141,23 @@ var Templater = function()
 			{locals : view_parameters}
 		);
 		
-		self.getBase(
-			{
-				title : "Sign Up",
-				page  : signup
-			},
-			false,
-			function(err, html) {
-				if (err) callback(err);
-				else {
-					callback(null, html);
-				}
-			}
+		var view_parameters = {};
+		
+		var account_navigation = self.getAccountNavigation(
+			view_parameters,
+			false
 		);
+		view_parameters.account_navigation = account_navigation;
+		
+		view_parameters.title = "Sign Up";
+		view_parameters.content = signup;
+		
+		return self.getBase(view_parameters, false);
 	}
+	
+	/**
+	 *    Partials
+	 **/
 	
 	/**
 	 *	Generates an HTML view of base, with given content.
@@ -177,17 +165,17 @@ var Templater = function()
 	 * 	Arguments:
 	 * 		parameters for view {
 	 *              title,
-	 *              page,
-	 *              page-navigation,
-	 *              account-navigation,
+	 *              page content,
+	 *              page navigation,
+	 *              account navigation,
 	 *              notifications
 	 * 		},
 	 * 		user logged in?
 	 *
-	 * 	Returns (via callback):
+	 * 	Returns:
 	 * 		HTML view
 	 **/
-	this.getBase = function(view_parameters, logged_in, callback) {
+	this.getBase = function(view_parameters, logged_in) {
 		view_parameters.base_url = Ni.config('base_url');
 		
 		if (view_parameters.title == null) {
@@ -196,11 +184,11 @@ var Templater = function()
 		if (view_parameters.page == null) {
 			view_parameters.page = "";
 		}
-		if (view_parameters.page-navigation == null) {
-			view_parameters.page-navigation = "";
+		if (view_parameters.page_navigation == null) {
+			view_parameters.page_navigation = "";
 		}
-		if (view_parameters.account-navigation == null) {
-			view_parameters.account-navigation = "";
+		if (view_parameters.account_navigation == null) {
+			view_parameters.account_navigation = "";
 		}
 		if (view_parameters.notifications == null) {
 			view_parameters.notifications = "";
@@ -211,7 +199,62 @@ var Templater = function()
 			{locals:view_parameters}
 		);
 		
-		callback(null, html);
+		return html;
+	}
+	
+	/**
+	 *	Generates an HTML view of the page navigation.
+	 *
+	 * 	Arguments:
+	 * 		parameters for view {
+	 * 		}
+	 *
+	 * 	Returns:
+	 * 		HTML view
+	 **/
+	this.getPageNavigation = function(view_parameters)
+	{
+		view_parameters.base_url = Ni.config('base_url');
+		
+		var page_navigation = jade.render(
+			Ni.view('page_navigation').template,
+			{locals: view_parameters}
+		);
+		
+		return page_navigation;
+	}
+	
+	/**
+	 *	Generates an HTML view of the account navigation.
+	 *
+	 * 	Arguments:
+	 * 		parameters for view {
+	 * 		    user logged in?
+	 * 		}
+	 *
+	 * 	Returns:
+	 * 		HTML view
+	 **/
+	this.getAccountNavigation = function(view_parameters, logged_in)
+	{
+		view_parameters.base_url = Ni.config('base_url');
+		
+		var account_navigation = null;
+		
+		if (logged_in) {
+			account_navigation = jade.render(
+				Ni.view('account_navigation_logged_in').template,
+				{locals: view_parameters}
+			);
+		}
+		else {
+			account_navigation = jade.render(
+				Ni.view('account_navigation_not_logged_in').template,
+				{locals: view_parameters}
+			);
+		}
+		
+		return account_navigation;
 	}
 };
 

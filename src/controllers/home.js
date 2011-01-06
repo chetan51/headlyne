@@ -128,15 +128,12 @@ var HomeController = function()
 					columns[2].feeds[0] = teaser3;
 					columns[2].feeds[1] = teaser4;
 					
-					Ni.library('Templater').getHomePage(
+					var home = Ni.library('Templater').getHomePage(
 						{feed_map: columns},
-						logged_in,
-						function(err, html) {
-							if (err) throw err;
-
-							res.ok(html);
-						}
+						logged_in
 					);
+					
+					res.ok(home);
 				}
 			); // close Step
 		}); // close checkCookie
@@ -156,25 +153,19 @@ var HomeController = function()
 					if (err) {
 						view_parameters.error_message = "Uh oh, something went wrong. Please try again.";
 						
-						Ni.library('Templater').getLoginPage(
-							view_parameters,
-							function(err, html) {
-								if (err) throw err;
-								res.ok(html);
-							}
+						var html = Ni.library('Templater').getLoginPage(
+							view_parameters
 						);
+						res.ok(html);
 					}
 					else {
 						if (!logged_in) {
 							view_parameters.error_message = error_message;
 							
-							Ni.library('Templater').getLoginPage(
-								view_parameters,
-								function(err, html) {
-									if (err) throw err;
-									res.ok(html);
-								}
+							var html = Ni.library('Templater').getLoginPage(
+								view_parameters
 							);
+							res.ok(html);
 						}
 						else {
 							res.setCookie(
@@ -194,13 +185,10 @@ var HomeController = function()
 			);
 		}
 		else {
-			Ni.library('Templater').getLoginPage(
-				view_parameters,
-				function(err, html) {
-					if (err) throw err;
-					res.ok(html);
-				}
+			var html = Ni.library('Templater').getLoginPage(
+				view_parameters
 			);
+			res.ok(html);
 		}		
 	}
 	
@@ -244,25 +232,19 @@ var HomeController = function()
 					if (err) {
 						view_parameters.error_message = "Uh oh, something went wrong. Please try again.";
 						
-						Ni.library('Templater').getSignupPage(
-							view_parameters,
-							function(err, html) {
-								if (err) throw err;
-								res.ok(html);
-							}
+						var html = Ni.library('Templater').getSignupPage(
+							view_parameters
 						);
+						res.ok(html);
 					}
 					else {
 						if (!signed_up) {
 							view_parameters.error_message = error_message;
 							
-							Ni.library('Templater').getSignupPage(
-								view_parameters,
-								function(err, html) {
-									if (err) throw err;
-									res.ok(html);
-								}
+							var html = Ni.library('Templater').getSignupPage(
+								view_parameters
 							);
+							res.ok(html);
 						}
 						else {
 							// new user created. login the user and proceed.
@@ -274,13 +256,10 @@ var HomeController = function()
 			);
 		}
 		else {
-			Ni.library('Templater').getSignupPage(
-				view_parameters,
-				function(err, html) {
-					if (err) throw err;
-					res.ok(html);
-				}
+			var html = Ni.library('Templater').getSignupPage(
+				view_parameters
 			);
+			res.ok(html);
 		}
 	}
 
