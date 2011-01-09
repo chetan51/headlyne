@@ -85,7 +85,7 @@ var UserController = function()
 		}
 	}
 	
-	this.sort = function(req, res, next)
+	this.update = function(req, res, next)
 	{
 		var res_obj = {
 			'error': null,
@@ -230,75 +230,11 @@ var UserController = function()
 						res.json(res_obj);
 						return;
 					}
-					var global_feed;
-
-					Step(
-						function getUser()
-						{
-							console.log('get user'); 
-							Ni.model('User').get(
-								cookie.data.user,
-								this
-							);
-						},
-						function findFeed(err, user)
-						{
-							console.log('find feed'); 
-							if(err) throw err; // rethrows error.
-							var row=-1, col=-1;
-							for( i in user.feeds )
-							{
-								for( j in user.feeds[i] )
-								{
-									if(
-										'url' in user.feeds[i][j] &&
-										user.feeds[i][j].url == req.body.feed_url
-									) {	
-										col = i;
-										row = j;
-									}
-								}
-							}
-
-							if( col == -1 ) { // row == -1 also then.
-								throw new Error('Cannot find feed');
-							} else {
-								return user.feeds[col][row];
-							}
-						},
-						function generateTeaser(err, feed)
-						{
-							global_feed = feed;
-							if(err) throw err; // rethrows error
-
-							console.log('gen teaser'); 
-							Ni.library('FeedServer').getFeedTeaser(
-								req.body.feed_url,
-								feed.num_feed_items,
-								function(){},
-								this
-							);
-						},
-						function updateTeaser(err, teaser)
-						{
-							console.log('gen teaser: '+err);
-							if(err) throw err;
-							for( keys in global_feed ) {
-								console.log('key '+keys);
-								teaser[keys] = global_feed[keys];
-							}
-							return teaser;
-						},
-						function genPage(err, feed)
-						{
-							console.log('genpage '+err);
-							if(err) throw err;
-							var teaser = Ni.library('Templater').getFeedTeaser(
-								{feed: feed}
-							);
-							return teaser;
-						},
-						function response(err, teaser)
+					
+					Ni.library('UserHandler').createTeaser(
+						cookie,
+						res.body.feed_url,
+						function(err, teaser)
 						{
 							console.log('returning obj '+err);
 							if(err) {

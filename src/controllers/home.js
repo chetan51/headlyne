@@ -11,6 +11,8 @@
 
 var Ni   = require('ni');
 var sys  = require('sys');
+var Quip = require('quip');
+var jade = require('jade');
 var jade = require('jade');
 var Step = require('step');
 var dbg  = require('../../src/libraries/Debugger.js');
@@ -28,135 +30,265 @@ var HomeController = function()
 		Ni.helper('cookies').checkCookie(req, res, function(err, cookie)
 		{
 			if( err ) {
-				self._loadHomePage(
-					false,
-					null,
-					function(err, html) {
+				dbg.log('redirect: home to logout');
+				res.moved('/home/logout');
+			} else {
+				// if valid, serve the page requested.
+				var global_user, global_feed_array=[];
+				Step(
+					function getUser()
+					{
+						dbg.log('getUser '+cookie.data.user);
+						Ni.model('User').get(
+							cookie.data.user,
+							this
+						);
+					},
+					function STUBuser(err, user)
+					{
+						global_user = user;
+						dbg.log(global_user.feeds);
+					/*
+						var new_feeds = [
+							[
+								{
+									url: 'http://feeds.feedburner.com/quotationspage/qotd',
+									num_feed_items: 9,
+									body_selection: 'item',
+									title_selection: 'item'
+								}
+							],
+							[
+								{
+									url: 'http://feeds.reuters.com/reuters/companyNews?format=xml',
+									num_feed_items: 2,
+									body_selection: 'webpage',
+									title_selection: 'webpage'
+								},
+								{
+									url: 'http://feeds.reuters.com/reuters/entertainment',
+									num_feed_items: 2,
+									body_selection: 'item',
+									title_selection: 'webpage'
+								},
+							],
+							[
+								{
+									url: 'http://feeds.feedburner.com/FutilityCloset',
+									num_feed_items: 3,
+									body_selection: 'webpage',
+									title_selection: 'item'
+								}
+							]
+						];
+						global_user.feeds = new_feeds;
+						Ni.model('User').updateFeeds(
+							cookie.data.user,
+							new_feeds,
+							this
+						);
+					},
+					function getTeasers(err, feed_array)
+					{*/
+						dbg.log('get teasers for '+JSON.stringify(global_user));
 						if (err) throw err;
+						
+						var count=0, done_count=0;
+						for(i in global_user.feeds) {
+							for(j in global_user.feeds[i]) {
+								global_feed_array[i] = [];
+								count = count + 1;
+							}
+						}
 
+						var _this = this;
+						global_user.feeds.forEach(function(feeds_i, i) {
+							feeds_i.forEach(function(feeds_j, j) {
+								Ni.library('UserHandler').createTeaser(
+									cookie,
+									feeds_j.url,
+									function(err, teaser)
+									{
+										done_count = done_count + 1;
+										global_feed_array[i][j] = teaser;
+										
+										if( done_count == count ) {
+											_this();
+										}
+									}
+								);
+							});
+						});
+						
+						if(!count)
+						{
+							throw new Error('No feeds saved!');
+						}
+					},
+					function(err, teasers)
+					{
+						dbg.log('got all teasers. Err: '+err);
+						var columns = [];
+						columns[0] = {};
+
+						if(!err) {
+							// fill columns variable
+							for( i in global_feed_array) {
+								columns[i] = {};
+								columns[i].feeds = global_feed_array[i];
+							}
+						}
+
+						// return teasers
+						var page = jade.render(
+							Ni.view('page').template,
+							{locals:
+								{
+								columns: columns
+								}
+							}
+						);
+						
+						var html = jade.render(
+							Ni.view('base').template,
+							{locals:
+								{
+									base_url : "/",
+									title    : cookie.data.user,
+									content  : page
+								}
+							}
+						);
 						res.ok(html);
 					}
 				);
-			} else {
-				logged_in = true;
-				
-				Ni.model('User').get(
-					cookie.data.user,
-					function(err, user) {
-						if (err) throw err;
-						else {
-							name = user.first_name + " " + user.last_name;
-							console.log(user.feeds);
-							
-							self._loadHomePage(
-								true,
-								name,
-								function(err, html) {
-									if (err) throw err;
+			}
+		}); // close checkCookie
+	}
 
-									res.ok(html);
+	this.sample = function(req, res, next)
+	{
+		var global_user={}, global_feed_array=[];
+		Step(
+			function STUBuser()
+			{
+				var new_feeds = [
+					[
+						{
+							url: 'http://feeds.feedburner.com/quotationspage/qotd',
+							num_feed_items: 9,
+							body_selection: 'item',
+							title_selection: 'item'
+						}
+					],
+					[
+						{
+							url: 'http://feeds.reuters.com/reuters/companyNews?format=xml',
+							num_feed_items: 2,
+							body_selection: 'webpage',
+							title_selection: 'webpage'
+						},
+						{
+							url: 'http://feeds.reuters.com/reuters/entertainment',
+							num_feed_items: 2,
+							body_selection: 'item',
+							title_selection: 'webpage'
+						},
+					],
+					[
+						{
+							url: 'http://feeds.feedburner.com/FutilityCloset',
+							num_feed_items: 3,
+							body_selection: 'webpage',
+							title_selection: 'item'
+						}
+					]
+				];
+				global_user.feeds = new_feeds;
+				return new_feeds;
+			},
+			function getTeasers(err, feed_array)
+			{
+				dbg.log('getting teasers');
+				if (err) throw err;
+				
+				var count=0, done_count=0;
+				for(i in global_user.feeds) {
+					for(j in global_user.feeds[i]) {
+						global_feed_array[i] = [];
+						count = count + 1;
+					}
+				}
+				
+				var _this = this;
+				global_user.feeds.forEach(function(feeds_i, i) {
+					feeds_i.forEach(function(feeds_j, j) {
+						Ni.library('FeedServer').getFeedTeaser(
+							feeds_j.url,
+							feeds_j.num_feed_items,
+							function(){},
+							function(err, teaser)
+							{
+								for( keys in global_user.feeds[i][j] )
+								{
+									teaser[keys] = global_user.feeds[i][j][keys];
 								}
-							);
+								
+								var teaser_html = jade.render(
+									Ni.view('feed').template,
+									{locals:teaser}
+								);
+
+								done_count = done_count + 1;
+								global_feed_array[i][j] = teaser_html;
+
+								if( done_count == count ) {
+									_this();
+								}
+							}
+						);
+					});
+				});
+				if(!count)
+				{
+					throw new Error('No feeds saved!');
+				}
+			},
+			function sendResponse(err, teasers)
+			{
+				dbg.log('got all teasers. Err: '+err);
+				var columns = [];
+				columns[0] = {};
+				
+				if(!err) {
+					// fill columns variable
+					for( i in global_feed_array) {
+						columns[i] = {};
+						columns[i].feeds = global_feed_array[i];
+					}
+				}
+				
+				// return teasers
+				var page = jade.render(
+					Ni.view('page').template,
+					{locals:
+						{
+						columns: columns
 						}
 					}
 				);
-			}
-		});
-	}
-	
-	this._loadHomePage = function(logged_in, name, callback)
-	{
-		Step(
-			function getFeeds() {
-				Ni.library('FeedServer').getFeedTeaser(
-					'http://feeds.feedburner.com/quotationspage/qotd',
-					9,
-					function() {},
-					this.parallel()
-				);
 				
-				Ni.library('FeedServer').getFeedTeaser(
-					'http://feeds.reuters.com/reuters/companyNews?format=xml',
-					4,
-					function() {},
-					this.parallel()
+				var html = jade.render(
+					Ni.view('base').template,
+					{locals:
+						{
+							base_url : "/",
+							title    : "Headlyne",
+							content  : page
+						}
+					}
 				);
-				
-				Ni.library('FeedServer').getFeedTeaser(
-					'http://feeds.reuters.com/reuters/entertainment',
-					//'http://xkcd.com/rss.xml',
-					4,
-					function() {},
-					this.parallel()
-				);
-				
-				Ni.library('FeedServer').getFeedTeaser(
-					'http://feeds.feedburner.com/FutilityCloset',
-					2,
-					function() {},
-					this.parallel()
-				);
-			},
-
-			function displayFeeds(err, feed1, feed2, feed3, feed4) {
-				if (err) {
-					callback(err);
-				}
-				else {
-					feed1.num_feed_items = 9;
-					feed1.title_selection = "item";
-					feed1.body_selection = "item";
-					
-					feed2.num_feed_items = 4;
-					feed2.title_selection = "item";
-					feed2.body_selection = "webpage";
-
-					feed3.num_feed_items = 4;
-					feed3.title_selection = "item";
-					feed3.body_selection = "item";
-					
-					feed4.num_feed_items = 2;
-					feed4.title_selection = "item";
-					feed4.body_selection = "webpage";
-					
-					var teaser1 = Ni.library('Templater').getFeedTeaser(
-						{feed: feed1}
-					);
-					var teaser2 = Ni.library('Templater').getFeedTeaser(
-						{feed: feed2}
-					);
-					var teaser3 = Ni.library('Templater').getFeedTeaser(
-						{feed: feed3}
-					);
-					var teaser4 = Ni.library('Templater').getFeedTeaser(
-						{feed: feed4}
-					);
-					
-					var columns = [];
-					columns[0] = {};
-					columns[0].feeds = [];
-					columns[0].feeds[0] = teaser1;
-					
-					columns[1] = {};
-					columns[1].feeds = [];
-					columns[1].feeds[0] = teaser2;
-					
-					columns[2] = {};
-					columns[2].feeds = [];
-					columns[2].feeds[0] = teaser4;
-					columns[2].feeds[1] = teaser3;
-					
-					var view_parameters = {};
-					view_parameters.feed_map = columns;
-					view_parameters.name = name;
-
-					var home = Ni.library('Templater').getHomePage(
-						view_parameters,
-						logged_in
-					);
-					
-					callback(null, home);
-				}
+				res.ok(html);
 			}
 		);
 	}
@@ -218,11 +350,11 @@ var HomeController = function()
 		Ni.helper('cookies').checkCookie(req, res, function(err, cookie)
 		{
 			if( err ) {
-				dbg.log('redirect: logout to home.');
+				dbg.log('redirect: logout to sample:');
 				dbg.log(err.message);
 				
 				res.clearCookie('cookie');
-				res.moved('/');
+				res.moved('/home/sample');
 			} else {
 				dbg.log(cookie.data);
 				Ni.library('UserAuth').invalidate(
@@ -232,8 +364,8 @@ var HomeController = function()
 						// no errors -- attach a null cookie, direct to
 						// login page, and get moving.
 						res.clearCookie('cookie');
-						res.moved('/');
-						dbg.log('redirect: logout to home.');
+						res.moved('/home/sample');
+						dbg.log('redirect: logout to sample.');
 					}
 				);
 			}
