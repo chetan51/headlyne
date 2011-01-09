@@ -136,6 +136,7 @@ var FeedServer = function()
 					callback(err);
 				}
 				else {
+					dbg.log('updating '+JSON.stringify(feed));
 					self.updateWebPagesForFeedItems(
 						feed.items,
 						num_feed_items,

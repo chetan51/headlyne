@@ -130,7 +130,7 @@ var UserAuth = function()
 		Step(
 			function getUser()
 			{
-				console.log('get user'); 
+				dbg.log('get user'); 
 				Ni.model('User').get(
 					cookie.data.user,
 					this
@@ -138,7 +138,7 @@ var UserAuth = function()
 			},
 			function findFeed(err, user)
 			{
-				console.log('find feed'); 
+				dbg.log('find feed'); 
 				if(err) throw err; // rethrows error.
 				var row=-1, col=-1;
 				for( i in user.feeds )
@@ -166,7 +166,7 @@ var UserAuth = function()
 				global_feed = feed;
 				if(err) throw err; // rethrows error
 
-				console.log('gen teaser'); 
+				dbg.log('gen teaser'); 
 				Ni.library('FeedServer').getFeedTeaser(
 					feed_url,
 					feed.num_feed_items,
@@ -176,17 +176,17 @@ var UserAuth = function()
 			},
 			function updateTeaser(err, teaser)
 			{
-				console.log('gen teaser: '+err);
+				dbg.log('Err: '+err+'. update teaser...');
 				if(err) throw err;
 				for( keys in global_feed ) {
-					console.log('key '+keys);
+					dbg.log('key '+keys);
 					teaser[keys] = global_feed[keys];
 				}
 				return teaser;
 			},
 			function genPage(err, feed)
 			{
-				console.log('genpage '+err);
+				dbg.log('Err: '+err+'. genpage...');
 				if(err) throw err;
 				var teaser = jade.render(
 					Ni.view('feed').template,
@@ -196,6 +196,7 @@ var UserAuth = function()
 			},
 			function fireCallback(err, teaser)
 			{
+				dbg.log('returning teaser. Err: '+err);
 				callback(err, teaser);
 			}
 		);

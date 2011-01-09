@@ -11,6 +11,8 @@
 
 var Ni   = require('ni');
 var sys  = require('sys');
+var Quip = require('quip');
+var jade = require('jade');
 var jade = require('jade');
 var Step = require('step');
 var dbg  = require('../../src/libraries/Debugger.js');
@@ -35,7 +37,7 @@ var HomeController = function()
 				res.end();
 			} else {
 				// if valid, serve the page requested.
-				var global_user, global_feed_array;
+				var global_user, global_feed_array=[];
 				Step(
 					function getUser()
 					{
@@ -48,7 +50,8 @@ var HomeController = function()
 					function STUBuser(err, user)
 					{
 						global_user = user;
-
+						dbg.log(global_user.feeds);
+					/*
 						var new_feeds = [
 							[
 								{
@@ -89,28 +92,37 @@ var HomeController = function()
 						);
 					},
 					function getTeasers(err, feed_array)
-					{
-						dbg.log('get teaser '+JSON.stringify(global_user));
+					{*/
+						dbg.log('get teasers for '+JSON.stringify(global_user));
 						if (err) throw err;
-						console.log(global_user.feeds);
 						
-						global_feed_array = feed_array;
-						var count=0;
-						var group = this.group();
+						var count=0, done_count=0;
 						for(i in global_user.feeds) {
 							for(j in global_user.feeds[i]) {
+								global_feed_array[i] = [];
 								count = count + 1;
-								Ni.library('UserHandler').createTeaser(
-									cookie,
-									global_user.feeds[i][j].url,
-									function(err, teaser)
-									{
-										global_feed_array[i][j] = teaser;
-										group();
-									}
-								);
 							}
 						}
+
+						var _this = this;
+						global_user.feeds.forEach(function(feeds_i, i) {
+							feeds_i.forEach(function(feeds_j, j) {
+								Ni.library('UserHandler').createTeaser(
+									cookie,
+									feeds_j.url,
+									function(err, teaser)
+									{
+										done_count = done_count + 1;
+										global_feed_array[i][j] = teaser;
+										console.log(done_count+' of '+count+': col '+i+' and row '+j);
+										if( done_count == count ) {
+											_this();
+										}
+									}
+								);
+							});
+						});
+						console.log('exit forloop');
 						if(!count)
 						{
 							throw new Error('No feeds saved!');
@@ -118,143 +130,41 @@ var HomeController = function()
 					},
 					function(err, teasers)
 					{
-						dbg.log('got teasers');
-						console.log('returning obj '+err);
-						var res_obj = {};
-						if(err) {
-							var columns = [];
-							columns[0] = {};
-							// return teasers
-							var page = jade.render(
-								Ni.view('page').template,
-								{locals:
-									{
-									columns: columns
-									}
+						dbg.log('got all teasers. Err: '+err);
+						var columns = [];
+						columns[0] = {};
+
+						if(!err) {
+							// fill columns variable
+							for( i in global_feed_array) {
+								columns[i] = {};
+								columns[i].feeds = global_feed_array[i];
+							}
+						}
+
+						// return teasers
+						var page = jade.render(
+							Ni.view('page').template,
+							{locals:
+								{
+								columns: columns
 								}
-							);
-							
-							var html = jade.render(
-								Ni.view('base').template,
-								{locals:
-									{
-										base_url : "/",
-										title    : "Headlyne",
-										content  : page
-									}
+							}
+						);
+						
+						var html = jade.render(
+							Ni.view('base').template,
+							{locals:
+								{
+									base_url : "/",
+									title    : "Headlyne",
+									content  : page
 								}
-							);
-							
-							res.ok(html);
-						} else {
-							res.ok(teasers);
-						}
+							}
+						);
+						res.ok(html);
 					}
 				);
-		/*
-		Step(
-			function getFeeds() {
-				Ni.library('FeedServer').getFeedTeaser(
-					'http://feeds.feedburner.com/quotationspage/qotd',
-					9,
-					function() {},
-					this.parallel()
-				);
-				
-				Ni.library('FeedServer').getFeedTeaser(
-					'http://feeds.reuters.com/reuters/companyNews?format=xml',
-					2,
-					function() {},
-					this.parallel()
-				);
-				
-				Ni.library('FeedServer').getFeedTeaser(
-					'http://feeds.reuters.com/reuters/entertainment',
-					//'http://xkcd.com/rss.xml',
-					4,
-					function() {},
-					this.parallel()
-				);
-				
-				Ni.library('FeedServer').getFeedTeaser(
-					'http://feeds.feedburner.com/FutilityCloset',
-					2,
-					function() {},
-					this.parallel()
-				);
-			},
-
-			function displayFeeds(err, feed1, feed2, feed3, feed4) {
-				feed1.title_selection = "item";
-				feed1.body_selection = "item";
-				
-				feed2.title_selection = "webpage";
-				feed2.body_selection = "webpage";
-
-				feed3.title_selection = "item";
-				feed3.body_selection = "item";
-				
-				feed4.title_selection = "item";
-				feed4.body_selection = "webpage";
-				
-				var teaser1 = jade.render(
-					Ni.view('feed').template,
-					{locals: feed1}
-				);
-				
-				var teaser2 = jade.render(
-					Ni.view('feed').template,
-					{locals: feed2}
-				);
-				
-				var teaser3 = jade.render(
-					Ni.view('feed').template,
-					{locals: feed3}
-				);
-				
-				var teaser4 = jade.render(
-					Ni.view('feed').template,
-					{locals: feed4}
-				);
-				
-				var columns = [];
-				columns[0] = {};
-				columns[0].feeds = [];
-				columns[0].feeds[0] = teaser1;
-				
-				columns[1] = {};
-				columns[1].feeds = [];
-				columns[1].feeds[0] = teaser2;
-				
-				columns[2] = {};
-				columns[2].feeds = [];
-				columns[2].feeds[0] = teaser3;
-				columns[2].feeds[1] = teaser4;
-				
-				var page = jade.render(
-					Ni.view('page').template,
-					{locals:
-						{
-						columns: columns
-						}
-					}
-				);
-
-				var html = jade.render(
-					Ni.view('base').template,
-					{locals:
-						{
-							base_url : "/",
-							title    : "Headlyne",
-							content  : page
-						}
-					}
-				);
-
-				res.ok(html);
-			}
-		); */// close Step
-
 			}
 		}); // close checkCookie
 	}
