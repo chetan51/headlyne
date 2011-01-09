@@ -114,7 +114,7 @@ var HomeController = function()
 									{
 										done_count = done_count + 1;
 										global_feed_array[i][j] = teaser;
-										console.log(done_count+' of '+count+': col '+i+' and row '+j);
+										
 										if( done_count == count ) {
 											_this();
 										}
@@ -122,7 +122,7 @@ var HomeController = function()
 								);
 							});
 						});
-						console.log('exit forloop');
+						
 						if(!count)
 						{
 							throw new Error('No feeds saved!');
@@ -167,6 +167,133 @@ var HomeController = function()
 				);
 			}
 		}); // close checkCookie
+	}
+
+	this.sample = function(req, res, next)
+	{
+		var global_user={}, global_feed_array=[];
+		Step(
+			function STUBuser()
+			{
+				var new_feeds = [
+					[
+						{
+							url: 'http://feeds.feedburner.com/quotationspage/qotd',
+							num_feed_items: 9,
+							body_selection: 'item',
+							title_selection: 'item'
+						}
+					],
+					[
+						{
+							url: 'http://feeds.reuters.com/reuters/companyNews?format=xml',
+							num_feed_items: 2,
+							body_selection: 'webpage',
+							title_selection: 'webpage'
+						},
+						{
+							url: 'http://feeds.reuters.com/reuters/entertainment',
+							num_feed_items: 2,
+							body_selection: 'item',
+							title_selection: 'webpage'
+						},
+					],
+					[
+						{
+							url: 'http://feeds.feedburner.com/FutilityCloset',
+							num_feed_items: 3,
+							body_selection: 'webpage',
+							title_selection: 'item'
+						}
+					]
+				];
+				global_user.feeds = new_feeds;
+				return new_feeds;
+			},
+			function getTeasers(err, feed_array)
+			{
+				dbg.log('getting teasers');
+				if (err) throw err;
+				
+				var count=0, done_count=0;
+				for(i in global_user.feeds) {
+					for(j in global_user.feeds[i]) {
+						global_feed_array[i] = [];
+						count = count + 1;
+					}
+				}
+				
+				var _this = this;
+				global_user.feeds.forEach(function(feeds_i, i) {
+					feeds_i.forEach(function(feeds_j, j) {
+						Ni.library('FeedServer').getFeedTeaser(
+							feeds_j.url,
+							feeds_j.num_feed_items,
+							function(){},
+							function(err, teaser)
+							{
+								for( keys in global_user.feeds[i][j] )
+								{
+									teaser[keys] = global_user.feeds[i][j][keys];
+								}
+								
+								var teaser_html = jade.render(
+									Ni.view('feed').template,
+									{locals:teaser}
+								);
+
+								done_count = done_count + 1;
+								global_feed_array[i][j] = teaser_html;
+
+								if( done_count == count ) {
+									_this();
+								}
+							}
+						);
+					});
+				});
+				if(!count)
+				{
+					throw new Error('No feeds saved!');
+				}
+			},
+			function sendResponse(err, teasers)
+			{
+				dbg.log('got all teasers. Err: '+err);
+				var columns = [];
+				columns[0] = {};
+				
+				if(!err) {
+					// fill columns variable
+					for( i in global_feed_array) {
+						columns[i] = {};
+						columns[i].feeds = global_feed_array[i];
+					}
+				}
+				
+				// return teasers
+				var page = jade.render(
+					Ni.view('page').template,
+					{locals:
+						{
+						columns: columns
+						}
+					}
+				);
+				
+				var html = jade.render(
+					Ni.view('base').template,
+					{locals:
+						{
+							base_url : "/",
+							title    : "Headlyne",
+							content  : page
+						}
+					}
+				);
+				res.ok(html);
+			}
+		);
 	}
 	
 	this.login = function(req, res, next) {
@@ -235,11 +362,11 @@ var HomeController = function()
 		Ni.helper('cookies').checkCookie(req, res, function(err, cookie)
 		{
 			if( err ) {
-				dbg.log('redirect: logout to login:');
+				dbg.log('redirect: logout to sample:');
 				dbg.log(err.message);
 				
 				res.clearCookie('cookie');
-				res.moved('/home/login');
+				res.moved('/home/sample');
 			} else {
 				dbg.log(cookie.data);
 				Ni.library('UserAuth').invalidate(
@@ -249,8 +376,8 @@ var HomeController = function()
 						// no errors -- attach a null cookie, direct to
 						// login page, and get moving.
 						res.clearCookie('cookie');
-						res.moved('/home/login');
-						dbg.log('redirect: logout to login.');
+						res.moved('/home/sample');
+						dbg.log('redirect: logout to sample.');
 					}
 				);
 			}
