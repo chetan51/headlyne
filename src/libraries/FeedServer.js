@@ -100,6 +100,7 @@ var FeedServer = function()
 							url,
 							num_feed_items,
 							function(err, feed_teaser) {
+								console.log(feed_teaser.items[0].webpage);
 								callback_immediately(err, feed_teaser);
 								callback_updated(err, feed_teaser);
 							}
@@ -356,7 +357,7 @@ var FeedServer = function()
 			function(err, webpage) {
 				if (err) {
 					if (err.message == "No such WebPage") {
-						dbg.log('retrying...');
+						dbg.log('fetching...');
 						self.fetchWebPageForFeedItem(
 							item,
 							callback
