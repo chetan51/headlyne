@@ -184,9 +184,8 @@ var UserAuth = function()
 			{
 				dbg.log('Err: '+err+'. genpage...');
 				if(err) throw err;
-				var teaser = jade.render(
-					Ni.view('feed').template,
-					{locals: feed}
+				var teaser = Ni.library('Templater').getFeedTeaser(
+					{feed: feed}
 				);
 				return teaser;
 			},
