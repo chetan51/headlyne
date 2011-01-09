@@ -140,26 +140,15 @@ var HomeController = function()
 						}
 
 						// return teasers
-						var page = jade.render(
-							Ni.view('page').template,
-							{locals:
-								{
-								columns: columns
-								}
-							}
+						var home = Ni.library('Templater').getHomePage(
+							{
+								feed_map: columns,
+								name    : cookie.data.user,
+							},
+							true
 						);
 						
-						var html = jade.render(
-							Ni.view('base').template,
-							{locals:
-								{
-									base_url : "/",
-									title    : cookie.data.user,
-									content  : page
-								}
-							}
-						);
-						res.ok(html);
+						res.ok(home);
 					}
 				);
 			}
@@ -234,9 +223,8 @@ var HomeController = function()
 									teaser[keys] = global_user.feeds[i][j][keys];
 								}
 								
-								var teaser_html = jade.render(
-									Ni.view('feed').template,
-									{locals:teaser}
+								var teaser_html = Ni.library('Templater').getFeedTeaser(
+									{feed: teaser}
 								);
 
 								done_count = done_count + 1;
@@ -269,26 +257,12 @@ var HomeController = function()
 				}
 				
 				// return teasers
-				var page = jade.render(
-					Ni.view('page').template,
-					{locals:
-						{
-						columns: columns
-						}
-					}
+				var home = Ni.library('Templater').getHomePage(
+					{feed_map: columns},
+					true
 				);
 				
-				var html = jade.render(
-					Ni.view('base').template,
-					{locals:
-						{
-							base_url : "/",
-							title    : "Headlyne",
-							content  : page
-						}
-					}
-				);
-				res.ok(html);
+				res.ok(home);
 			}
 		);
 	}
