@@ -40,7 +40,7 @@ var AccountController = function()
 			view_parameters = params;
 			view_parameters.error_message = null;
 			
-			self.login_helper(
+			self._login(
 				params,
 				function(err, logged_in, error_message, cookie) {
 					if (err) {
@@ -77,7 +77,7 @@ var AccountController = function()
 	}
 	
 	/*
-	 *	Validates credentials and authenticates user.
+	 *	Helper that validates credentials and authenticates user.
 	 *	
 	 *		Arguments: credentials {
 	 *		               username,
@@ -88,7 +88,7 @@ var AccountController = function()
 	 *		                        error message
 	 *		                        cookie
 	 */
-	this.login_helper = function(params, callback) {
+	this._login = function(params, callback) {
 		if (params.username == null || params.username == "") {
 			callback(null, false, "Please enter your username.");
 		}
@@ -151,7 +151,7 @@ var AccountController = function()
 			var params = req.body;
 			view_parameters = params;
 			
-			self.signup_helper(
+			self._signup(
 				params,
 				function(err, signed_up, error_message) {
 					if (err) {
@@ -189,7 +189,7 @@ var AccountController = function()
 	}
 	
 	/*
-	 *	Validates input fields and registers new user.
+	 *	Helper that validates input fields and registers new user.
 	 *	
 	 *		Arguments: input fields {
 	 *		               username,
@@ -201,7 +201,7 @@ var AccountController = function()
 	 *		                        registered?
 	 *		                        error message
 	 */
-	this.signup_helper = function(params, callback) {
+	this._signup = function(params, callback) {
 		if (params.username == null || params.username == "") {
 			callback(null, false, "Please enter a username.");
 		}
