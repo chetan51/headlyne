@@ -390,7 +390,158 @@ var HomeController = function()
 			res.ok(html);
 		}
 	}
+	
+	this.register = function(req, res, next) {
+		var view_parameters = {};
+		
+		if(req.method == 'POST' && req.body) {
+			// Check sign up
+			var params = req.body, param_error=false;
+			view_parameters = params;
+		
+			if (params.username == null || params.username == "") {
+				view_parameters.error_message = "Please enter a username."; param_error=true;
+			}
+			else if (params.invite_code == null || params.invite_code == "") {
+				view_parameters.error_message = "Please enter your Invite Code."; param_error=true;
+			}
+			else if (params.email == null || params.email == "") {
+				view_parameters.error_message = "Please enter your email address."; param_error=true;
+			}
+			else if (params.first_name == null || params.first_name == "") {
+				view_parameters.error_message = "Please enter your first name."; param_error=true;
+			}
+			else if (params.last_name == null || params.last_name == "") {
+				view_parameters.error_message = "Please enter your last name."; param_error=true;
+			}
+			else if (params.password == null || params.password == "") {
+				view_parameters.error_message = "Please enter a password."; param_error=true;
+			}
+			else if (params.confirm_password == null || params.confirm_password == "") {
+				view_parameters.error_message = "Please confirm the password."; param_error=true;
+			}
+			else if (params.password != params.confirm_password) {
+				view_parameters.error_message = "Passwords do not match."; param_error=true;
+			}
 
+			if(param_error) {
+				var html = Ni.library('Templater').getRegistrationPage(
+					view_parameters
+				);
+				res.ok(html);
+			} else {
+				Step(
+					function checkCode()
+					{
+						Ni.model('Invites').exists(
+							params.invite_code,
+							this
+						);
+					},
+					function addUser(err, is_valid)
+					{
+						if(err) throw err;
+						if(!is_valid) {
+							dbg.log('invalid code');
+							throw new Error('Invalid Invite Code.');
+						} else {
+							Ni.model('User').save(
+								params.username,
+								params.password,
+								params.first_name,
+								params.last_name,
+								params.email,
+								this
+							);
+						}
+					},
+					function checkIfAdded(err, user)
+					{
+						if(err != null) {
+							throw err;
+						} else {
+							return true;
+						}
+					},
+					function finish(err, completed)
+					{
+						if(err) {
+							if( err.message == "Database match exists" ) {
+								view_parameters.error_message = 'That username is already taken!';
+							} else if( err.message == "Invalid Invite Code.") {
+								view_parameters.error_message = err.message;
+							} else {
+								view_parameters.error_message = "Uh oh, something went wrong. Please try again.";
+							}
+							var html = Ni.library('Templater').getRegistrationPage(
+								view_parameters
+							);
+							res.ok(html);
+							return;
+						} else {
+							
+							// first, remove the invite code.
+							Ni.model('Invites').remove(
+								params.invite_code,
+								function(err){}
+							);
+							
+							// add default feeds for the user.
+							var new_feeds = [
+								[
+									{
+										url: 'http://feeds.feedburner.com/quotationspage/qotd',
+										num_feed_items: 9,
+										body_selection: 'item',
+										title_selection: 'item'
+									}
+								],
+								[
+									{
+										url: 'http://feeds.reuters.com/reuters/companyNews?format=xml',
+										num_feed_items: 2,
+										body_selection: 'webpage',
+										title_selection: 'webpage'
+									},
+									{
+										url: 'http://feeds.reuters.com/reuters/entertainment',
+										num_feed_items: 2,
+										body_selection: 'item',
+										title_selection: 'webpage'
+									},
+								],
+								[
+									{
+										url: 'http://feeds.feedburner.com/FutilityCloset',
+										num_feed_items: 3,
+										body_selection: 'webpage',
+										title_selection: 'item'
+									}
+								]
+							];
+
+							Ni.model('User').updateFeeds(
+								params.username,
+								new_feeds,
+								function(err)
+								{
+									// new user created. login the user and proceed.
+									req.body = params;
+									self.login(req, res, next);
+								}
+							);
+							return;
+						}
+					}
+				);
+			}
+		} else {
+			var html = Ni.library('Templater').getRegistrationPage(
+				view_parameters
+			);
+			res.ok(html);
+		}
+	}
 };
 
 /*

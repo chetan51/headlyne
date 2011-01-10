@@ -168,6 +168,59 @@ var Templater = function()
 	}
 	
 	/**
+	 *	Generates an HTML view of the register page.
+	 *
+	 * 	Arguments:
+	 * 		parameters for view {
+	 * 			username
+	 * 			email address
+	 * 			error message
+	 * 		}
+	 *
+	 * 	Returns:
+	 * 		HTML view
+	 **/
+	this.getRegistrationPage = function(view_parameters)
+	{
+		view_parameters.base_url = Ni.config('base_url');
+		
+		if (view_parameters.username == null) {
+			view_parameters.username = "";
+		}
+		if (view_parameters.invite_code == null) {
+			view_parameters.invite_code = "";
+		}
+		if (view_parameters.email == null) {
+			view_parameters.email = "";
+		}
+		if (view_parameters.first_name == null) {
+			view_parameters.first_name = "";
+		}
+		if (view_parameters.last_name == null) {
+			view_parameters.last_name = "";
+		}
+
+		var signup = jade.render(
+			Ni.view('register').template,
+			{locals : view_parameters}
+		);
+		
+		var view_parameters = {};
+		
+		var account_navigation = self.getAccountNavigation(
+			view_parameters,
+			false
+		);
+		view_parameters.account_navigation = account_navigation;
+		
+		view_parameters.title = "Sign Up";
+		view_parameters.folio_title = "Sign Up";
+		view_parameters.content = signup;
+		
+		return self.getBase(view_parameters, false);
+	}
+	
+	/**
 	 *    Partials
 	 **/
 	
