@@ -16,7 +16,6 @@ var jade = require('jade');
 var jade = require('jade');
 var Step = require('step');
 var dbg  = require('../../src/libraries/Debugger.js');
-var cookie_node = require('cookie');
 
 /*
  *  The home controller
