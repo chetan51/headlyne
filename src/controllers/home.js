@@ -98,7 +98,7 @@ var HomeController = function()
 						var _this = this;
 						global_user.feeds.forEach(function(feeds_i, i) {
 							feeds_i.forEach(function(feeds_j, j) {
-								Ni.library('UserHandler').createTeaser(
+								self._createTeaser(
 									global_user,
 									feeds_j.url,
 									function(err, teaser)
@@ -257,6 +257,68 @@ var HomeController = function()
 				);
 				
 				res.ok(home);
+			}
+		);
+	}
+	
+	/*
+	 *	Helper that creates teaser according to given user's specifications.
+	 *	
+	 *		Arguments: user
+	 *		           feed URL
+	 *		
+	 *		Returns (via callback): error
+	 *		                        teaser in JSON format
+	 */
+	this._createTeaser = function(user, feed_url, callback)
+	{
+		var global_feed;
+		Step(
+			function findFeed()
+			{
+				dbg.log('find feed'); 
+				Ni.model('User').getFeed(
+					user.username,
+					feed_url,
+					this
+				);
+			},
+			function generateTeaser(err, feed)
+			{
+				global_feed = feed;
+				if(err) throw err; // rethrows error
+
+				dbg.log('gen teaser'); 
+				Ni.library('FeedServer').getFeedTeaser(
+					feed_url,
+					feed.num_feed_items,
+					function(){},
+					this
+				);
+			},
+			function updateTeaser(err, teaser)
+			{
+				dbg.log('Err: '+err+'. update teaser...');
+				if(err) throw err;
+				for( keys in global_feed ) {
+					dbg.log('key '+keys);
+					teaser[keys] = global_feed[keys];
+				}
+				return teaser;
+			},
+			function genPage(err, feed)
+			{
+				dbg.log('Err: '+err+'. genpage...');
+				if(err) throw err;
+				var teaser = Ni.library('Templater').getFeedTeaser(
+					{feed: feed}
+				);
+				return teaser;
+			},
+			function fireCallback(err, teaser)
+			{
+				dbg.log('returning teaser. Err: '+err);
+				callback(err, teaser);
 			}
 		);
 	}
