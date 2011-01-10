@@ -12,7 +12,7 @@ var crypto  = require('crypto'),
 /**
  *	Provides functions for user handling.
  **/
-var UserAuth = function()
+var UserHandler = function()
 {
 	/**
 	 *	Class variables
@@ -174,4 +174,4 @@ var UserAuth = function()
 	}
 };
 
-module.exports = new UserAuth();
+module.exports = new UserHandler();
