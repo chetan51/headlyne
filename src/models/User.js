@@ -279,6 +279,44 @@ var User = function()
 			}
 		);
 	}
+	
+	/**
+	 * Gets a feed for the user.
+	 *
+	 * 	Arguments:
+	 * 		username,
+	 * 		feed_url
+	 *
+	 * 	Returns:      The given feed.
+	 **/
+	this.getFeed = function(username, feed_url, callback) {
+		Ni.model('User').get(
+			username,
+			function(err, user) {
+				if(err) throw err; // rethrows error.
+				var row=-1, col=-1;
+				for( i in user.feeds )
+				{
+					for( j in user.feeds[i] )
+					{
+						if(
+							'url' in user.feeds[i][j] &&
+							user.feeds[i][j].url == feed_url
+						) {
+							col = i;
+							row = j;
+						}
+					}
+				}
+
+				if( col == -1 ) { // row == -1 also then.
+					callback(new Error('Cannot find feed'));
+				} else {
+					callback(null, user.feeds[col][row]);
+				}
+			}
+		);
+	}
 
 	/**
 	 * Edits feed for a user.

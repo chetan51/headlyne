@@ -135,27 +135,11 @@ var UserAuth = function()
 			function findFeed(err, user)
 			{
 				dbg.log('find feed'); 
-				if(err) throw err; // rethrows error.
-				var row=-1, col=-1;
-				for( i in user.feeds )
-				{
-					for( j in user.feeds[i] )
-					{
-						if(
-							'url' in user.feeds[i][j] &&
-							user.feeds[i][j].url == feed_url
-						) {
-							col = i;
-							row = j;
-						}
-					}
-				}
-
-				if( col == -1 ) { // row == -1 also then.
-					throw new Error('Cannot find feed');
-				} else {
-					return user.feeds[col][row];
-				}
+				Ni.model('User').getFeed(
+					cookie.data.user,
+					feed_url,
+					this
+				);
 			},
 			function generateTeaser(err, feed)
 			{
