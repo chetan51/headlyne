@@ -269,30 +269,29 @@ var HomeController = function()
 	this.login = function(req, res, next) {
 		var view_parameters = {};
 		
-		if(req.method == 'POST' && req.body) {
+		if(req.method != 'POST' || !req.body) {
+			// Show login page
+			var html = Ni.library('Templater').getLoginPage(
+				view_parameters
+			);
+			
+			res.ok(html);
+		}
+		else {
 			// Check login
 			var params = req.body;
 			view_parameters = params;
+			view_parameters.error_message = null;
 			
 			Ni.library('UserHandler').login(
 				params,
 				function(err, logged_in, error_message, cookie) {
 					if (err) {
 						view_parameters.error_message = "Uh oh, something went wrong. Please try again.";
-						
-						var html = Ni.library('Templater').getLoginPage(
-							view_parameters
-						);
-						res.ok(html);
 					}
 					else {
 						if (!logged_in) {
 							view_parameters.error_message = error_message;
-							
-							var html = Ni.library('Templater').getLoginPage(
-								view_parameters
-							);
-							res.ok(html);
 						}
 						else {
 							res.setCookie(
@@ -308,15 +307,16 @@ var HomeController = function()
 							dbg.log('redirect: login to home, logged in');
 						}
 					}
+					
+					if (view_parameters.error_message) {
+						var html = Ni.library('Templater').getLoginPage(
+							view_parameters
+						);
+						res.ok(html);
+					}
 				}
 			);
 		}
-		else {
-			var html = Ni.library('Templater').getLoginPage(
-				view_parameters
-			);
-			res.ok(html);
-		}		
 	}
 	
 	this.logout = function(req, res, next) {
