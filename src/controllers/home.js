@@ -104,7 +104,7 @@ var HomeController = function()
 						global_user.feeds.forEach(function(feeds_i, i) {
 							feeds_i.forEach(function(feeds_j, j) {
 								Ni.library('UserHandler').createTeaser(
-									cookie,
+									global_user,
 									feeds_j.url,
 									function(err, teaser)
 									{

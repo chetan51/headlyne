@@ -120,23 +120,15 @@ var UserAuth = function()
 		}
 	}
 	
-	this.createTeaser = function(cookie, feed_url, callback)
+	this.createTeaser = function(user, feed_url, callback)
 	{
 		var global_feed;
 		Step(
-			function getUser()
-			{
-				dbg.log('get user'); 
-				Ni.model('User').get(
-					cookie.data.user,
-					this
-				);
-			},
-			function findFeed(err, user)
+			function findFeed()
 			{
 				dbg.log('find feed'); 
 				Ni.model('User').getFeed(
-					cookie.data.user,
+					user.username,
 					feed_url,
 					this
 				);
