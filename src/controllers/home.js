@@ -259,7 +259,7 @@ var HomeController = function()
 				// return teasers
 				var home = Ni.library('Templater').getHomePage(
 					{feed_map: columns},
-					true
+					false
 				);
 				
 				res.ok(home);
