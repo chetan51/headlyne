@@ -31,6 +31,10 @@ var db_name = 'headlyne',
  **/
 Ni.config('root', __dirname);
 
+/**
+ *  App configuration
+ **/
+
 Ni.config('base_url',            "/");
 Ni.config('http_timeout',        30000);
 Ni.config('feedparse_timeout',   5000);
@@ -40,6 +44,41 @@ Ni.config('session_lifetime',    14 * 24 * 60 * 60 * 1000);
 Ni.config('snippet_image_limit', 2);
 Ni.config('snippet_text_limit',  300);
 Ni.config('log_enabled',         true);
+
+Ni.config('default_feeds',
+	[
+		[
+			{
+				url: 'http://feeds.feedburner.com/quotationspage/qotd',
+				num_feed_items: 9,
+				body_selection: 'item',
+				title_selection: 'item'
+			}
+		],
+		[
+			{
+				url: 'http://feeds.reuters.com/reuters/companyNews?format=xml',
+				num_feed_items: 2,
+				body_selection: 'webpage',
+				title_selection: 'webpage'
+			},
+			{
+				url: 'http://feeds.reuters.com/reuters/entertainment',
+				num_feed_items: 2,
+				body_selection: 'item',
+				title_selection: 'webpage'
+			},
+		],
+		[
+			{
+				url: 'http://feeds.feedburner.com/FutilityCloset',
+				num_feed_items: 3,
+				body_selection: 'webpage',
+				title_selection: 'item'
+			}
+		]
+	]
+);		
 
 Ni.boot(function() {
 	Ni.library('DatabaseDriver').init(

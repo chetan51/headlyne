@@ -59,41 +59,8 @@ var HomeController = function()
 
 	this.sample = function(req, res, next)
 	{
-		var feed_map = [
-			[
-				{
-					url: 'http://feeds.feedburner.com/quotationspage/qotd',
-					num_feed_items: 9,
-					body_selection: 'item',
-					title_selection: 'item'
-				}
-			],
-			[
-				{
-					url: 'http://feeds.reuters.com/reuters/companyNews?format=xml',
-					num_feed_items: 2,
-					body_selection: 'webpage',
-					title_selection: 'webpage'
-				},
-				{
-					url: 'http://feeds.reuters.com/reuters/entertainment',
-					num_feed_items: 2,
-					body_selection: 'item',
-					title_selection: 'webpage'
-				},
-			],
-			[
-				{
-					url: 'http://feeds.feedburner.com/FutilityCloset',
-					num_feed_items: 3,
-					body_selection: 'webpage',
-					title_selection: 'item'
-				}
-			]
-		];
-		
 		self._generateColumns(
-			feed_map,
+			Ni.config('default_feeds'),
 			function(err, columns) {
 				if (err) throw err;
 				
