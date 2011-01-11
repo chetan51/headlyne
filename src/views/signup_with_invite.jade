@@ -2,8 +2,6 @@
   form(action=base_url+"account/register", method="post")
     .username-control
       input.username-input(type="text", placeholder="username", name="username", value=username)
-    .invite-code-control
-      input.invite_code-input(type="text", placeholder="Invite Code", name="invite_code", value=invite_code)
     .email-control
       input.email-input(type="text", placeholder="email address", name="email", value=email)
     .name-control
@@ -13,6 +11,8 @@
       input.password-input(type="password", placeholder="password", name="password")
     .confirm-password-control
       input.confirm-password-input(type="password", placeholder="confirm password", name="confirm_password")
+    .invite-code-control
+      input.invite_code-input(type="text", placeholder="invite code", name="invite_code", value=invite_code)
     .submit-control
       input.submit-button(type="submit", name="submit", value="Sign Up")
   .message
