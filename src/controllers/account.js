@@ -399,7 +399,24 @@ var AccountController = function()
 				res.ok(html);
 			} else {
 				// add the request to the database.
-				// redirect to requested_invites page
+				Ni.model('Invite').request_invite(
+					params.email,
+					params.first_name,
+					params.last_name,
+					function(err)
+					{
+						if(err) {
+							view_parameters.error_message = err.message;
+							var html = Ni.library('Templater').getRequestInvites(
+								view_parameters
+							);
+							res.ok(html);
+						} else {
+							// redirect to requested_invites page
+							res.moved('/account/invite_requested');
+						}
+					}
+				);
 			}
 		} else {
 			var html = Ni.library('Templater').getRequestInvites(
