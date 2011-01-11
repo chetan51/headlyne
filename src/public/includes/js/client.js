@@ -82,13 +82,32 @@ function addFeedListeners(feeds) {
 	
       enablePlaceholders(feeds);
       
+      var feed_bodies = feeds.children(".body");
+      
 	// Make all links open in new window and block event bubbling
-	feeds.find("a").click(function(e) {
+	feed_bodies.find("a").click(function(e) {
 		window.open($(this).attr('href'));
 
 		e.stopPropagation();               
 		e.preventDefault();
 	});
+	
+	// Make all images clickable and load in reader
+	var clickable_images = feed_bodies.find("img");
+	
+	clickable_images.addClass("modalInput");
+	clickable_images.attr('rel', "#reader");
+	clickable_images.overlay({  // reader overlay
+		// some mask tweaks suitable for modal dialogs
+		mask: {
+			color: '#000000',
+			loadSpeed: 200,
+			opacity: 0.9
+		},
+		closeOnClick: true
+	});
+	
+	clickable_images.click(feedItemBodyImageClicked);
 }
 
 function refreshColumnDeleteOptions(columns) {
@@ -522,6 +541,21 @@ function feedItemTitleClicked(e) {
 			reader_body_div.html(data.page);
 		}
 	});
+}
+
+function feedItemBodyImageClicked(e) {
+	var feeditem_div = $(this).parents(".item");
+	var feeditem_title = feeditem_div.find("> .header > .title").text() + " [image]";
+	
+	var reader_title_div = $("#reader > .content > .title");
+	var reader_body_div = $("#reader > .content > .body");
+	
+	reader_title_div.html(feeditem_title);
+	reader_body_div.html("");
+	reader_body_div.append($(this).clone());
+	
+	e.stopPropagation();               
+	e.preventDefault();
 }
 
 function columnDeleteClicked(e) {
