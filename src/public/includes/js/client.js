@@ -418,24 +418,26 @@ function feedDeleteConfirmClicked(e) {
 		feed_div.remove();
 	});
 	
-	if (verifyLoggedInForChanges()) {
-		// Update backend
-		$.ajax({
-			url: "/user/remove",
-			type: 'POST',
-			data: {
-				feed_url : feed_url
-			},
-			datatype: 'json',
-			success: function(data) {
-				if (!data || data.error) {
+	if (feed_url && feed_url != "") {
+		if (verifyLoggedInForChanges()) {
+			// Update backend
+			$.ajax({
+				url: "/user/remove",
+				type: 'POST',
+				data: {
+					feed_url : feed_url
+				},
+				datatype: 'json',
+				success: function(data) {
+					if (!data || data.error) {
+						updateAccountError();
+					}
+				},
+				error: function() {
 					updateAccountError();
 				}
-			},
-			error: function() {
-				updateAccountError();
-			}
-		});
+			});
+		}
 	}
 }
 
