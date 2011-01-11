@@ -273,6 +273,7 @@ function addColumnClicked(e) {
 	equallyWidenColumns();
 	addColumnListeners(new_column);
 	refreshColumnDeleteOptions($(".column"));
+	updateAccountForFeedMap();
 }
 
 function feedEditClicked(e) {
@@ -400,9 +401,32 @@ function feedDeleteCancelClicked(e) {
 
 function feedDeleteConfirmClicked(e) {
 	var feed_div = $(this).parents(".feed");
+	var settings_div = feed_div.find("> .header > .settings");
+	var feed_url = settings_div.children(".url").text();
+	
 	feed_div.hide("fast", function() {
 		feed_div.remove();
 	});
+	
+	if (verifyLoggedInForChanges()) {
+		// Update backend
+		$.ajax({
+			url: "/user/remove",
+			type: 'POST',
+			data: {
+				feed_url : feed_url
+			},
+			datatype: 'json',
+			success: function(data) {
+				if (!data || data.error) {
+					updateAccountError();
+				}
+			},
+			error: function() {
+				updateAccountError();
+			}
+		});
+	}
 }
 
 function feedHeaderHoverIn(e) {
@@ -550,6 +574,48 @@ function columnHoverOut(e) {
 }
 
 function feedPositionsUpdated(e) {
+	updateAccountForFeedMap();
+}
+
+/*
+ * Helper functions
+ */
+function equallyWidenColumns() {
+	var width = 99 / $(".column").length;
+	$(".column").animate({"width" : width + "%"}, "fast");
+}
+
+function resizeColumnDynamically(column, width_percent, callback) {
+	var other_columns_width_percent = (99 - width_percent) / ($(".column").length - 1);
+	
+	column.animate({"width" : width_percent+"%"}, "fast", callback);
+	$(".column").not(column).animate({"width" : other_columns_width_percent+"%"}, "fast");
+}
+
+function hideFeedPreviews() {
+	$(".feed > .preview").hide("slide", {direction: "up"}, "fast");
+}
+
+function previewError(preview_div) {
+	preview_div.hide();
+	preview_div.html("There was an error while loading the feed preview. Please refresh the page and try again.");
+	preview_div.slideDown("fast");
+}
+
+function fullArticleError(article_div) {
+	article_div.html("There was an error while loading the article. Please refresh the page and try again.<br><br>");
+	article_div.slideDown("fast");
+}
+
+function readerError() {
+	$("#reader > .content > .body").html("There was an error while loading the article. Please refresh the page and try again.");
+}
+
+function updateAccountError() {
+	notify("<p>There was an error while updating your account. Please refresh and try again.</p>");
+}
+
+function updateAccountForFeedMap() {
 	var feed_map = [];
 	$(".column").each(function(column_index) {
 		feed_map[column_index] = [];
@@ -593,44 +659,6 @@ function feedPositionsUpdated(e) {
 	}
 }
 
-/*
- * Helper functions
- */
-function equallyWidenColumns() {
-	var width = 99 / $(".column").length;
-	$(".column").animate({"width" : width + "%"}, "fast");
-}
-
-function resizeColumnDynamically(column, width_percent, callback) {
-	var other_columns_width_percent = (99 - width_percent) / ($(".column").length - 1);
-	
-	column.animate({"width" : width_percent+"%"}, "fast", callback);
-	$(".column").not(column).animate({"width" : other_columns_width_percent+"%"}, "fast");
-}
-
-function hideFeedPreviews() {
-	$(".feed > .preview").hide("slide", {direction: "up"}, "fast");
-}
-
-function previewError(preview_div) {
-	preview_div.hide();
-	preview_div.html("There was an error while loading the feed preview. Please refresh the page and try again.");
-	preview_div.slideDown("fast");
-}
-
-function fullArticleError(article_div) {
-	article_div.html("There was an error while loading the article. Please refresh the page and try again.<br><br>");
-	article_div.slideDown("fast");
-}
-
-function readerError() {
-	$("#reader > .content > .body").html("There was an error while loading the article. Please refresh the page and try again.");
-}
-
-function updateAccountError() {
-	notify("<p>There was an error while updating your account. Please refresh and try again.</p>");
-}
-
 function resetFeedDelete(feed_div) {
 	var delete_div = feed_div.find("> .header > .edit-overlay > .edit-delete > .delete");
 	delete_div.children(".default-control").show();
@@ -652,6 +680,8 @@ function removeColumn(column_div) {
 		column_div.remove();
 		refreshColumnDeleteOptions($(".column"));
 	});
+	
+	updateAccountForFeedMap();
 }
 
 function updateFeedPreview(feed_div, callback) {
