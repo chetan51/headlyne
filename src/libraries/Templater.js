@@ -207,6 +207,12 @@ var Templater = function()
 		
 		var view_parameters = {};
 		
+		var notifications = jade.render(
+			Ni.view('signup_invite_notification').template
+		);
+			
+		view_parameters.notifications = notifications;
+		
 		var account_navigation = self.getAccountNavigation(
 			view_parameters,
 			false
