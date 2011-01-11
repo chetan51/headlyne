@@ -64,10 +64,14 @@ function addFeedListeners(feeds) {
 	var feeditem_body_div = feeditem_div.find("> .body");
 	var snippet_div = feeditem_body_div.children(".snippet");
 	snippet_div.click(snippetClicked);
+	
 	var article_div = feeditem_body_div.children(".full-article");
 	article_div.click(fullArticleClicked);
+	
 	var feeditem_title = feeditem_div.find("> .header > .title");
-	feeditem_title.click(feedItemTitleClicked);
+	
+	feeditem_title.addClass("modalInput");
+	feeditem_title.attr('rel', "#reader");
 	feeditem_title.overlay({  // reader overlay
 		// some mask tweaks suitable for modal dialogs
 		mask: {
@@ -77,6 +81,7 @@ function addFeedListeners(feeds) {
 		},
 		closeOnClick: true
 	});
+	feeditem_title.click(feedItemTitleClicked);
 	
 	feeds.children(".header").hover(feedHeaderHoverIn, feedHeaderHoverOut);
 	
