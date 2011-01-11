@@ -265,9 +265,6 @@ var AccountController = function()
 			if (params.username == null || params.username == "") {
 				view_parameters.error_message = "Please enter a username."; param_error=true;
 			}
-			else if (params.invite_code == null || params.invite_code == "") {
-				view_parameters.error_message = "Please enter your invite code."; param_error=true;
-			}
 			else if (params.email == null || params.email == "") {
 				view_parameters.error_message = "Please enter your email address."; param_error=true;
 			}
@@ -285,6 +282,9 @@ var AccountController = function()
 			}
 			else if (params.password != params.confirm_password) {
 				view_parameters.error_message = "Passwords do not match."; param_error=true;
+			}
+			else if (params.invite_code == null || params.invite_code == "") {
+				view_parameters.error_message = "Please enter your invite code."; param_error=true;
 			}
 
 			if(param_error) {
