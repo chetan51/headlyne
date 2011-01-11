@@ -96,6 +96,17 @@ Ni.boot(function() {
 			
 			if (err) throw err;
 			
+			/*
+			Ni.model('Invites').add(
+				'admin',
+				function(err, invite_code) {
+					if (err) throw err;
+
+					console.log(invite_code);
+				}
+			);
+			*/
+			
 			var app = Connect.createServer(
 				Quip(),               
 				Connect.bodyDecoder(),
