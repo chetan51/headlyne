@@ -372,6 +372,42 @@ var AccountController = function()
 			res.ok(html);
 		}
 	}
+
+	this.request_invite = function(req, res, next)
+	{
+		var view_parameters = {};
+		
+		if(req.method == 'POST' && req.body) {
+			// Check sign up
+			var params = req.body, param_error=false;
+			view_parameters = params;
+		
+			if (params.email == null || params.email == "") {
+				view_parameters.error_message = "Please enter your email address."; param_error=true;
+			}
+			else if (params.first_name == null || params.first_name == "") {
+				view_parameters.error_message = "Please enter your first name."; param_error=true;
+			}
+			else if (params.last_name == null || params.last_name == "") {
+				view_parameters.error_message = "Please enter your last name."; param_error=true;
+			}
+
+			if(param_error) {
+				var html = Ni.library('Templater').getRequestInvites(
+					view_parameters
+				);
+				res.ok(html);
+			} else {
+				// add the request to the database.
+				// redirect to requested_invites page
+			}
+		} else {
+			var html = Ni.library('Templater').getRequestInvites(
+				view_parameters
+			);
+			res.ok(html);
+		}
+	}
 };
 
 /*

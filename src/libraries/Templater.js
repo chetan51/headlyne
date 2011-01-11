@@ -227,6 +227,56 @@ var Templater = function()
 	}
 	
 	/**
+	 *	Generates an HTML view of the page to request invites
+	 *
+	 * 	Arguments:
+	 * 		parameters for view {
+	 * 			email
+	 * 			first_name
+	 *			last_name
+	 * 			error message
+	 * 		}
+	 *
+	 * 	Returns:
+	 * 		HTML view
+	 **/
+	this.getRequestInvites = function(view_parameters)
+	{
+		view_parameters.base_url = Ni.config('base_url');
+		
+		if (view_parameters.email == null) {
+			view_parameters.email = "";
+		}
+		if (view_parameters.first_name == null) {
+			view_parameters.first_name = "";
+		}
+		if (view_parameters.last_name == null) {
+			view_parameters.last_name = "";
+		}
+
+		var req_invite_body = jade.render(
+			Ni.view('request_invite').template,
+			{locals : view_parameters}
+		);
+		
+		var view_parameters = {};
+		
+		view_parameters.notifications = "";
+		
+		var account_navigation = self.getAccountNavigation(
+			view_parameters,
+			false
+		);
+		view_parameters.account_navigation = account_navigation;
+		
+		view_parameters.title = "Request an Invite";
+		view_parameters.folio_title = "Request an Invite";
+		view_parameters.content = req_invite_body;
+		
+		return self.getBase(view_parameters, false);
+	}
+
+	/**
 	 *    Partials
 	 **/
 	
