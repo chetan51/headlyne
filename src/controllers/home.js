@@ -151,108 +151,47 @@ var HomeController = function()
 
 	this.sample = function(req, res, next)
 	{
-		var global_user={}, global_feed_array=[];
-		Step(
-			function STUBuser()
-			{
-				var new_feeds = [
-					[
-						{
-							url: 'http://feeds.feedburner.com/quotationspage/qotd',
-							num_feed_items: 9,
-							body_selection: 'item',
-							title_selection: 'item'
-						}
-					],
-					[
-						{
-							url: 'http://feeds.reuters.com/reuters/companyNews?format=xml',
-							num_feed_items: 2,
-							body_selection: 'webpage',
-							title_selection: 'webpage'
-						},
-						{
-							url: 'http://feeds.reuters.com/reuters/entertainment',
-							num_feed_items: 2,
-							body_selection: 'item',
-							title_selection: 'webpage'
-						},
-					],
-					[
-						{
-							url: 'http://feeds.feedburner.com/FutilityCloset',
-							num_feed_items: 3,
-							body_selection: 'webpage',
-							title_selection: 'item'
-						}
-					]
-				];
-				global_user.feeds = new_feeds;
-				return new_feeds;
-			},
-			function getTeasers(err, feed_array)
-			{
-				dbg.log('getting teasers');
-				if (err) throw err;
-				
-				var count=0, done_count=0;
-				for(i in global_user.feeds) {
-					for(j in global_user.feeds[i]) {
-						global_feed_array[i] = [];
-						count = count + 1;
-					}
-				}
-				
-				var _this = this;
-				global_user.feeds.forEach(function(feeds_i, i) {
-					feeds_i.forEach(function(feeds_j, j) {
-						Ni.library('FeedServer').getFeedTeaser(
-							feeds_j.url,
-							feeds_j.num_feed_items,
-							function(){},
-							function(err, teaser)
-							{
-								for( keys in global_user.feeds[i][j] )
-								{
-									teaser[keys] = global_user.feeds[i][j][keys];
-								}
-								
-								var teaser_html = Ni.library('Templater').getFeedTeaser(
-									{feed: teaser}
-								);
-
-								done_count = done_count + 1;
-								global_feed_array[i][j] = teaser_html;
-
-								if( done_count == count ) {
-									_this();
-								}
-							}
-						);
-					});
-				});
-				if(!count)
+		var feeds = [
+			[
 				{
-					throw new Error('No feeds saved!');
+					url: 'http://feeds.feedburner.com/quotationspage/qotd',
+					num_feed_items: 9,
+					body_selection: 'item',
+					title_selection: 'item'
 				}
-			},
-			function sendResponse(err, teasers)
-			{
-				dbg.log('got all teasers. Err: '+err);
-				var columns = [];
-				columns[0] = {};
-				
-				if(!err) {
-					// fill columns variable
-					for( i in global_feed_array) {
-						columns[i] = {};
-						columns[i].feeds = global_feed_array[i];
-					}
+			],
+			[
+				{
+					url: 'http://feeds.reuters.com/reuters/companyNews?format=xml',
+					num_feed_items: 2,
+					body_selection: 'webpage',
+					title_selection: 'webpage'
+				},
+				{
+					url: 'http://feeds.reuters.com/reuters/entertainment',
+					num_feed_items: 2,
+					body_selection: 'item',
+					title_selection: 'webpage'
+				},
+			],
+			[
+				{
+					url: 'http://feeds.feedburner.com/FutilityCloset',
+					num_feed_items: 3,
+					body_selection: 'webpage',
+					title_selection: 'item'
 				}
+			]
+		];
+		
+		self._createFeedMap(
+			feeds,
+			function(err, feed_map) {
+				if (err) throw err;
 				
 				// return teasers
 				var home = Ni.library('Templater').getHomePage(
-					{feed_map: columns},
+					{feed_map: feed_map},
 					false
 				);
 				
@@ -321,6 +260,67 @@ var HomeController = function()
 				callback(err, teaser);
 			}
 		);
+	}
+	
+	/*
+	 *	Helper that creates a feed map for the given user's feeds.
+	 *	
+	 *		Arguments: user's feeds
+	 *		
+	 *		Returns (via callback): error
+	 *		                        feed map in JSON format
+	 */
+	this._createFeedMap = function(feeds, callback)
+	{
+		dbg.log('creating feed map');
+		
+		var global_feed_array=[];
+		var count=0, done_count=0;
+		for(i in feeds) {
+			for(j in feeds[i]) {
+				global_feed_array[i] = [];
+				count = count + 1;
+			}
+		}
+		
+		feeds.forEach(function(feeds_i, i) {
+			feeds_i.forEach(function(feeds_j, j) {
+				Ni.library('FeedServer').getFeedTeaser(
+					feeds_j.url,
+					feeds_j.num_feed_items,
+					function(){},
+					function(err, teaser)
+					{
+						if (err)  {
+							callback(err);
+							return;
+						}
+
+						for( keys in feeds[i][j] )
+						{
+							teaser[keys] = feeds[i][j][keys];
+						}
+						
+						var teaser_html = Ni.library('Templater').getFeedTeaser(
+							{feed: teaser}
+						);
+
+						done_count = done_count + 1;
+						global_feed_array[i][j] = teaser_html;
+
+						if( done_count == count ) {
+							callback(null, global_feed_array);
+							return;
+						}
+					}
+				);
+			});
+		});
+		
+		if(!count)
+		{
+			 callback(new Error('No feeds to create feed map.'));
+		}
 	}
 };
 
