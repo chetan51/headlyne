@@ -9,7 +9,10 @@
           - if (item.webpage.title)
             h2.title.modalInput(rel="#reader")= item.webpage.title
       - if (item.link)
-        .url= item.link
+        .from
+          p
+            | from
+            a(href=item.link, target="_blank")= title
     .body
       .full-article
       - if (body_selection == "item")
