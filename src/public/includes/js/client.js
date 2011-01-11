@@ -87,16 +87,21 @@ function addFeedListeners(feeds) {
 	
       enablePlaceholders(feeds);
       
-      var feed_bodies = feeds.children(".body");
-      
+	addFeedItemBodyListeners(feeds.find("> .body > .item > .body"));
+}
+
+function addFeedItemBodyListeners(feeditem_bodies) {
 	// Make all links open in new window and block event bubbling
-	feed_bodies.find("a").click(feedItemBodyLinkClicked);
+	var links = feeditem_bodies.find("a");
+	links.unbind("click");
+	links.click(feedItemBodyLinkClicked);
 	
 	// Make all images clickable and load in reader
-	var clickable_images = feed_bodies.find("img");
+	var clickable_images = feeditem_bodies.find("img");
 	
 	clickable_images.addClass("modalInput");
 	clickable_images.attr('rel', "#reader");
+	clickable_images.unbind("click");
 	clickable_images.overlay({  // reader overlay
 		// some mask tweaks suitable for modal dialogs
 		mask: {
@@ -106,7 +111,6 @@ function addFeedListeners(feeds) {
 		},
 		closeOnClick: true
 	});
-	
 	clickable_images.click(feedItemBodyImageClicked);
 }
 
@@ -512,6 +516,7 @@ function snippetClicked(e) {
 			snippet_div.slideUp("fast");
 			article_div.html(data.page);
 			article_div.slideDown("fast");
+			addFeedItemBodyListeners(feeditem_div.children(".body"));
 		}
 	});
 }
