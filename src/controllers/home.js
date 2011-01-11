@@ -27,126 +27,34 @@ var HomeController = function()
 				dbg.log('redirect: home to logout');
 				res.moved('/account/logout');
 			} else {
-				// if valid, serve the page requested.
-				var global_user, global_feed_array=[];
-				Step(
-					function getUser()
-					{
-						dbg.log('getUser '+cookie.data.user);
-						Ni.model('User').get(
-							cookie.data.user,
-							this
-						);
-					},
-					function STUBuser(err, user)
-					{
-						global_user = user;
-						dbg.log(global_user.feeds);
-					/*
-						var new_feeds = [
-							[
-								{
-									url: 'http://feeds.feedburner.com/quotationspage/qotd',
-									num_feed_items: 9,
-									body_selection: 'item',
-									title_selection: 'item'
+				// User logged in, serve user's home page
+				dbg.log('geting user home page for ' + cookie.data.user);
+				
+				Ni.model('User').get(
+					cookie.data.user,
+					function(err, user) {
+						self._generateColumns(
+							user.feeds,
+							function(err, columns) {
+								if (err) {
+									dbg.log("there was an error in generating one of the teasers");
 								}
-							],
-							[
-								{
-									url: 'http://feeds.reuters.com/reuters/companyNews?format=xml',
-									num_feed_items: 2,
-									body_selection: 'webpage',
-									title_selection: 'webpage'
-								},
-								{
-									url: 'http://feeds.reuters.com/reuters/entertainment',
-									num_feed_items: 2,
-									body_selection: 'item',
-									title_selection: 'webpage'
-								},
-							],
-							[
-								{
-									url: 'http://feeds.feedburner.com/FutilityCloset',
-									num_feed_items: 3,
-									body_selection: 'webpage',
-									title_selection: 'item'
-								}
-							]
-						];
-						global_user.feeds = new_feeds;
-						Ni.model('User').updateFeeds(
-							cookie.data.user,
-							new_feeds,
-							this
-						);
-					},
-					function getTeasers(err, feed_array)
-					{*/
-						dbg.log('get teasers for '+JSON.stringify(global_user));
-						if (err) throw err;
-						
-						var count=0, done_count=0;
-						for(i in global_user.feeds) {
-							for(j in global_user.feeds[i]) {
-								global_feed_array[i] = [];
-								count = count + 1;
-							}
-						}
 
-						var _this = this;
-						global_user.feeds.forEach(function(feeds_i, i) {
-							feeds_i.forEach(function(feeds_j, j) {
-								self._createTeaser(
-									global_user,
-									feeds_j.url,
-									function(err, teaser)
+								var home = Ni.library('Templater').getHomePage(
 									{
-										done_count = done_count + 1;
-										global_feed_array[i][j] = teaser;
-										
-										if( done_count == count ) {
-											_this();
-										}
-									}
+										columns : columns,
+								    		name    : user.first_name + " " + user.last_name
+									},
+									true
 								);
-							});
-						});
-						
-						if(!count)
-						{
-							throw new Error('No feeds saved!');
-						}
-					},
-					function(err, teasers)
-					{
-						dbg.log('got all teasers. Err: '+err);
-						var columns = [];
-						columns[0] = {};
-
-						if(!err) {
-							// fill columns variable
-							for( i in global_feed_array) {
-								columns[i] = {};
-								columns[i].feeds = global_feed_array[i];
+								
+								res.ok(home);
 							}
-						}
-
-						// return teasers
-						var home = Ni.library('Templater').getHomePage(
-							{
-								feed_map: columns,
-								name    : cookie.data.user,
-							},
-							true
 						);
-						
-						res.ok(home);
 					}
 				);
 			}
-		}); // close checkCookie
+		});
 	}
 
 	this.sample = function(req, res, next)
@@ -189,7 +97,6 @@ var HomeController = function()
 			function(err, columns) {
 				if (err) throw err;
 				
-				// return teasers
 				var home = Ni.library('Templater').getHomePage(
 					{columns: columns},
 					false
@@ -304,30 +211,24 @@ var HomeController = function()
 					{
 						if (err)  {
 							global_err = err;
-							return;
 						}
-						
-						// Add view parameters
-						for (key in feed_map[i][j])
-						{
-							teaser[key] = feed_map[i][j][key];
-						}
+						else {
+							// Add view parameters
+							for (key in feed_map[i][j])
+							{
+								teaser[key] = feed_map[i][j][key];
+							}
 
-						var teaser_html = Ni.library('Templater').getFeedTeaser(
-							{feed: teaser}
-						);
+							var teaser_html = Ni.library('Templater').getFeedTeaser(
+								{feed: teaser}
+							);
+							
+							columns[i].feeds[j] = teaser_html;
+						}
 
 						count++;
-						columns[i].feeds[j] = teaser_html;
-
 						if (count == total_count) {
-							if (global_err) {
-								callback(global_err);
-							}
-							else {
-								callback(null, columns);
-							}
-							return;
+							callback(global_err, columns);
 						}
 					}
 				);

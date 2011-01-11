@@ -27,7 +27,7 @@ var Templater = function()
 	 * 	Arguments:
 	 * 		parameters for view {
 	 *              columns,
-	 *              username
+	 *              user's name
 	 * 		},
 	 * 		user logged in?
 	 *
