@@ -81,6 +81,14 @@ function addFeedListeners(feeds) {
 	feeds.children(".header").hover(feedHeaderHoverIn, feedHeaderHoverOut);
 	
       enablePlaceholders(feeds);
+      
+	// Make all links open in new window and block event bubbling
+	feeds.find("a").click(function(e) {
+		window.open($(this).attr('href'));
+
+		e.stopPropagation();               
+		e.preventDefault();
+	});
 }
 
 function refreshColumnDeleteOptions(columns) {
