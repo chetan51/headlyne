@@ -143,6 +143,8 @@ var AccountController = function()
 		});
 	}
 	
+	/*	Plain sign up, no invite
+	 *
 	this.signup = function(req, res, next) {
 		var view_parameters = {};
 		
@@ -187,6 +189,7 @@ var AccountController = function()
 			res.ok(html);
 		}
 	}
+	*/
 	
 	/*
 	 *	Helper that validates input fields and registers new user.
@@ -248,7 +251,10 @@ var AccountController = function()
 		}
 	}
 	
-	this.register = function(req, res, next) {
+	/*
+	 *    Invite-based sign up
+	 */
+	this.signup = function(req, res, next) {
 		var view_parameters = {};
 		
 		if(req.method == 'POST' && req.body) {
@@ -330,7 +336,7 @@ var AccountController = function()
 							} else {
 								view_parameters.error_message = "Uh oh, something went wrong. Please try again.";
 							}
-							var html = Ni.library('Templater').getRegistrationPage(
+							var html = Ni.library('Templater').getSignupPageWithInvite(
 								view_parameters
 							);
 							res.ok(html);
@@ -360,7 +366,7 @@ var AccountController = function()
 				);
 			}
 		} else {
-			var html = Ni.library('Templater').getRegistrationPage(
+			var html = Ni.library('Templater').getSignupPageWithInvite(
 				view_parameters
 			);
 			res.ok(html);

@@ -168,7 +168,7 @@ var Templater = function()
 	}
 	
 	/**
-	 *	Generates an HTML view of the register page.
+	 *	Generates an HTML view of the sign up page with invite.
 	 *
 	 * 	Arguments:
 	 * 		parameters for view {
@@ -180,7 +180,7 @@ var Templater = function()
 	 * 	Returns:
 	 * 		HTML view
 	 **/
-	this.getRegistrationPage = function(view_parameters)
+	this.getSignupPageWithInvite = function(view_parameters)
 	{
 		view_parameters.base_url = Ni.config('base_url');
 		
@@ -201,7 +201,7 @@ var Templater = function()
 		}
 
 		var signup = jade.render(
-			Ni.view('register').template,
+			Ni.view('signup_with_invite').template,
 			{locals : view_parameters}
 		);
 		
