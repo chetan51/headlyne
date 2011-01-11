@@ -277,6 +277,43 @@ var Templater = function()
 	}
 
 	/**
+	 *	Generates an HTML view of the interim page after an 
+	 *	invite is requested.
+	 *
+	 * 	Arguments:
+	 * 		parameters for view {
+	 * 		}
+	 *
+	 * 	Returns:
+	 * 		HTML view
+	 **/
+	this.getInviteRequested = function(view_parameters)
+	{
+		view_parameters.base_url = Ni.config('base_url');
+		
+		var body = jade.render(
+			Ni.view('invite_requested').template,
+			{locals : view_parameters}
+		);
+		
+		var view_parameters = {};
+		
+		view_parameters.notifications = body;
+		
+		var account_navigation = self.getAccountNavigation(
+			view_parameters,
+			false
+		);
+		view_parameters.account_navigation = account_navigation;
+		
+		view_parameters.title = "Headlyne - Invite Requested";
+		view_parameters.folio_title = "";
+		view_parameters.content = "";
+		
+		return self.getBase(view_parameters, false);
+	}
+
+	/**
 	 *    Partials
 	 **/
 	

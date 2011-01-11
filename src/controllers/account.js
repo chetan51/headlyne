@@ -425,6 +425,16 @@ var AccountController = function()
 			res.ok(html);
 		}
 	}
+	
+	this.invite_requested = function(req, res, next)
+	{
+		var view_parameters = {};
+		
+		var html = Ni.library('Templater').getInviteRequested(
+			view_parameters
+		);
+		res.ok(html);
+	}
 };
 
 /*
