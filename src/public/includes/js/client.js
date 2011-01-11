@@ -439,6 +439,8 @@ function feedDeleteConfirmClicked(e) {
 			});
 		}
 	}
+	
+	equallyWidenColumns();
 }
 
 function feedHeaderHoverIn(e) {
