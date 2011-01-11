@@ -481,7 +481,9 @@ function feedURLKeyup(e) {
 		var page = this_column.parents(".page");
 		var same_feeds = page.find("> .column > .content > .feed > .source > .url-control > .url-input[value='" + feed_url + "']");
 		if (same_feeds.size() > 1) {
-			notify("<p>That feed already exists on this page.</p>");
+			var preview_div = feed_div.children(".preview");
+			preview_div.html("That feed already exists on this page.");
+			preview_div.slideDown("fast");
 		}
 		else {
 			// Save URL to settings div
