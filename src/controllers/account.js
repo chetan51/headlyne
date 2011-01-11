@@ -260,7 +260,7 @@ var AccountController = function()
 				view_parameters.error_message = "Please enter a username."; param_error=true;
 			}
 			else if (params.invite_code == null || params.invite_code == "") {
-				view_parameters.error_message = "Please enter your Invite Code."; param_error=true;
+				view_parameters.error_message = "Please enter your invite code."; param_error=true;
 			}
 			else if (params.email == null || params.email == "") {
 				view_parameters.error_message = "Please enter your email address."; param_error=true;
@@ -300,7 +300,7 @@ var AccountController = function()
 						if(err) throw err;
 						if(!is_valid) {
 							dbg.log('invalid code');
-							throw new Error('Invalid Invite Code.');
+							throw new Error('Invalid invite code.');
 						} else {
 							Ni.model('User').save(
 								params.username,
@@ -324,7 +324,7 @@ var AccountController = function()
 					{
 						if(err) {
 							if( err.message == "Database match exists" ) {
-								view_parameters.error_message = 'That username is already taken!';
+								view_parameters.error_message = 'That username is already taken.';
 							} else if( err.message == "Invalid Invite Code.") {
 								view_parameters.error_message = err.message;
 							} else {
