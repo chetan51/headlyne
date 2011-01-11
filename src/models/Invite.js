@@ -128,7 +128,7 @@ var InviteModel = function()
 	}
 
 	/**
-	 * Adds a person's details to the mailing_list.
+	 * Adds a person's details to the invite requested list.
 	 *
 	 * 	Arguments:
 	 * 		email
@@ -140,7 +140,7 @@ var InviteModel = function()
 	this.request_invite = function(email, first_name, last_name, callback)
 	{
 		DatabaseDriver.getCollection(
-			'mailing_list',
+			'invite_requested',
 			function(err, collection)
 			{
 				if (err) {
