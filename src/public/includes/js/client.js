@@ -400,7 +400,9 @@ function feedDeleteCancelClicked(e) {
 
 function feedDeleteConfirmClicked(e) {
 	var feed_div = $(this).parents(".feed");
-	feed_div.hide("fast");
+	feed_div.hide("fast", function() {
+		feed_div.remove();
+	});
 }
 
 function feedHeaderHoverIn(e) {
