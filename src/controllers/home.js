@@ -322,11 +322,12 @@ var HomeController = function()
 
 						if (count == total_count) {
 							if (global_err) {
-								callback(global_error);
+								callback(global_err);
 							}
 							else {
 								callback(null, columns);
 							}
+							return;
 						}
 					}
 				);
