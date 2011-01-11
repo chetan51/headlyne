@@ -85,12 +85,7 @@ function addFeedListeners(feeds) {
       var feed_bodies = feeds.children(".body");
       
 	// Make all links open in new window and block event bubbling
-	feed_bodies.find("a").click(function(e) {
-		window.open($(this).attr('href'));
-
-		e.stopPropagation();               
-		e.preventDefault();
-	});
+	feed_bodies.find("a").click(feedItemBodyLinkClicked);
 	
 	// Make all images clickable and load in reader
 	var clickable_images = feed_bodies.find("img");
@@ -541,6 +536,13 @@ function feedItemTitleClicked(e) {
 			reader_body_div.html(data.page);
 		}
 	});
+}
+
+function feedItemBodyLinkClicked(e) {
+	window.open($(this).attr('href'));
+
+	e.stopPropagation();               
+	e.preventDefault();
 }
 
 function feedItemBodyImageClicked(e) {
