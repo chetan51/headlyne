@@ -52,7 +52,25 @@
 }
 
 #content {
-	> .signup {
+	
+	> .login, > .signup, > .request-invite {
+		text-align: center;
+		width: 100%;
+		margin-top: 10px;
+		margin-bottom: 15px;
+
+		> form {
+			input {
+				font-size: 14px;
+			}
+		}
+		
+		> .message {
+			margin-top: 10px;
+		}
+	}
+
+	> .signup, > .request-invite {
 		> form {
 			input {
 				width: 200px;
@@ -276,23 +294,6 @@
 				}
 			}
 		}
-	}
-}
-
-.login, .signup {
-	text-align: center;
-	width: 100%;
-	margin-top: 10px;
-	margin-bottom: 15px;
-
-	> form {
-		input {
-			font-size: 14px;
-		}
-	}
-	
-	> .message {
-		margin-top: 10px;
 	}
 }
 

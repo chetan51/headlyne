@@ -306,8 +306,8 @@ var Templater = function()
 		);
 		view_parameters.account_navigation = account_navigation;
 		
-		view_parameters.title = "Headlyne - Invite Requested";
-		view_parameters.folio_title = "";
+		view_parameters.title = "Invite Requested";
+		view_parameters.folio_title = "Invite Requsted";
 		view_parameters.content = "";
 		
 		return self.getBase(view_parameters, false);
