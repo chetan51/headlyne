@@ -573,7 +573,7 @@ function feedPositionsUpdated(e) {
 	if (verifyLoggedInForChanges()) {
 		// Update backend
 		$.ajax({
-			url: "/user/sort",
+			url: "/user/update",
 			type: 'POST',
 			data: {
 				feed_array : JSON.stringify(feed_map)
