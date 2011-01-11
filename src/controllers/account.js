@@ -288,7 +288,7 @@ var AccountController = function()
 			}
 
 			if(param_error) {
-				var html = Ni.library('Templater').getRegistrationPage(
+				var html = Ni.library('Templater').getSignupPageWithInvite(
 					view_parameters
 				);
 				res.ok(html);
