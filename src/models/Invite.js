@@ -126,6 +126,48 @@ var InviteModel = function()
 			}
 		);
 	}
+
+	/**
+	 * Adds a person's details to the mailing_list.
+	 *
+	 * 	Arguments:
+	 * 		email
+	 * 		first_name
+	 * 		last_name
+	 * 	Returns:
+	 * 		nothing (only errors, if any)
+	 **/
+	this.request_invite = function(email, first_name, last_name, callback)
+	{
+		DatabaseDriver.getCollection(
+			'mailing_list',
+			function(err, collection)
+			{
+				if (err) {
+					callback(err);
+				}
+				else {
+					DatabaseDriver.overwrite(
+						collection,
+						{'email' : email},
+						{'email'     : email,
+						 'first_name': first_name,
+						 'last_name' : last_name
+						},
+						function(err, added)
+						{
+							if (err) {
+								callback(err);
+							}
+							else {
+								callback(null);
+							}
+						}
+					);
+				}
+			}
+		);
+	}
 }
 
 module.exports = new InviteModel();
