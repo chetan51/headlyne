@@ -186,12 +186,12 @@ var HomeController = function()
 		
 		self._generateColumns(
 			feed_map,
-			function(err, feed_map) {
+			function(err, columns) {
 				if (err) throw err;
 				
 				// return teasers
 				var home = Ni.library('Templater').getHomePage(
-					{feed_map: feed_map},
+					{columns: columns},
 					false
 				);
 				
@@ -274,53 +274,64 @@ var HomeController = function()
 	{
 		dbg.log('generating columns');
 		
-		var global_feed_array=[];
-		var count=0, done_count=0;
-		for(i in feed_map) {
-			for(j in feed_map[i]) {
-				global_feed_array[i] = [];
-				count = count + 1;
+		var columns = [];
+		var total_count = 0, count = 0;
+		var global_err = null;
+		
+		// Set up return object and count the number of feeds to process
+		for (i in feed_map) {
+			for (j in feed_map[i]) {
+				columns[i] = {};
+				columns[i].feeds = [];
+				total_count++;
 			}
 		}
 		
-		feed_map.forEach(function(feeds_i, i) {
-			feeds_i.forEach(function(feeds_j, j) {
+		if (total_count == 0)
+		{
+			 callback(new Error('No feeds to generate columns.'));
+			 return;
+		}
+		
+		// Process feed map
+		feed_map.forEach(function(column, i) {
+			column.forEach(function(feed, j) {
 				Ni.library('FeedServer').getFeedTeaser(
-					feeds_j.url,
-					feeds_j.num_feed_items,
+					feed.url,
+					feed.num_feed_items,
 					function(){},
 					function(err, teaser)
 					{
 						if (err)  {
-							callback(err);
+							global_err = err;
 							return;
 						}
 						
-						for( keys in feed_map[i][j] )
+						// Add view parameters
+						for (key in feed_map[i][j])
 						{
-							teaser[keys] = feed_map[i][j][keys];
+							teaser[key] = feed_map[i][j][key];
 						}
 
 						var teaser_html = Ni.library('Templater').getFeedTeaser(
 							{feed: teaser}
 						);
 
-						done_count = done_count + 1;
-						global_feed_array[i][j] = teaser_html;
+						count++;
+						columns[i].feeds[j] = teaser_html;
 
-						if( done_count == count ) {
-							callback(null, global_feed_array);
-							return;
+						if (count == total_count) {
+							if (global_err) {
+								callback(global_error);
+							}
+							else {
+								callback(null, columns);
+							}
 						}
 					}
 				);
 			});
 		});
-		
-		if(!count)
-		{
-			 callback(new Error('No feeds to generate columns.'));
-		}
 	}
 };
 
