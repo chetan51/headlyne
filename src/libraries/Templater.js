@@ -26,7 +26,7 @@ var Templater = function()
 	 *
 	 * 	Arguments:
 	 * 		parameters for view {
-	 *              feed_map,
+	 *              columns,
 	 *              username
 	 * 		},
 	 * 		user logged in?
@@ -38,8 +38,8 @@ var Templater = function()
 	{
 		view_parameters.base_url = Ni.config('base_url');
 		
-		if (view_parameters.feed_map == null) {
-			view_parameters.feed_map = [];
+		if (view_parameters.columns == null) {
+			view_parameters.columns = [];
 		}
 		
 		var page = jade.render(

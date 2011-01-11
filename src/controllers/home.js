@@ -151,7 +151,7 @@ var HomeController = function()
 
 	this.sample = function(req, res, next)
 	{
-		var feeds = [
+		var feed_map = [
 			[
 				{
 					url: 'http://feeds.feedburner.com/quotationspage/qotd',
@@ -184,8 +184,8 @@ var HomeController = function()
 			]
 		];
 		
-		self._createFeedMap(
-			feeds,
+		self._generateColumns(
+			feed_map,
 			function(err, feed_map) {
 				if (err) throw err;
 				
@@ -263,27 +263,27 @@ var HomeController = function()
 	}
 	
 	/*
-	 *	Helper that creates a feed map for the given user's feeds.
+	 *	Helper that generates columns of feeds according to given feed map.
 	 *	
-	 *		Arguments: user's feeds
+	 *		Arguments: feed map
 	 *		
 	 *		Returns (via callback): error
-	 *		                        feed map in JSON format
+	 *		                        columns for page view
 	 */
-	this._createFeedMap = function(feeds, callback)
+	this._generateColumns = function(feed_map, callback)
 	{
-		dbg.log('creating feed map');
+		dbg.log('generating columns');
 		
 		var global_feed_array=[];
 		var count=0, done_count=0;
-		for(i in feeds) {
-			for(j in feeds[i]) {
+		for(i in feed_map) {
+			for(j in feed_map[i]) {
 				global_feed_array[i] = [];
 				count = count + 1;
 			}
 		}
 		
-		feeds.forEach(function(feeds_i, i) {
+		feed_map.forEach(function(feeds_i, i) {
 			feeds_i.forEach(function(feeds_j, j) {
 				Ni.library('FeedServer').getFeedTeaser(
 					feeds_j.url,
@@ -295,12 +295,12 @@ var HomeController = function()
 							callback(err);
 							return;
 						}
-
-						for( keys in feeds[i][j] )
-						{
-							teaser[keys] = feeds[i][j][keys];
-						}
 						
+						for( keys in feed_map[i][j] )
+						{
+							teaser[keys] = feed_map[i][j][keys];
+						}
+
 						var teaser_html = Ni.library('Templater').getFeedTeaser(
 							{feed: teaser}
 						);
@@ -319,7 +319,7 @@ var HomeController = function()
 		
 		if(!count)
 		{
-			 callback(new Error('No feeds to create feed map.'));
+			 callback(new Error('No feeds to generate columns.'));
 		}
 	}
 };
