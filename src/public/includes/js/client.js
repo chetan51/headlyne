@@ -393,28 +393,7 @@ function feedDoneClicked(e) {
 			}
 		});
 		
-		if (verifyLoggedInForChanges()) {
-			// Update backend
-			$.ajax({
-				url: "/user/edit",
-				type: 'POST',
-				data: {
-					feed_url        : feed_url,
-					num_feed_items  : num_feed_items,
-					title_selection : title_selection,
-					body_selection  : body_selection
-				},
-				datatype: 'json',
-				success: function(data) {
-					if (!data || data.error) {
-						updateAccountError();
-					}
-				},
-				error: function() {
-					updateAccountError();
-				}
-			});
-		}
+		updateAccountForFeedMap();
 	}
 }
 
