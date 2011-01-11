@@ -1,0 +1,12 @@
+.request_invite
+  form(action=base_url+"account/invite_requested", method="post")
+    .email-control
+      input.email-input(type="text", placeholder="email address", name="email", value=email)
+    .name-control
+      input.first-name-input(type="text", placeholder="first name", name="first_name", value=first_name)
+      input.last-name-input(type="text", placeholder="last name", name="last_name", value=last_name)
+    .submit-control
+      input.submit-button(type="submit", name="submit", value="Request an Invite!")
+  .message
+    - if (typeof(error_message) != 'undefined') // hack to fix weird bug
+      p.error= error_message
