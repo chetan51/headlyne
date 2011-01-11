@@ -679,9 +679,8 @@ function removeColumn(column_div) {
 	resizeColumnDynamically(column_div, 0, function() {
 		column_div.remove();
 		refreshColumnDeleteOptions($(".column"));
+		updateAccountForFeedMap();
 	});
-	
-	updateAccountForFeedMap();
 }
 
 function updateFeedPreview(feed_div, callback) {
