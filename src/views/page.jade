@@ -1,21 +1,6 @@
 .page
+  .molds
+    #column-mold!= column_mold
+    #feed-mold!= feed_mold
   - each column in columns 
-    .column(style="width: " + (99 / columns.length) + "%")
-      .header
-        .edit-overlay
-          span.delete
-            span.default-control
-              a.delete-button(href='#') Remove Column
-            span.deleting-control
-              span [\ 
-              a.move-left-button(href="#") Move Feeds Left
-              span \ - 
-              a.move-right-button(href="#") Move Feeds Right
-              span \ - 
-              a.delete-button(href="#") Delete Feeds
-              span \ - 
-              a.cancel-button(href='#') Cancel
-              span \ ] 
-      .content
-        - each feed in column.feeds
-          .feed!= feed
+    .column(style="width: " + (99 / columns.length) + "%")!= column

@@ -260,28 +260,19 @@ function editOrDoneClicked(e) {
 }
 
 function addFeedClicked(e) {
-	var new_feed_div = $(".feed").last().clone();
+	var new_feed_div = $("#feed-mold").clone();
+	new_feed_div.addClass("feed");
+	new_feed_div.removeAttr('id', "feed-mold");
 	
 	// Clear new feed
-	var body_div = new_feed_div.children(".body");
-	body_div.html("");
-	
 	var header_div = new_feed_div.children(".header");
 	header_div.children(".title").html("(New Feed)");
-	
-	var settings_div = header_div.children(".settings");
-	settings_div.children(".url").html("");
-	settings_div.children(".num-feed-items").html("");
-	settings_div.children(".title-selection").html("");
-	settings_div.children(".body-selection").html("");
-	
-	var source_div = new_feed_div.children(".source");
-	var url_input_div = source_div.find(".url-control > .url-input");
-	url_input_div.val("");
 	
 	// Show new feed
 	new_feed_div.hide();
 	$(".column").last().children(".content").append(new_feed_div);
+	new_feed_div.children(".header").show();
+	new_feed_div.children(".body").hide();
 	new_feed_div.slideDown("fast");
 	
 	// Set up new feed
@@ -290,6 +281,7 @@ function addFeedClicked(e) {
 	edit_div.children(".default-control").hide();
 	edit_div.children(".editing-control").show();
 	edit_overlay.show();
+	var source_div = new_feed_div.children(".source");
 	source_div.slideDown("fast");
 	
 	addFeedListeners(new_feed_div);
@@ -297,12 +289,17 @@ function addFeedClicked(e) {
 }
 
 function addColumnClicked(e) {
-	var new_column = $(".column").last().clone();
-	new_column.children(".content").html("");
-	$(".page").append(new_column);
+	var new_column_div = $("#column-mold").clone();
+	new_column_div.addClass("column");
+	new_column_div.removeAttr('id', "column-mold");
+	
+	$(".page").append(new_column_div);
+	
+	new_column_div.children(".header").show();
+	new_column_div.children(".body").show();
 	
 	equallyWidenColumns();
-	addColumnListeners(new_column);
+	addColumnListeners(new_column_div);
 	refreshColumnDeleteOptions($(".column"));
 	updateAccountForFeedMap();
 }
@@ -757,9 +754,6 @@ function updateFeedPreview(feed_div, callback) {
 						
 						if (num_feed_items && num_feed_items != "") {
 							num_feed_items_input.val(num_feed_items);
-						}
-						else {
-							num_feed_items_input.val("5");
 						}
 						
 						if (title_selection == "item") {

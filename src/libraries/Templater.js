@@ -42,9 +42,46 @@ var Templater = function()
 			view_parameters.columns = [];
 		}
 		
+		var columns_html = [];
+		for (i in view_parameters.columns) {
+			var column = view_parameters.columns[i];
+
+			var column_html = jade.render(
+				Ni.view('column').template,
+				{locals: column}
+			);
+			
+			columns_html[i] = column_html;
+		}
+		
+		var column_mold_html = jade.render(
+			Ni.view('column').template,
+			{locals: {feeds: null}}
+		);
+		
+		var feed_mold_html = jade.render(
+			Ni.view('feed').template,
+			{locals:
+				{
+					title           : null,
+		    			url             : null,
+		    			num_feed_items  : null,
+		    			title_selection : null,
+		    			body_selection  : null,
+		    			body            : null
+				}
+			}
+		);
+		
 		var page = jade.render(
 			Ni.view('page').template,
-			{locals: view_parameters}
+			{locals: 
+				{
+					columns     : columns_html,
+					column_mold : column_mold_html,
+					feed_mold   : feed_mold_html
+				}
+			}
 		);
 		
 		var name = view_parameters.name;
