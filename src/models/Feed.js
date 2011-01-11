@@ -51,6 +51,7 @@ var Feed = function()
 						 'author': author,
 						 'description': description,
 						 'time_modified': new Date().getTime(),
+						 'time_accessed': new Date().getTime(),
 						 'items': []
 						},
 						function(err, feed)
@@ -98,15 +99,28 @@ var Feed = function()
 				else {
 					collection.findOne(
 						{'url_hash': feed_id},
-						function(err, doc)
+						function(err, feed)
 						{
 							if(err != null)
 								callback(new Error('Database Search Error'));
 							else {
-								if(typeof(doc) == 'undefined') {
+								if(typeof(feed) == 'undefined') {
 									callback(new Error('No such feed'));
 								} else {
-									callback(null, doc);
+									feed.time_accessed = new Date().getTime();
+									
+									callback(null, feed);
+									
+									// Update time accessed
+									DatabaseDriver.update(
+										collection,
+										{'url_hash':feed.url_hash},
+										feed,
+										function(err, new_feed) {
+										
+											console.log("database updated");
+										}
+									);
 								}
 							}
 						}
