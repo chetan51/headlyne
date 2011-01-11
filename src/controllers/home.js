@@ -21,55 +21,63 @@ var HomeController = function()
 
 	this.index = function(req, res, next)
 	{
-		Ni.helper('cookies').checkCookie(req, res, function(err, cookie)
-		{
-			if( err ) {
-				dbg.log('redirect: home to logout');
-				res.moved('/account/logout');
-			} else {
-				// User logged in, serve user's home page
-				dbg.log('geting user home page for ' + cookie.data.user);
+		Step(
+			function getColumns() {
+				var step = this;
 				
-				Ni.model('User').get(
-					cookie.data.user,
-					function(err, user) {
-						self._generateColumns(
-							user.feeds,
-							function(err, columns) {
+				Ni.helper('cookies').checkCookie(req, res, function(err, cookie)
+				{
+					if( err ) {
+						// Return default feeds
+						step(null, Ni.config('default_feeds'));
+					} else {
+						// User logged in, get user's feeds
+						dbg.log('geting feeds for user ' + cookie.data.user);
+						
+						Ni.model('User').get(
+							cookie.data.user,
+							function(err, user) {
 								if (err) {
-									dbg.log("there was an error in generating one of the teasers");
+									step(err);
 								}
-
-								var home = Ni.library('Templater').getHomePage(
-									{
-										columns : columns,
-								    		name    : user.first_name + " " + user.last_name
-									},
-									true
-								);
-								
-								res.ok(home);
+								else {
+									step(null, user.feeds, user);
+								}
 							}
 						);
 					}
-				);
-			}
-		});
-	}
+				});
+			},
+			function generateHomePage(err, feeds, user) {
+				self._generateColumns(
+					feeds,
+					function(err, columns) {
+						if (err) {
+							dbg.log("there was an error in generating one of the teasers");
+						}
 
-	this.sample = function(req, res, next)
-	{
-		self._generateColumns(
-			Ni.config('default_feeds'),
-			function(err, columns) {
-				if (err) throw err;
-				
-				var home = Ni.library('Templater').getHomePage(
-					{columns: columns},
-					false
+						var home;
+						if (user) {
+							home = Ni.library('Templater').getHomePage(
+								{
+									columns : columns,
+									name    : user.first_name + " " + user.last_name
+								},
+								true
+							);
+						}
+						else {
+							home = Ni.library('Templater').getHomePage(
+								{
+									columns : columns,
+								},
+								false
+							);
+						}
+						
+						res.ok(home);
+					}
 				);
-				
-				res.ok(home);
 			}
 		);
 	}
