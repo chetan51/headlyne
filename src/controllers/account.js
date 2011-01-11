@@ -296,7 +296,7 @@ var AccountController = function()
 				Step(
 					function checkCode()
 					{
-						Ni.model('Invites').exists(
+						Ni.model('Invite').exists(
 							params.invite_code,
 							this
 						);
@@ -344,7 +344,7 @@ var AccountController = function()
 						} else {
 							
 							// first, remove the invite code.
-							Ni.model('Invites').remove(
+							Ni.model('Invite').remove(
 								params.invite_code,
 								function(err){}
 							);

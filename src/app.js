@@ -136,7 +136,7 @@ Ni.boot(function() {
 			if (err) throw err;
 			
 			/*
-			Ni.model('Invites').add(
+			Ni.model('Invite').add(
 				'admin',
 				function(err, invite_code) {
 					if (err) throw err;

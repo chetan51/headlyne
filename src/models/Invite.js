@@ -1,5 +1,5 @@
 /**
- * Invites.js is the model for invites.
+ *    Invite model
  **/
 
 /**
@@ -9,9 +9,9 @@ var crypto         = require('crypto');
 var DatabaseDriver = require('../libraries/DatabaseDriver.js');
 
 /**
- * The Invites model
+ * The invite model
  **/
-var Invites = function()
+var InviteModel = function()
 {
 	var self = this;
 
@@ -128,4 +128,4 @@ var Invites = function()
 	}
 }
 
-module.exports = new Invites();
+module.exports = new InviteModel();
