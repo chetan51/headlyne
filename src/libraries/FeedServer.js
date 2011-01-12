@@ -100,7 +100,7 @@ var FeedServer = function()
 							url,
 							num_feed_items,
 							function(err, feed_teaser) {
-								console.log(feed_teaser.items[0].webpage);
+								dbg.log(feed_teaser.items[0].webpage);
 								callback_immediately(err, feed_teaser);
 								callback_updated(err, feed_teaser);
 							}

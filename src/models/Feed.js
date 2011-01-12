@@ -118,7 +118,7 @@ var Feed = function()
 										feed,
 										function(err, new_feed) {
 										
-											console.log("database updated");
+											dbg.log("access time updated");
 										}
 									);
 								}
