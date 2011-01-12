@@ -63,12 +63,12 @@ var Templater = function()
 			Ni.view('feed').template,
 			{locals:
 				{
-					title           : null,
-		    			url             : null,
-		    			num_feed_items  : null,
-		    			title_selection : null,
-		    			body_selection  : null,
-		    			body            : null
+					title           : "",
+		    			url             : "",
+		    			num_feed_items  : "",
+		    			title_selection : "",
+		    			body_selection  : "",
+		    			body            : ""
 				}
 			}
 		);
