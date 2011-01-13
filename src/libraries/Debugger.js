@@ -6,8 +6,8 @@ var Ni = require('ni');
 /**
  *	Debugger library
  **/
-var Debugger = function() {
-	
+var Debugger = function()
+{
 	var self = this;
 	
 	this.called = function called(owner_class) {
@@ -25,6 +25,13 @@ var Debugger = function() {
 	{
 		if (Ni.config('log_enabled')) {
 			console.log(message + "[" + arguments.callee.caller.name + "]");
+		}
+	}
+	
+	this.error = function log(err)
+	{
+		if (Ni.config('log_enabled')) {
+			console.log("ERROR: " + err.message + "[" + arguments.callee.caller.name + "]");
 		}
 	}
 };
