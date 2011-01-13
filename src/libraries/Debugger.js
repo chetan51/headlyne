@@ -26,7 +26,7 @@ var Debugger = function()
 	this.error = function log(err)
 	{
 		if (Ni.config('log_enabled')) {
-			console.log("[" + arguments.callee.caller.name + "]" + " ERROR: " + message);
+			console.log("[" + arguments.callee.caller.name + "]" + " ERROR: " + err.message);
 		}
 	}
 };
