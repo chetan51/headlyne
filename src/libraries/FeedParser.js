@@ -61,6 +61,15 @@ var FeedParser = function()
 		var result=false;       // set to true on end document/error.
 		                        // if no result after time out, return error.
 
+		var timeout = setTimeout(function parsingTimeOut() {
+			dbg.called();
+		
+			if(!result) {
+				callback(new Error('Parser timed out.'));
+				result=true;
+			}
+		}, Ni.config('feedparse_timeout'));
+
 		/**
 		 * This is the xml parser from node-xml.
 		 * We define callback functions that are triggered
@@ -91,6 +100,8 @@ var FeedParser = function()
 						result=true;
 						feed.items = items;
 						callback(null, feed);
+						
+						clearTimeout(timeout);
 					}
 				}
 			);
@@ -102,6 +113,8 @@ var FeedParser = function()
 					if(!result) {
 						result=true;
 						callback(new Error(err));
+						
+						clearTimeout(timeout);
 					}
 				}
 			);
@@ -358,15 +371,6 @@ var FeedParser = function()
 			
 		}); // End xml.SAXParser creation.
 		
-		setTimeout(function parsingTimeOut() {
-			dbg.called();
-		
-			if(!result) {
-				callback(new Error('Parser timed out.'));
-				result=true;
-			}
-		}, Ni.config('feedparse_timeout'));
-
 		parser.parseString(rss);
 		
 	}   // End parse(url, callback, callback)
