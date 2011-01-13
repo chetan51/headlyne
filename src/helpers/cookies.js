@@ -28,7 +28,6 @@ var CookiesHelper = function()
 		var cookie_obj;
 		try {
 			cookie_obj = JSON.parse(cookie);
-			console.log(cookie_obj);
 		} catch (e) {
 			callback(new Error('Cookie is broken.'));
 		}
