@@ -16,6 +16,7 @@
 var Connect = require('connect'),
     Quip    = require('quip'),
     Ni      = require('ni');
+    dbg     = require('./libraries/Debugger.js');
 
 /**
  * Constants
@@ -80,15 +81,18 @@ Ni.config('default_feeds',
 	]
 );		
 
-Ni.boot(function() {
+Ni.boot(function initializeDatabase() {
+	dbg.called();
+	
 	Ni.library('DatabaseDriver').init(
 		db_name,
 		db_addr,
 		db_port,
 		db_user,
 		db_pass,
-		function(err) {
-
+		function startServer(err) {
+			dbg.called();
+			
 			/*
 			Ni.library('DatabaseDriver').getCollection(
 				'feeds',
@@ -157,7 +161,8 @@ Ni.boot(function() {
 			);
 
 			app.listen(3000);
-			console.log('Application server started on port 3000');
+			
+			dbg.log("Headlyne master server started on port 3000");
 		}
 	);
 });
