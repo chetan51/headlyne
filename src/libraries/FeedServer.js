@@ -262,13 +262,13 @@ var FeedServer = function()
 				);
 			},
 			function generateAndReturnTeaser(
-				dbg.called();
-		
 				err,
 				saved_feed,
 				saved_webpages
 			)
 			{
+				dbg.called();
+		
 				var teaser = self.generateFeedTeaser(
 					saved_feed,
 					saved_feed.items,
