@@ -40,13 +40,17 @@ var FeedServer = function()
 	 * 			body
 	 * 		}
 	 **/
-	this.getFullContent = function(webpage_url, callback)
+	this.getFullContent = function getFullContent(webpage_url, callback)
 	{
+		dbg.called();
+		
 		var fake_item = {}; fake_item.link = webpage_url;
 		self.getWebPageForFeedItem(
 			fake_item,
-			function(err, webpage)
+			function returnWebPage(err, webpage)
 			{
+				dbg.called();
+		
 				callback(err, webpage);
 			}
 		);
@@ -72,19 +76,24 @@ var FeedServer = function()
 	 *		           callback function called when completely up
 	 *		           	to date
 	 **/
-	this.getFeedTeaser = function(url, num_feed_items, callback_immediately, callback_updated)
+	this.getFeedTeaser = function getFeedTeaser(url, num_feed_items, callback_immediately, callback_updated)
 	{
+		dbg.called();
+		
 		FeedModel.isUpToDate(
 			url,
-			function(err, result) {
+			function updateOrReturnFeed(err, result) {
+				dbg.called();
+		
 				if (err) {
 					if (err.message == "No such feed") {
 						callback_immediately(null, null);
 						self.updateFeedForURL(
 							url,
 							num_feed_items,
-							function(err, feed_teaser) {
-								dbg.log('fire back from feedTeaser');
+							function returnFeedUpdated(err, feed_teaser) {
+								dbg.called();
+		
 								callback_updated(err, feed_teaser);
 							}
 						);
@@ -99,8 +108,9 @@ var FeedServer = function()
 						self.getFeedTeaserFromDatabase(
 							url,
 							num_feed_items,
-							function(err, feed_teaser) {
-								dbg.log(feed_teaser.items[0].webpage);
+							function returnFeedImmediatelyAndUpdated(err, feed_teaser) {
+								dbg.called();
+		
 								callback_immediately(err, feed_teaser);
 								callback_updated(err, feed_teaser);
 							}
@@ -111,8 +121,9 @@ var FeedServer = function()
 						self.updateFeedForURL(
 							url,
 							num_feed_items,
-							function(err, feed_teaser) {
-								dbg.log('get feed teaser callback fired');
+							function returnFeedUpdated(err, feed_teaser) {
+								dbg.called();
+		
 								callback_updated(err, feed_teaser);
 							}
 						);
@@ -128,20 +139,25 @@ var FeedServer = function()
 	 *		Arguments: url of feed
 	 *		           callback function called with feed teaser when complete
 	 **/
-	this.getFeedTeaserFromDatabase = function(url, num_feed_items, callback)
+	this.getFeedTeaserFromDatabase = function getFeedTeaserFromDatabase(url, num_feed_items, callback)
 	{
+		dbg.called();
+		
 		FeedModel.get(
 			url,
-			function(err, feed) {
+			function updateWebPagesAndReturnFeedTeaser(err, feed) {
+				dbg.called();
+		
 				if (err) {
 					callback(err);
 				}
 				else {
-					dbg.log('updating '+JSON.stringify(feed));
 					self.updateWebPagesForFeedItems(
 						feed.items,
 						num_feed_items,
-						function(err, webpages) {
+						function returnFeedTeaser(err, webpages) {
+							dbg.called();
+		
 							if (err) {
 								callback(err);
 							}
@@ -169,11 +185,15 @@ var FeedServer = function()
 	 *		           callback function called with feed, items
 	 *		               and webpages when complete
 	 **/
-	this.updateFeedForURL = function(url, num_feed_items, callback)
+	this.updateFeedForURL = function updateFeedForURL(url, num_feed_items, callback)
 	{
+		dbg.called();
+		
 		Downloader.fetch(
 			url,
-			function(err, data) {
+			function parseAndReturnFeed(err, data) {
+				dbg.called();
+		
 				if (err) {
 					callback(err);
 				}
@@ -183,7 +203,9 @@ var FeedServer = function()
 				else {
 					FeedParser.parse(
 						data,
-						function(err, feed) {
+						function updateAndReturnFeed(err, feed) {
+							dbg.called();
+		
 							if (err) {
 								callback(err);
 							}
@@ -192,8 +214,10 @@ var FeedServer = function()
 									url,
 									feed,
 									num_feed_items,
-									function(err, teaser)
+									function returnParsedFeed(err, teaser)
 									{
+										dbg.called();
+		
 										callback(err, teaser);
 									}
 								);
@@ -214,10 +238,14 @@ var FeedServer = function()
 	 *		           callback function called with feed, items
 	 *		               and webpages when complete
 	 **/
-	this.updateParsedFeed = function(url, feed, num_feed_items, callback)
+	this.updateParsedFeed = function updateParsedFeed(url, feed, num_feed_items, callback)
 	{
+		dbg.called();
+		
 		Step(
 			function processFeed() {
+				dbg.called();
+		
 				var step = this;
 			
 				self.saveFeedAndItems(
@@ -233,7 +261,9 @@ var FeedServer = function()
 					step.parallel()
 				);
 			},
-			function done(
+			function generateAndReturnTeaser(
+				dbg.called();
+		
 				err,
 				saved_feed,
 				saved_webpages
@@ -246,8 +276,6 @@ var FeedServer = function()
 					saved_webpages
 				);
 				
-				dbg.log('generated teaser');
-					
 				if (err) {
 					callback(err);
 				}
@@ -266,14 +294,18 @@ var FeedServer = function()
 	 *		           the feed's items
 	 *		           callback function called with feed when complete
 	 **/
-	this.saveFeedAndItems = function(url, feed, items, callback)
+	this.saveFeedAndItems = function saveFeedAndItems(url, feed, items, callback)
 	{
+		dbg.called();
+		
 		FeedModel.save(
 			url,
 			feed.title,
 			feed.author,
 			feed.description,
-			function(err, saved_feed) {
+			function saveFeedItems(err, saved_feed) {
+				dbg.called();
+		
 				if (err) {
 					callback(err);
 				}
@@ -281,7 +313,9 @@ var FeedServer = function()
 					FeedModel.pushFeedItems(
 						url,
 						items,
-						function(err, feed) {
+						function returnFeedWithFeedItemsUpdated(err, feed) {
+							dbg.called();
+		
 							if (err) {
 								callback(err);
 							}
@@ -309,18 +343,21 @@ var FeedServer = function()
 	 *		           callback function called with saved
 	 *		               web pages when complete
 	 **/
-	this.updateWebPagesForFeedItems = function(items, num_items, callback)
+	this.updateWebPagesForFeedItems = function updateWebPagesForFeedItems(items, num_items, callback)
 	{
-		dbg.log('update webpages... '+num_items);
-		dbg.log(callback);
+		dbg.called();
+		
 		Step(
 			function getAndSaveWebPages() {
+				dbg.called();
+		
 				var group = this.group();
 				var total_items = 0;
 				items.forEach(
-					function(item) {
+					function eachItem(item) {
+						dbg.called();
+		
 						if (total_items < num_items) {
-							dbg.log('updating '+item);
 							self.getWebPageForFeedItem(
 								item,
 								group()
@@ -330,8 +367,9 @@ var FeedServer = function()
 					}
 				);
 			},
-			function done(err, saved_webpages) {
-				dbg.log('saved pages'+err+'|'+saved_webpages);
+			function returnSavedWebpages(err, saved_webpages) {
+				dbg.called();
+		
 				if (err) {
 					callback(err);
 				}
@@ -350,26 +388,27 @@ var FeedServer = function()
 	 *		           callback function called with retrieved
 	 *		               web page when complete
 	 **/
-	this.getWebPageForFeedItem = function(item, callback)
+	this.getWebPageForFeedItem = function getWebPageForFeedItem(item, callback)
 	{
+		dbg.called();
+		
 		WebPageModel.get(
 			item.link,
-			function(err, webpage) {
+			function fetchOrReturnWebPage(err, webpage) {
+				dbg.called();
+		
 				if (err) {
 					if (err.message == "No such WebPage") {
-						dbg.log('fetching...');
 						self.fetchWebPageForFeedItem(
 							item,
 							callback
 						);
 					}
 					else {
-						dbg.log('error: '+err.message);
 						callback(err);
 					}
 				}
 				else {
-					dbg.log('got page');
 					callback(null, webpage);
 				}
 			}
@@ -384,15 +423,21 @@ var FeedServer = function()
 	 *		           callback function called with retrieved
 	 *		               web page when complete
 	 **/
-	this.fetchWebPageForFeedItem = function(item, callback)
+	this.fetchWebPageForFeedItem = function fetchWebPageForFeedItem(item, callback)
 	{
+		dbg.called();
+		
 		Downloader.fetch(
 			item.link,
-			function(err, data) {
+			function grabContentForWebPage(err, data) {
+				dbg.called();
+		
 				if (!err && data) {
 					ContentGrabber.readable(
 						data,
-						function(err, title, article) {
+						function saveWebPage(err, title, article) {
+							dbg.called();
+		
 							if (!err && title && article) {
 								WebPageModel.save(
 									item.link,
@@ -421,8 +466,10 @@ var FeedServer = function()
 	 *		           the feed items
 	 *		           webpages for each feed item
 	 **/
-	this.generateFeedTeaser = function(feed, items, num_feed_items, webpages)
+	this.generateFeedTeaser = function generateFeedTeaser(feed, items, num_feed_items, webpages)
 	{
+		dbg.called();
+		
 		feed.items = items.slice(0, num_feed_items);
 		
 		// Attach webpages to items

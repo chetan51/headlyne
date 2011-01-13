@@ -8,7 +8,8 @@
  *	Module dependencies
  **/
 var Ni   = require('ni'),
-    jade = require('jade');
+    jade = require('jade'),
+    dbg  = require('../../src/libraries/Debugger.js');
 
 /**
  *	The Templater library
@@ -34,8 +35,10 @@ var Templater = function()
 	 * 	Returns:
 	 * 		HTML view
 	 **/
-	this.getHomePage = function(view_parameters, logged_in)
+	this.getHomePage = function getHomePage(view_parameters, logged_in)
 	{
+		dbg.called();
+		
 		view_parameters.base_url = Ni.config('base_url');
 		
 		if (view_parameters.columns == null) {
@@ -126,8 +129,10 @@ var Templater = function()
 	 * 	Returns:
 	 * 		HTML view
 	 **/
-	this.getLoginPage = function(view_parameters)
+	this.getLoginPage = function getLoginPage(view_parameters)
 	{
+		dbg.called();
+		
 		view_parameters.base_url = Ni.config('base_url');
 		
 		if (view_parameters.username == null) {
@@ -167,8 +172,10 @@ var Templater = function()
 	 * 	Returns:
 	 * 		HTML view
 	 **/
-	this.getSignupPage = function(view_parameters)
+	this.getSignupPage = function getSignupPage(view_parameters)
 	{
+		dbg.called();
+		
 		view_parameters.base_url = Ni.config('base_url');
 		
 		if (view_parameters.username == null) {
@@ -217,8 +224,10 @@ var Templater = function()
 	 * 	Returns:
 	 * 		HTML view
 	 **/
-	this.getSignupPageWithInvite = function(view_parameters)
+	this.getSignupPageWithInvite = function getSignupPageWithInvite(view_parameters)
 	{
+		dbg.called();
+		
 		view_parameters.base_url = Ni.config('base_url');
 		
 		if (view_parameters.username == null) {
@@ -277,8 +286,10 @@ var Templater = function()
 	 * 	Returns:
 	 * 		HTML view
 	 **/
-	this.getRequestInvites = function(view_parameters)
+	this.getRequestInvites = function getRequestInvites(view_parameters)
 	{
+		dbg.called();
+		
 		view_parameters.base_url = Ni.config('base_url');
 		
 		if (view_parameters.email == null) {
@@ -324,8 +335,10 @@ var Templater = function()
 	 * 	Returns:
 	 * 		HTML view
 	 **/
-	this.getInviteRequested = function(view_parameters)
+	this.getInviteRequested = function getInviteRequested(view_parameters)
 	{
+		dbg.called();
+		
 		view_parameters.base_url = Ni.config('base_url');
 		
 		var body = jade.render(
@@ -370,7 +383,9 @@ var Templater = function()
 	 * 	Returns:
 	 * 		HTML view
 	 **/
-	this.getBase = function(view_parameters, logged_in) {
+	this.getBase = function getBase(view_parameters, logged_in) {
+		dbg.called();
+		
 		view_parameters.base_url = Ni.config('base_url');
 		
 		if (view_parameters.title == null) {
@@ -414,8 +429,10 @@ var Templater = function()
 	 * 	Returns:
 	 * 		HTML view
 	 **/
-	this.getPageNavigation = function(view_parameters)
+	this.getPageNavigation = function getPageNavigation(view_parameters)
 	{
+		dbg.called();
+		
 		view_parameters.base_url = Ni.config('base_url');
 		
 		var page_navigation = jade.render(
@@ -438,8 +455,10 @@ var Templater = function()
 	 * 	Returns:
 	 * 		HTML view
 	 **/
-	this.getAccountNavigation = function(view_parameters, logged_in)
+	this.getAccountNavigation = function getAccountNavigation(view_parameters, logged_in)
 	{
+		dbg.called();
+		
 		view_parameters.base_url = Ni.config('base_url');
 		
 		if (view_parameters.name == null) {
@@ -475,8 +494,10 @@ var Templater = function()
 	 * 	Returns:
 	 * 		HTML view
 	 **/
-	this.getFeedTeaser = function(view_parameters)
+	this.getFeedTeaser = function getFeedTeaser(view_parameters)
 	{
+		dbg.called();
+		
 		var feed = view_parameters.feed;
 		
 		var teaser_body = self.getFeedTeaserBody(
@@ -504,8 +525,10 @@ var Templater = function()
 	 * 	Returns:
 	 * 		HTML view
 	 **/
-	this.getFeedTeaserBody = function(view_parameters)
+	this.getFeedTeaserBody = function getFeedTeaserBody(view_parameters)
 	{
+		dbg.called();
+		
 		var feed = view_parameters.feed;
 		
 		var teaser_body = jade.render(

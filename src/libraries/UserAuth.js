@@ -17,8 +17,10 @@ var UserAuth = function()
 	 */
 	var self = this;
 	
-	this.session_gen = function(username, lifetime)
+	this.session_gen = function session_gen(username, lifetime)
 	{
+		dbg.called();
+		
 		var id_gen = crypto.createHash('sha256');
 		id_gen.update(Math.random() + username);
 		var id = id_gen.digest('hex');
@@ -43,18 +45,18 @@ var UserAuth = function()
 
 	// passed a session object (as in the database).
 	// returns true if the session has expired.
-	this.checkExpired = function(session_object)
+	this.checkExpired = function checkExpired(session_object)
 	{
+		dbg.called();
+		
 		var now = new Date().getTime();
 		
 		// if still valid, pass the same session object.
 		
 
 		if( session_object.cookie.expires > now ) {
-			dbg.log('\tSession is valid');
 			return false;
 		} else {
-			dbg.log('\tSession has expired');
 			return true;
 		}
 	}
@@ -82,12 +84,16 @@ var UserAuth = function()
 	 *			'expires',
 	 *		}
 	 **/
-	this.authenticate = function( username, password, callback )
+	this.authenticate = function authenticate( username, password, callback )
 	{
+		dbg.called();
+		
 		User.get(
 			username,
-			function(err, user)
+			function checkPassword(err, user)
 			{
+				dbg.called();
+		
 				if(err != null)
 				{
 					callback(err);
@@ -119,8 +125,10 @@ var UserAuth = function()
 					User.setSession(
 						username,
 						new_sesh,
-						function(err, sesh)
+						function returnSession(err, sesh)
 						{
+							dbg.called();
+		
 							callback(err, true, sesh.cookie);
 						}
 					);
@@ -132,8 +140,10 @@ var UserAuth = function()
 	/**
 	 * Returns true if the session_cookie is a valid JSON object for session_cookies
 	 **/
-	this.validate_cookie = function(session_cookie)
+	this.validate_cookie = function validate_cookie(session_cookie)
 	{
+		dbg.called();
+		
 		if( typeof(session_cookie) == 'undefined' || session_cookie == null) return false;
 		if( typeof(session_cookie.id) == 'undefined' || session_cookie.id == null) return false;
 		if( typeof(session_cookie.data) == 'undefined' || session_cookie.data == null) return false;
@@ -147,8 +157,10 @@ var UserAuth = function()
 	/**
 	 * Returns true if the session_cookie matches the user_cookie
 	 **/
-	this.match_cookie = function(session_cookie, user_cookie)
+	this.match_cookie = function match_cookie(session_cookie, user_cookie)
 	{
+		dbg.called();
+		
 		if( session_cookie.id         != user_cookie.id ) return false;
 		if( session_cookie.persistent != user_cookie.persistent ) return false;
 		if( session_cookie.expires    != user_cookie.expires ) return false;
@@ -163,8 +175,10 @@ var UserAuth = function()
 	 * Returns true if valid and not expired.
 	 * If expired, return false and delete it from the database.
 	 **/
-	this.checkAuth = function(session_cookie, callback)
+	this.checkAuth = function checkAuth(session_cookie, callback)
 	{
+		dbg.called();
+		
 		if( !self.validate_cookie(session_cookie) ) {
 			callback(new Error('Invalid Session Cookie'));
 			return;
@@ -174,8 +188,10 @@ var UserAuth = function()
 		
 		User.get(
 			username,
-			function(err,user)
+			function checkSession(err,user)
 			{
+				dbg.called();
+		
 				if(err != null) {
 					callback(err);
 					return;
@@ -195,6 +211,8 @@ var UserAuth = function()
 						null,
 						function(err, s)
 						{
+							dbg.called();
+		
 							callback(err, false);
 						}
 					);
@@ -216,8 +234,10 @@ var UserAuth = function()
 	 * Removes the session object from the user.
 	 * Returns err=null if successful.
 	 **/
-	this.invalidate = function(username, callback)
+	this.invalidate = function invalidate(username, callback)
 	{
+		dbg.called();
+		
 		User.setSession(
 			username,
 			null,

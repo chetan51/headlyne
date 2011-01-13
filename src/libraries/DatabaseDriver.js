@@ -24,8 +24,10 @@ var DatabaseDriver = function()
 	 *	Initializes the Database Driver with what database
 	 *	connection to use.
 	 **/
-	this.init = function(name, address, port, username, password, callback)
+	this.init = function init(name, address, port, username, password, callback)
 	{
+		dbg.called();
+		
 		self.database.name     = name;
 		self.database.address  = address;
 		self.database.port     = port;
@@ -42,8 +44,10 @@ var DatabaseDriver = function()
 		);
 		//db.authenticate(db_user, db_port))
 		self.database.db.open(
-			function(err, db2)
+			function returnDatabaseConnection(err, db2)
 			{
+				dbg.called();
+		
 				if(err != null)
 					callback(new Error('Database Connection Error: '+err.message));
 				else {
@@ -57,20 +61,26 @@ var DatabaseDriver = function()
 	/**
 	 * 	Terminates the database connection.
 	 **/
-	this.close = function()
+	this.close = function close()
 	{
+		dbg.called();
+		
 		self.database.db.close();
 	}
 	
 	/**
 	 *	Gets a specified collection from the database.
 	 **/
-	this.getCollection = function(collection_name, callback)
+	this.getCollection = function getCollection(collection_name, callback)
 	{
+		dbg.called();
+		
 		self.database.db.collection(
 			collection_name,
-			function(err, collection)
+			function returnCollection(err, collection)
 			{
+				dbg.called();
+		
 				if(err != null) {
 					callback(new Error('Database Access Error: '+err.message));
 				} else {
@@ -85,21 +95,26 @@ var DatabaseDriver = function()
 	 *	key. If it doesn't exist, it inserts the given object at
 	 *	the given key location. Otherwise, it returns an error.
 	 **/
-	this.ensureInsert = function(collection, key, obj, callback)
+	this.ensureInsert = function ensureInsert(collection, key, obj, callback)
 	{
+		dbg.called();
+		
 		collection.findOne(
 			key,
-			function(err, doc)
+			function insertIfNotExists(err, doc)
 			{
+				dbg.called();
+		
 				if(err != null)
 					callback(new Error('Database Search Error'));
 				else {
 					if(typeof(doc) == 'undefined') {
 						collection.insert(
 							obj,
-							function(err, inserted_docs)
+							function insertDocument(err, inserted_docs)
 							{
-								dbg.log('inserted: '+inserted_docs);
+								dbg.called();
+		
 								callback(err, inserted_docs[0]);
 								/*if(err != null)
 									callback(new Error('Database Insertion Error'));
@@ -120,20 +135,26 @@ var DatabaseDriver = function()
 	 *	key. If it doesn't exist, it inserts the given object at
 	 *	the given key location.
 	 **/
-	this.ensureExists = function(collection, key, obj, callback)
+	this.ensureExists = function ensureExists(collection, key, obj, callback)
 	{
+		dbg.called();
+		
 		collection.findOne(
 			key,
-			function(err, doc)
+			function getDocument(err, doc)
 			{
+				dbg.called();
+		
 				if(err != null)
 					callback(new Error('Database Search Error'));
 				else {
 					if(typeof(doc) == 'undefined') {
 						collection.insert(
 							obj,
-							function(err, inserted_docs)
+							function returnInsertedDocument(err, inserted_docs)
 							{
+								dbg.called();
+		
 								if(err != null)
 									callback(new Error('Database Insertion Error'));
 								else
@@ -154,19 +175,25 @@ var DatabaseDriver = function()
 	 *	the given key location. If it does exist, it overwrites
 	 *	it with the given object.
 	 **/
-	this.overwrite = function(collection, key, obj, callback)
+	this.overwrite = function overwrite(collection, key, obj, callback)
 	{
+		dbg.called();
+		
 		collection.remove(
 			key,
-			function(err)
+			function insertNewDocument(err)
 			{
+				dbg.called();
+		
 				if(err != null)
 					callback(new Error('Database Delete Error'));
 				else {
 					collection.insert(
 						obj,
-						function(err, inserted_docs)
+						function returnInsertedDocument(err, inserted_docs)
 						{
+							dbg.called();
+		
 							if(err != null)
 								callback(new Error('Database Insertion Error'));
 							else
@@ -181,14 +208,18 @@ var DatabaseDriver = function()
 	/**
 	 * 	Updates all objects matching the key with the given obj_part
 	 **/
-	this.update = function(collection, key, obj_part, callback)
+	this.update = function update(collection, key, obj_part, callback)
 	{
+		dbg.called();
+		
 		var once=false;
 		collection.update(
 			key,
 			obj_part,
-			function(err, doc)
+			function returnUpdatedDocument(err, doc)
 			{
+				dbg.called();
+		
 				if( !once ) {
 					once = true;
 					if(err != null)

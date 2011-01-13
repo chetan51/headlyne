@@ -14,17 +14,23 @@ var ContentGrabber = function()
 {
 	var self = this;
 	
-	this.domify = function(html)
+	this.domify = function domify(html)
 	{
+		dbg.called();
+		
 		return jsdom.jsdom(html);
 	};
 
-	this.readable = function(html, callback)
+	this.readable = function readable(html, callback)
 	{
+		dbg.called();
+		
 		Readability.parse(
 			html,
 			"",
-			function (result) {
+			function returnResult(result) {
+				dbg.called();
+		
 				if (result.err) {
 					callback(result.err);
 				}
@@ -43,8 +49,10 @@ var ContentGrabber = function()
 	 *
 	 * 	Returns: snippet text.
 	 **/
-	this.snip = function(fulltext)
+	this.snip = function snip(fulltext)
 	{
+		dbg.called();
+		
 		var text_length = 0, snip_text = '';
 		var image_count = 0;
 
@@ -112,7 +120,6 @@ var ContentGrabber = function()
 							{
 								case 'img':
 									image_count = image_count + 1;
-									dbg.log('Found '+image_count+' image.');
 									if ( image_count == Ni.config('snippet_image_limit') )
 										done = true;
 							}

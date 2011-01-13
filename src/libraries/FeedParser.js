@@ -37,8 +37,10 @@ var FeedParser = function()
 	 * Version: 0 if the version cannot be detected. Otherwise the version number.
 	 **/
 	
-	this.parse = function(rss, callback)
+	this.parse = function parse(rss, callback)
 	{
+		dbg.called();
+		
 		var feed = {};          // the feed item to be returned via the callback.
 		var items=[];           // the items returned via the callback.
 		
@@ -64,13 +66,17 @@ var FeedParser = function()
 		 * We define callback functions that are triggered
 		 * when the corresponding event occurs.
 		 **/
-		var parser = new xml.SaxParser(function(cb)
+		var parser = new xml.SaxParser(function initializeParser(cb)
 		{
+			dbg.called();
+		
 			/**
 			 * Initialize parser
 			 **/
 			cb.onStartDocument(
-				function() {
+				function startDocument() {
+					dbg.called();
+		
 					tagstack.push('root');
 					pureswitch=0;
 					rellink=false;
@@ -78,7 +84,9 @@ var FeedParser = function()
 			);
 
 			cb.onEndDocument(
-				function() {
+				function endDocument() {
+					dbg.called();
+		
 					if(!result) {
 						result=true;
 						feed.items = items;
@@ -88,7 +96,9 @@ var FeedParser = function()
 			);
 			
 			cb.onError(
-				function(err) {
+				function processError(err) {
+					dbg.called();
+		
 					if(!result) {
 						result=true;
 						callback(new Error(err));
@@ -273,7 +283,7 @@ var FeedParser = function()
 			}
 
 			cb.onStartElementNS(
-				function(elem, attrs, prefix, uri, namespaces)
+				function processStartOfElement(elem, attrs, prefix, uri, namespaces)
 				{
 					if(pureswitch) {
 						textifyOpenTag(elem, prefix, attrs);
@@ -306,7 +316,7 @@ var FeedParser = function()
 			);
 
 			cb.onEndElementNS(
-				function(elem, prefix, uri)
+				function processEndOfElement(elem, prefix, uri)
 				{
 					if(pureswitch) {
 						textifyCloseTag(elem, prefix);
@@ -335,7 +345,7 @@ var FeedParser = function()
 				}
 			);
 			
-			cb.onCharacters(function(str) {
+			cb.onCharacters(function processCharacter(str) {
 				content+=str;
 			});
 			
@@ -348,7 +358,9 @@ var FeedParser = function()
 			
 		}); // End xml.SAXParser creation.
 		
-		setTimeout(function() {
+		setTimeout(function parsingTimeOut() {
+			dbg.called();
+		
 			if(!result) {
 				callback(new Error('Parser timed out.'));
 				result=true;
@@ -365,8 +377,10 @@ var FeedParser = function()
 	 * 
 	 * Supports http/https protocols ONLY.
 	 **/
-	this.stripURLs = function(str)
+	this.stripURLs = function stripURLs(str)
 	{
+		dbg.called();
+		
 		geturl = new RegExp("(^|[ \t\r\n])((http|https):(([A-Za-z0-9$_.+!*(),;/?:@&~=-])|%[A-Fa-f0-9]{2}){2,}(#([a-zA-Z0-9][a-zA-Z0-9$_.+!*(),;/?:@&~=%-]*))?([A-Za-z0-9$_+!*();/?:~-]))"
 		        ,"g"
 		);

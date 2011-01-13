@@ -14,8 +14,10 @@ var Downloader = function() {
 	
 	var self = this;
 	
-	this.fetch = function(url, callback)
+	this.fetch = function fetch(url, callback)
 	{
+		dbg.called();
+		
 		if (url.length > 0) {
 			self.fetch_helper(url, Ni.config('max_redirect'), callback);
 		}
@@ -24,14 +26,18 @@ var Downloader = function() {
 		}
 	}
 	
-	this.fetch_helper = function(url, max_redirect_level, callback)
+	this.fetch_helper = function fetch_helper(url, max_redirect_level, callback)
 	{
+		dbg.called();
+		
 		if(max_redirect_level == 0) {
 			callback(new Error('Endless redirection.'));
 			return;
 		}
 		
-		var timeout = setTimeout(function() {
+		var timeout = setTimeout(function timedOut() {
+			dbg.called();
+		
 			callback(new Error('Request timed out.'));
 		}, Ni.config('http_timeout'));
 		
@@ -41,7 +47,9 @@ var Downloader = function() {
 			parser: false
 		};
 
-		rest.get(url, options).addListener('complete', function(data, response) {
+		rest.get(url, options).addListener('complete', function processResponse(data, response) {
+			dbg.called();
+		
 			clearTimeout(timeout);
 			
 			switch(response.statusCode) {
@@ -60,12 +68,16 @@ var Downloader = function() {
 					callback(new Error("Error " + response.statusCode + ": Page not found."));
 					break;
 			}
-		}).addListener('error', function(data, response) {
-			dbg.log('REST error?');
+		}).addListener('error', function processError(data, response) {
+			dbg.called();
+		
+			dbg.error('download error');
 		});
 
-		process.on('uncaughtException', function(err){
-			dbg.log('Debugger: Uncaught exception!');
+		process.on('uncaughtException', function processUncaughtException(err){
+			dbg.called();
+		
+			dbg.log('uncaught exception while downloading');
 			// allow request to time out.
 		});
 	}
