@@ -8,6 +8,7 @@
 var crypto         = require('crypto');
 var DatabaseDriver = require('../libraries/DatabaseDriver.js');
 var Ni             = require('ni');
+var dbg            = require('../../src/libraries/Debugger.js');
 
 /**
  * The Feed model
@@ -27,12 +28,16 @@ var Feed = function()
 	 * 	Returns:      the feed that was saved
 	 * 	              false on error
 	 **/
-	this.save = function(url, title, author, description, callback)
+	this.save = function save(url, title, author, description, callback)
 	{
+		dbg.called();
+		
 		DatabaseDriver.getCollection(
 			'feeds',
-			function(err, collection)
+			function updateFeed(err, collection)
 			{
+				dbg.called();
+		
 				if (err) {
 					callback(err);
 				}
@@ -54,8 +59,10 @@ var Feed = function()
 						 'time_accessed': new Date().getTime(),
 						 'items': []
 						},
-						function(err, feed)
+						function returnUpdatedFeed(err, feed)
 						{
+							dbg.called();
+		
 							if (err) {
 								callback(err);
 							}
@@ -83,24 +90,30 @@ var Feed = function()
 	 * 	                  time_modified
 	 * 	              }
 	 **/
-	this.get = function(feed_url, callback)
+	this.get = function get(feed_url, callback)
 	{
+		dbg.called();
+		
 		var hasher = crypto.createHash('sha256');
 		hasher.update(feed_url);
 		var feed_id = hasher.digest('hex');
 
 		DatabaseDriver.getCollection(
 			'feeds',
-			function(err, collection)
+			function getFeed(err, collection)
 			{
+				dbg.called();
+		
 				if (err) {
 					callback(err);
 				}
 				else {
 					collection.findOne(
 						{'url_hash': feed_id},
-						function(err, feed)
+						function checkGotFeed(err, feed)
 						{
+							dbg.called();
+		
 							if(err != null)
 								callback(new Error('Database Search Error'));
 							else {
@@ -116,9 +129,8 @@ var Feed = function()
 										collection,
 										{'url_hash':feed.url_hash},
 										feed,
-										function(err, new_feed) {
-										
-											dbg.log("access time updated");
+										function accessTimeUpdated(err, new_feed) {
+											dbg.called();
 										}
 									);
 								}
@@ -139,12 +151,16 @@ var Feed = function()
 	 * 	                  > now
 	 * 	              false otherwise
 	 **/
-	this.isUpToDate = function(feed_url, callback)
+	this.isUpToDate = function isUpToDate(feed_url, callback)
 	{
+		dbg.called();
+		
 		self.get(
 			feed_url,
-			function(err, feed)
+			function checkIfUpToDate(err, feed)
 			{
+				dbg.called();
+		
 				if (err) {
 					callback(err);
 				}
@@ -169,22 +185,26 @@ var Feed = function()
 	 * 	              if the deletion was successful.
 	 * 	              Otherwise, it calls the errback.
 	 **/
-	this.remove = function(feed_url, callback)
+	this.remove = function remove(feed_url, callback)
 	{
+		dbg.called();
+		
 		var hasher = crypto.createHash('sha256');
 		hasher.update(feed_url);
 		var feed_id = hasher.digest('hex');
 		DatabaseDriver.getCollection(
 			'feeds',
-			function(err, collection)
+			function removeFeed(err, collection)
 			{
+				dbg.called();
+		
 				if (err) {
 					callback(err);
 				}
 				else {
 					collection.remove(
 						{'url_hash':feed_id},
-						function(err, doc)
+						function returnResult(err, doc)
 						{
 							if(err != null)
 								callback(new Error('Database Deletion Error'));
@@ -205,12 +225,16 @@ var Feed = function()
 	 *
 	 * 	Returns:      updated feed.
 	 **/
-	this.pushFeedItems = function(feed_url, feed_items, callback)
+	this.pushFeedItems = function pushFeedItems(feed_url, feed_items, callback)
 	{
+		dbg.called();
+		
 		self.get(
 			feed_url,
-			function(err, feed)
+			function pushItems(err, feed)
 			{
+				dbg.called();
+		
 				if (err) {
 					callback(err);
 				}
@@ -220,8 +244,10 @@ var Feed = function()
 					feed.time_modified = new Date().getTime();
 					DatabaseDriver.getCollection(
 						'feeds',
-						function(err, collection)
+						function updateDatabase(err, collection)
 						{
+							dbg.called();
+		
 							if (err) {
 								callback(err);
 							}
@@ -230,7 +256,7 @@ var Feed = function()
 									collection,
 									{'url_hash': feed.url_hash},
 									feed,
-									function(err, feed)
+									function returnResult(err, feed)
 									{
 										if (err) {
 											callback(err);
@@ -255,8 +281,10 @@ var Feed = function()
 	 *
 	 * 	Returns:      updated feed, popped items.
 	 **/
-	this.popFeedItems = function(feed_url, callback, pop_size)
+	this.popFeedItems = function popFeedItems(feed_url, callback, pop_size)
 	{
+		dbg.called();
+		
 		if(pop_size == null || typeof(pop_size) == 'undefined')
 		{
 			pop_size = 1;
@@ -264,8 +292,10 @@ var Feed = function()
 
 		self.get(
 			feed_url,
-			function(err, feed)
+			function getFeedItems(err, feed)
 			{
+				dbg.called();
+		
 				if (err) {
 					callback(err);
 				}
@@ -276,8 +306,10 @@ var Feed = function()
 					
 					DatabaseDriver.getCollection(
 						'feeds',
-						function(err, collection)
+						function updateDatabaseForFeed(err, collection)
 						{
+							dbg.called();
+		
 							if (err) {
 								callback(err);
 							}
@@ -286,7 +318,7 @@ var Feed = function()
 									collection,
 									{'url_hash':feed.url_hash},
 									feed,
-									function(err, new_feed)
+									function returnResult(err, new_feed)
 									{
 										if (err) {
 											callback(err);

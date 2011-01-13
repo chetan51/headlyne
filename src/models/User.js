@@ -63,8 +63,6 @@ var User = function()
 								callback(err);
 							}
 							else {
-								//delete user['password_hash'];
-								dbg.log('saved user: '+user);
 								callback(null, user);
 							}
 						}
