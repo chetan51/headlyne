@@ -10,14 +10,9 @@ var Debugger = function()
 {
 	var self = this;
 	
-	this.called = function called(owner_class) {
+	this.called = function called() {
 		if (Ni.config('log_enabled')) {
-			var owner_label = "";
-			if (owner_class) {
-				owner_label = owner_class + ".";
-			}
-
-			console.log("Called: " + owner_label + arguments.callee.caller.name);
+			console.log("Called: " + arguments.callee.caller.name);
 		}
 	}
 	
