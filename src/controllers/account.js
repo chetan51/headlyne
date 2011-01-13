@@ -9,7 +9,7 @@
 
 var Ni   = require('ni');
 var Step = require('step');
-var dbg  = require('../../src/libraries/Debugger.js');
+var dbg  = require('../libraries/Debugger.js');
 
 /*
  *  The account controller
@@ -18,12 +18,16 @@ var AccountController = function()
 {
 	var self = this;
 
-	this.index = function(req, res, next)
+	this.index = function index(req, res, next)
 	{
+		dbg.called();
+		
 		res.error('Nothing to do.');
 	}
 
-	this.login = function(req, res, next) {
+	this.login = function login(req, res, next) {
+		dbg.called();
+		
 		var view_parameters = {};
 		
 		if(req.method != 'POST' || !req.body) {
@@ -42,7 +46,9 @@ var AccountController = function()
 			
 			self._login(
 				params,
-				function(err, logged_in, error_message, cookie) {
+				function setCookieAndLogin(err, logged_in, error_message, cookie) {
+					dbg.called();
+		
 					if (err) {
 						view_parameters.error_message = "Uh oh, something went wrong. Please try again.";
 					}
@@ -61,7 +67,6 @@ var AccountController = function()
 							);
 						
 							res.moved('/');
-							dbg.log('redirect: login to home, logged in');
 						}
 					}
 					
@@ -88,7 +93,9 @@ var AccountController = function()
 	 *		                        error message
 	 *		                        cookie
 	 */
-	this._login = function(params, callback) {
+	this._login = function _login(params, callback) {
+		dbg.called();
+		
 		if (params.username == null || params.username == "") {
 			callback(null, false, "Please enter your username.");
 		}
@@ -99,8 +106,10 @@ var AccountController = function()
 			Ni.library('UserAuth').authenticate(
 				params.username,
 				params.password,
-				function(err, is_new, cookie)
+				function checkAuthenticationAttempt(err, is_new, cookie)
 				{
+					dbg.called();
+		
 					if(err != null) {
 						if( err.message == 'No such User' ||
 						    err.message == 'Invalid Password' )
@@ -117,35 +126,34 @@ var AccountController = function()
 		}
 	}
 
-	this.logout = function(req, res, next) {
-		Ni.helper('cookies').checkCookie(req, res, function(err, cookie)
-		{
-			if( err ) {
-				dbg.log('redirect: logout to home:');
-				dbg.log(err.message);
-				
+	this.logout = function logout(req, res, next) {
+		dbg.called();
+		
+		Ni.helper('cookies').checkCookie(
+			req,
+			res,
+			function clearCookieAndLogout(err, cookie)
+			{
+				dbg.called();
+		
+				if( !err ) {
+					Ni.library('UserAuth').invalidate(
+						cookie.data.user,
+						function(err) {}
+					);
+				}
+					
 				res.clearCookie('cookie');
 				res.moved('/');
-			} else {
-				dbg.log(cookie.data);
-				Ni.library('UserAuth').invalidate(
-					cookie.data.user,
-					function(err)
-					{
-						// no errors -- attach a null cookie, direct to
-						// login page, and get moving.
-						res.clearCookie('cookie');
-						res.moved('/');
-						dbg.log('redirect: logout to home.');
-					}
-				);
 			}
-		});
+		);
 	}
 	
 	/*	Plain sign up, no invite
 	 *
-	this.signup = function(req, res, next) {
+	this.signup = function signup(req, res, next) {
+		dbg.called();
+		
 		var view_parameters = {};
 		
 		if(req.method == 'POST' && req.body) {
@@ -155,7 +163,9 @@ var AccountController = function()
 			
 			self._signup(
 				params,
-				function(err, signed_up, error_message) {
+				function checkSignupAttempt(err, signed_up, error_message) {
+					dbg.called();
+		
 					if (err) {
 						view_parameters.error_message = "Uh oh, something went wrong. Please try again.";
 						
@@ -204,7 +214,9 @@ var AccountController = function()
 	 *		                        registered?
 	 *		                        error message
 	 */
-	this._signup = function(params, callback) {
+	this._signup = function _signup(params, callback) {
+		dbg.called();
+		
 		if (params.username == null || params.username == "") {
 			callback(null, false, "Please enter a username.");
 		}
@@ -233,8 +245,10 @@ var AccountController = function()
 				params.first_name,
 				params.last_name,
 				params.email,
-				function(err, user)
+				function finishSignup(err, user)
 				{
+					dbg.called();
+		
 					if(err != null) {
 						if (err.message == "Database match exists") {
 							callback(null, false, "That username is taken.");
@@ -254,7 +268,9 @@ var AccountController = function()
 	/*
 	 *    Invite-based sign up
 	 */
-	this.signup = function(req, res, next) {
+	this.signup = function signup(req, res, next) {
+		dbg.called();
+		
 		var view_parameters = {};
 		
 		if(req.method == 'POST' && req.body) {
@@ -296,6 +312,8 @@ var AccountController = function()
 				Step(
 					function checkCode()
 					{
+						dbg.called();
+		
 						Ni.model('Invite').exists(
 							params.invite_code,
 							this
@@ -303,9 +321,10 @@ var AccountController = function()
 					},
 					function addUser(err, is_valid)
 					{
+						dbg.called();
+		
 						if(err) throw err;
 						if(!is_valid) {
-							dbg.log('invalid code');
 							throw new Error('Invalid invite code.');
 						} else {
 							Ni.model('User').save(
@@ -320,6 +339,8 @@ var AccountController = function()
 					},
 					function checkIfAdded(err, user)
 					{
+						dbg.called();
+		
 						if(err != null) {
 							throw err;
 						} else {
@@ -328,6 +349,8 @@ var AccountController = function()
 					},
 					function finish(err, completed)
 					{
+						dbg.called();
+		
 						if(err) {
 							if( err.message == "Database match exists" ) {
 								view_parameters.error_message = 'That username is already taken.';
@@ -342,7 +365,6 @@ var AccountController = function()
 							res.ok(html);
 							return;
 						} else {
-							
 							// first, remove the invite code.
 							Ni.model('Invite').remove(
 								params.invite_code,
@@ -353,8 +375,10 @@ var AccountController = function()
 							Ni.model('User').updateFeeds(
 								params.username,
 								Ni.config('default_feeds'),
-								function(err)
+								function loginUser(err)
 								{
+									dbg.called();
+		
 									// new user created. login the user and proceed.
 									req.body = params;
 									self.login(req, res, next);
@@ -373,8 +397,10 @@ var AccountController = function()
 		}
 	}
 
-	this.request_invite = function(req, res, next)
+	this.request_invite = function request_invite(req, res, next)
 	{
+		dbg.called();
+		
 		var view_parameters = {};
 		
 		if(req.method == 'POST' && req.body) {
@@ -403,8 +429,10 @@ var AccountController = function()
 					params.email,
 					params.first_name,
 					params.last_name,
-					function(err)
+					function checkInviteRequested(err)
 					{
+						dbg.called();
+		
 						if(err) {
 							view_parameters.error_message = err.message;
 							var html = Ni.library('Templater').getRequestInvites(
@@ -426,8 +454,10 @@ var AccountController = function()
 		}
 	}
 	
-	this.invite_requested = function(req, res, next)
+	this.invite_requested = function invite_requested(req, res, next)
 	{
+		dbg.called();
+		
 		var view_parameters = {};
 		
 		var html = Ni.library('Templater').getInviteRequested(
