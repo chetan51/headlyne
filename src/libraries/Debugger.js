@@ -24,14 +24,14 @@ var Debugger = function()
 	this.log = function log(message)
 	{
 		if (Ni.config('log_enabled')) {
-			console.log(message + "[" + arguments.callee.caller.name + "]");
+			console.log("[" + arguments.callee.caller.name + "]" + " " + message);
 		}
 	}
 	
 	this.error = function log(err)
 	{
 		if (Ni.config('log_enabled')) {
-			console.log("ERROR: " + err.message + "[" + arguments.callee.caller.name + "]");
+			console.log("[" + arguments.callee.caller.name + "]" + " ERROR: " + message);
 		}
 	}
 };
