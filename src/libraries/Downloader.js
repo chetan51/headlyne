@@ -17,6 +17,7 @@ var Downloader = function() {
 	this.fetch = function fetch(url, callback)
 	{
 		dbg.called();
+		dbg.log("Fetching url: " + url);
 		
 		if (url.length > 0) {
 			self.fetch_helper(url, Ni.config('max_redirect'), callback);
@@ -77,7 +78,7 @@ var Downloader = function() {
 		process.on('uncaughtException', function processUncaughtException(err){
 			dbg.called();
 		
-			dbg.log('uncaught exception while downloading');
+			dbg.error(err);
 			// allow request to time out.
 		});
 	}
