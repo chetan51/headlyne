@@ -17,16 +17,22 @@ var AdminController = function()
 {
 	var self = this;
 
-	this.index = function(req, res, next)
+	this.index = function index(req, res, next)
 	{
+		dbg.called();
+		
 		res.error('Nothing to do.');
 	}
 	
-	this.invite = function(req, res, next)
+	this.invite = function invite(req, res, next)
 	{
+		dbg.called();
+		
 		self._authenticate(
 			req,
-			function(err, is_admin) {
+			function checkIfAdmin(err, is_admin) {
+				dbg.called();
+		
 				if (err) {
 					res.error("Error: " + err.message);
 				}
@@ -34,7 +40,9 @@ var AdminController = function()
 					if (is_admin) {
 						self._invite(
 							req,
-							function(err, invite_code) {
+							function showInviteCode(err, invite_code) {
+								dbg.called();
+		
 								if (err) {
 									res.error("Error: " + err.message);
 								}
@@ -52,10 +60,14 @@ var AdminController = function()
 		);
 	}
 	
-	this._invite = function(req, callback) {
+	this._invite = function _invite(req, callback) {
+		dbg.called();
+		
 		Ni.model('Invite').add(
 			"admin",
-			function(err, invite_code) {
+			function finishInvite(err, invite_code) {
+				dbg.called();
+		
 				if (err) {
 					callback(err);
 				}
@@ -66,8 +78,10 @@ var AdminController = function()
 		);
 	}
 	
-	this._authenticate = function(req, callback)
+	this._authenticate = function _authenticate(req, callback)
 	{
+		dbg.called();
+		
 		var parameters = url.parse(req.url, true).query;
 		
 		if (!parameters) {

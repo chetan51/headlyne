@@ -18,13 +18,17 @@ var dbg = require('../libraries/Debugger');
  */
 var FeedController = function()
 {
-	this.index = function(req, res, next)
+	this.index = function index(req, res, next)
 	{
+		dbg.called();
+		
 		res.error("No feed selected.");
 	}
 
-	this.preview = function(req, res, next)
+	this.preview = function preview(req, res, next)
 	{
+		dbg.called();
+		
 		// object to be filled and returned.
 		var res_obj = {
 			'error': null,
@@ -55,10 +59,11 @@ var FeedController = function()
 				req.body.feed_url,
 				1,
 				function() {},
-				function(err, teaser)
+				function renderPreviewView(err, teaser)
 				{
+					dbg.called();
+		
 					if (err) {
-						dbg.log('preview error: '+err.message);
 						res_obj.error = err;
 						res.json(res_obj);
 						return;
@@ -72,14 +77,15 @@ var FeedController = function()
 
 					res_obj.preview = preview;
 					res.json(res_obj);
-					dbg.log('preview sent');
 				}
 			);
 		}
 	}
 	
-	this.teaser_body = function(req, res, next)
+	this.teaser_body = function teaser_body(req, res, next)
 	{
+		dbg.called();
+		
 		// object to be filled and returned.
 		var res_obj = {
 			'error': null,
@@ -122,10 +128,11 @@ var FeedController = function()
 				req.body.feed_url,
 				req.body.num_feed_items,
 				function() {},
-				function(err, feed)
+				function renderTeaserView(err, feed)
 				{
+					dbg.called();
+		
 					if (err) {
-						dbg.log('preview error: '+err.message);
 						res_obj.error = err;
 						res.json(res_obj);
 						return;
@@ -142,14 +149,15 @@ var FeedController = function()
 					res_obj.feed_title  = feed.title;
 					res_obj.teaser_body = teaser_body;
 					res.json(res_obj);
-					dbg.log('teaser sent');
 				}
 			);
 		}
 	}
 	
-	this.webpage = function(req, res, next)
+	this.webpage = function webpage(req, res, next)
 	{
+		dbg.called();
+		
 		// object to be filled and returned.
 		var res_obj = {
 			'error': null,
@@ -176,13 +184,13 @@ var FeedController = function()
 			//POST.webpage_url = "http://www.futilitycloset.com/2010/12/31/mail-snail/";
 
 			// now get the full page
-			dbg.log('accessing library for full page...');
 			Ni.library('FeedServer').getFullContent(
 				req.body.webpage_url,
-				function(err, webpage)
+				function renderFullPageView(err, webpage)
 				{
+					dbg.called();
+		
 					if(err) {
-						dbg.log('Error occured: '+err.message);
 						res_obj.error = err;
 						res.json(res_obj);
 						return;
@@ -195,7 +203,6 @@ var FeedController = function()
 					);
 
 					res_obj.page = page;
-					dbg.log('Page served'+res_obj);
 					res.json(res_obj);
 				}
 			);

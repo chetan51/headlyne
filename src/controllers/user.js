@@ -16,13 +16,17 @@ var qs   = require('querystring');
  */
 var UserController = function()
 {
-	this.index = function(req, res, next)
+	this.index = function index(req, res, next)
 	{
+		dbg.called();
+		
 		res.error("No operation selected.");
 	}
 	
-	this.edit = function(req, res, next)
+	this.edit = function edit(req, res, next)
 	{
+		dbg.called();
+		
 		var res_obj = {
 			'error': null,
 			'success': false
@@ -50,10 +54,11 @@ var UserController = function()
 			// now, check if the cookie is valid.
 //			var cookie={}; cookie.data={}; cookie.data.user = 'username';
 			Ni.helper('cookies').checkCookie(req, res,
-				function(err, cookie)
+				function editUserFeed(err, cookie)
 				{
+					dbg.called();
+		
 					if(err) {
-						console.log(err.message);
 						res_obj.error = err;
 						res.json(res_obj);
 						return;
@@ -66,10 +71,11 @@ var UserController = function()
 						req.body.num_feed_items,
 						req.body.title_selection,
 						req.body.body_selection,
-						function(err, feeds)
+						function sendResponse(err, feeds)
 						{
+							dbg.called();
+		
 							if(err) {
-								console.log(err.message);
 								res_obj.error = err;
 								res.json(res_obj);
 								return;
@@ -85,8 +91,10 @@ var UserController = function()
 		}
 	}
 	
-	this.update = function(req, res, next)
+	this.update = function update(req, res, next)
 	{
+		dbg.called();
+		
 		var res_obj = {
 			'error': null,
 			'success': false
@@ -110,10 +118,11 @@ var UserController = function()
 		else {
 			// now check cookie
 			Ni.helper('cookies').checkCookie(req, res,
-				function(err, cookie)
+				function updateUserFeed(err, cookie)
 				{
+					dbg.called();
+		
 					if(err) {
-						console.log(err.message);
 						res_obj.error = err;
 						res.json(res_obj);
 						return;
@@ -122,10 +131,11 @@ var UserController = function()
 					Ni.model('User').updateFeeds(
 						cookie.data.user,
 						JSON.parse(req.body.feed_array),
-						function(err, feeds)
+						function sendResponse(err, feeds)
 						{
+							dbg.called();
+		
 							if(err) {
-								console.log(err.message);
 								res_obj.error = err;
 								res.json(res_obj);
 								return;
@@ -141,8 +151,10 @@ var UserController = function()
 		}
 	}
 
-	this.remove = function(req, res, next)
+	this.remove = function remove(req, res, next)
 	{
+		dbg.called();
+		
 		var res_obj = {
 			'error': null,
 			'success': false
@@ -166,10 +178,11 @@ var UserController = function()
 		else {
 			// now get cookie
 			Ni.helper('cookies').checkCookie(req, res,
-				function(err, cookie)
+				function removeUserFeed(err, cookie)
 				{
+					dbg.called();
+		
 					if(err) {
-						console.log(err.message);
 						res_obj.error = err;
 						res.json(res_obj);
 						return;
@@ -178,10 +191,11 @@ var UserController = function()
 					Ni.model('User').removeFeed(
 						cookie.data.user,
 						req.body.feed_url,
-						function(err, feeds)
+						function returnResponse(err, feeds)
 						{
+							dbg.called();
+		
 							if(err) {
-								console.log(err.message);
 								res_obj.error = err;
 								res.json(res_obj);
 								return;
@@ -197,8 +211,10 @@ var UserController = function()
 		}
 	}
 
-	this.teaser = function(req, res, next)
+	this.teaser = function teaser(req, res, next)
 	{
+		dbg.called();
+		
 		var res_obj = {
 			'error': null,
 			'teaser': ''
@@ -222,10 +238,11 @@ var UserController = function()
 		else {
 			// now check cookie
 			Ni.helper('cookies').checkCookie(req, res,
-				function(err, cookie)
+				function getTeaserForUser(err, cookie)
 				{
+					dbg.called();
+		
 					if(err) {
-						console.log(err.message);
 						res_obj.error = err;
 						res.json(res_obj);
 						return;
@@ -234,9 +251,10 @@ var UserController = function()
 					Ni.library('UserHandler').createTeaser(
 						cookie,
 						res.body.feed_url,
-						function(err, teaser)
+						function sendResponse(err, teaser)
 						{
-							console.log('returning obj '+err);
+							dbg.called();
+		
 							if(err) {
 								res_obj.error = err;
 								res.json(res_obj);

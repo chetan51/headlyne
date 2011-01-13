@@ -19,41 +19,55 @@ var HomeController = function()
 {
 	var self = this;
 
-	this.index = function(req, res, next)
+	this.index = function index(req, res, next)
 	{
+		dbg.called();
+		
 		Step(
 			function getColumns() {
+				dbg.called();
+		
 				var step = this;
 				
-				Ni.helper('cookies').checkCookie(req, res, function(err, cookie)
-				{
-					if( err ) {
-						// Return default feeds
-						step(null, Ni.config('default_feeds'));
-					} else {
-						// User logged in, get user's feeds
-						dbg.log('geting feeds for user ' + cookie.data.user);
-						
-						Ni.model('User').get(
-							cookie.data.user,
-							function(err, user) {
-								if (err) {
-									step(err);
+				Ni.helper('cookies').checkCookie(
+					req,
+					res,
+					function returnFeeds(err, cookie)
+					{
+						dbg.called();
+		
+						if( err ) {
+							// Return default feeds
+							step(null, Ni.config('default_feeds'));
+						} else {
+							// User logged in, get user's feeds
+							Ni.model('User').get(
+								cookie.data.user,
+								function returnUserFeeds(err, user) {
+									dbg.called();
+		
+									if (err) {
+										step(err);
+									}
+									else {
+										step(null, user.feeds, user);
+									}
 								}
-								else {
-									step(null, user.feeds, user);
-								}
-							}
-						);
+							);
+						}
 					}
-				});
+				);
 			},
 			function generateHomePage(err, feeds, user) {
+				dbg.called();
+		
 				self._generateColumns(
 					feeds,
-					function(err, columns) {
+					function renderHomePageView(err, columns) {
+						dbg.called();
+		
 						if (err) {
-							dbg.log("there was an error in generating one of the teasers");
+							dbg.error("there was an error in generating one of the teasers");
 						}
 
 						var home;
@@ -90,9 +104,9 @@ var HomeController = function()
 	 *		Returns (via callback): error
 	 *		                        columns for page view
 	 */
-	this._generateColumns = function(feed_map, callback)
+	this._generateColumns = function _generateColumns(feed_map, callback)
 	{
-		dbg.log('generating columns');
+		dbg.called();
 		
 		var columns = [];
 		var total_count = 0, count = 0;
@@ -114,14 +128,20 @@ var HomeController = function()
 		}
 		
 		// Process feed map
-		feed_map.forEach(function(column, i) {
-			column.forEach(function(feed, j) {
+		feed_map.forEach(function eachColumn(column, i) {
+			dbg.called();
+		
+			column.forEach(function eachFeed(feed, j) {
+				dbg.called();
+		
 				Ni.library('FeedServer').getFeedTeaser(
 					feed.url,
 					feed.num_feed_items,
 					function(){},
-					function(err, teaser)
+					function renderTeaserView(err, teaser)
 					{
+						dbg.called();
+		
 						if (err)  {
 							global_err = err;
 						}
