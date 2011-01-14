@@ -34,7 +34,8 @@ var InviteModel = function()
 				else {
 					var hasher = crypto.createHash('sha256');
 					hasher.update(inviter + Math.random());
-					var invite_code = hasher.digest('hex');
+					var invite_code = hasher.digest('base64');
+					invite_code = invite_code.slice(10, 20);
 
 					DatabaseDriver.ensureInsert(
 						collection,

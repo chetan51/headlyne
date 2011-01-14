@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+ 
+<feed xmlns="http://www.w3.org/2005/Atom">
+ 
+	<title>Atom Title</title>
+	<subtitle>This is a subtitle</subtitle>
+	<link href="http://www.someexamplerssdomain.com/main.html" rel="self" />
+	<link href="http://example.org/" />
+	<id>urn:uuid:60a76c80-d399-11d9-b91C-0003939e0af6</id>
+	<updated>2003-12-13T18:30:02Z</updated>
+	<author>
+		<name>John Doe</name>
+		<email>johndoe@example.com</email>
+	</author>
+ 
+	<entry>
+		<title>Item 1 Title</title>
+		<link href="http://localhost:7500/blogpost1" />
+		<link rel="alternate" type="text/html" href="http://localhost:7500/blogpost1"/>
+		<link rel="edit" href="http://example.org/2003/12/13/atom03/edit"/>
+		<id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+		<updated>2003-12-13T18:30:02Z</updated>
+		<summary>Here is some text containing an interesting description of the thing to be described.</summary>
+	</entry>
+ 
+	<entry>
+		<title>Item 2 Title</title>
+		<link href="http://localhost:7500/blogpost2" />
+		<link rel="alternate" type="text/html" href="http://localhost:7500/blogpost2"/>
+		<link rel="edit" href="http://example.org/2003/12/13/atom03/edit"/>
+		<id>urn:uuid:1225c695-cdb8-4ebb-aaaa-80da344efa6a</id>
+		<updated>2003-12-13T18:30:02Z</updated>
+		<summary>More description.</summary>
+	</entry>
+</feed>
