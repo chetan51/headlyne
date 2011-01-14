@@ -226,7 +226,8 @@ var FeedParser = function()
 				for(i in attrs)
 				{
 					if(attrs[i][0] == 'rel') {
-						if(attrs[i][1] == 'alternate') {
+						if(attrs[i][1] == 'alternate' ||
+						   attrs[i][1] == 'self' ) {
 							rellink=true;
 							break;
 						}
@@ -258,6 +259,7 @@ var FeedParser = function()
 						}
 						break;
 					case 'description':
+					case 'subtitle':
 						feed.description = content;
 						break;
 				}
@@ -291,6 +293,7 @@ var FeedParser = function()
 						}
 						break;
 					case 'description':
+					case 'summary':
 						items[cur_item].description = content;
 						break;
 				}
@@ -305,6 +308,8 @@ var FeedParser = function()
 						// check if pureswitch should be enabled
 						switchPure(attrs);
 
+						content='';
+						
 						// processing for some open tags
 						switch(elem.toLowerCase())
 						{
@@ -321,9 +326,16 @@ var FeedParser = function()
 							// If I have opened a link, check if it has a rel=alternate.
 							case 'link':
 								checkRelAlternate(attrs);
+								if(type == 'atom' && rellink == true) {
+									for(i in attrs)
+									{
+										if(attrs[i][0] == 'href') {
+											content = attrs[i][1];
+										}
+									}
+								}
 								break;
 						}
-						content='';
 					}
 					tagstack.push(elem.toLowerCase());
 				}

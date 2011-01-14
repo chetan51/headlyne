@@ -10,7 +10,7 @@ var Ni = require('ni');
 /**
  *  Test Constants
  **/
-var sampleFeed = {
+var sampleRSS = {
 	path        : './test/mocks/mock_app/views/basic_feed.xml',
 	title       : 'RSS Title',
 	link        : 'http://www.someexamplerssdomain.com/main.html',
@@ -29,6 +29,27 @@ var sampleFeed = {
 	]
 };
 
+var sampleAtom = {
+	path        : './test/mocks/mock_app/views/basic_atom.xml',
+	title       : 'Atom Title',
+	link        : 'http://www.someexamplerssdomain.com/main.html',
+	description : 'This is a subtitle',
+	items       : [
+		{
+			title       : "Item 1 Title",
+			description : "Here is some text containing an interesting description of the thing to be described.",
+			link        : "http://localhost:7500/blogpost1"
+		},
+		{
+			title       : "Item 2 Title",
+			description : "More description.",
+			link        : "http://localhost:7500/blogpost2"
+		}
+	]
+};
+
+var big_atom_file = './test/mocks/mock_app/views/big_atom.xml';
+
 /**
  *  Tests
  **/
@@ -46,7 +67,7 @@ exports['parse XML'] = nodeunit.testCase(
 	'basic RSS': function(test) {
 		test.expect(9);
 		
-		var rss = fs.readFileSync(sampleFeed.path, 'utf-8');
+		var rss = fs.readFileSync(sampleRSS.path, 'utf-8');
 		
 		FeedParser.parse(
 			rss,
@@ -55,18 +76,66 @@ exports['parse XML'] = nodeunit.testCase(
 					console.log(err);
 				}
 				else {
-					test.equal(feed.title, sampleFeed.title);
-					test.equal(feed.link, sampleFeed.link);
-					test.equal(feed.description, sampleFeed.description);
+					test.equal(feed.title, sampleRSS.title);
+					test.equal(feed.link, sampleRSS.link);
+					test.equal(feed.description, sampleRSS.description);
 					for (var i in feed.items) {
 						item = feed.items[i];
 						
-						test.equal(item.title, sampleFeed.items[i].title);
-						test.equal(item.description, sampleFeed.items[i].description);
-						test.equal(item.link, sampleFeed.items[i].link);
+						test.equal(item.title, sampleRSS.items[i].title);
+						test.equal(item.description, sampleRSS.items[i].description);
+						test.equal(item.link, sampleRSS.items[i].link);
 					}
 				}
 				test.done();
+			}
+		);
+	},
+	
+	'basic Atom': function(test) {
+		test.expect(9);
+		
+		var atom = fs.readFileSync(sampleAtom.path, 'utf-8');
+		
+		FeedParser.parse(
+			atom,
+			function(err, feed) {
+				if (err) {
+					console.log(err);
+				}
+				else {
+					test.equal(feed.title, sampleAtom.title);
+					test.equal(feed.link, sampleAtom.link);
+					test.equal(feed.description, sampleAtom.description);
+					for (var i in feed.items) {
+						item = feed.items[i];
+						
+						test.equal(item.title, sampleAtom.items[i].title);
+						test.equal(item.description, sampleAtom.items[i].description);
+						test.equal(item.link, sampleAtom.items[i].link);
+					}
+				}
+				test.done();
+			}
+		);
+	},
+	
+	'big Atom': function(test) {
+		test.expect(1);
+		
+		var atom = fs.readFileSync(big_atom_file, 'utf-8');
+		
+		FeedParser.parse(
+			atom,
+			function(err, feed) {
+				if (err) {
+					console.log(err);
+				}
+				else {
+					test.ok(1);
+					console.log(JSON.stringify(feed));
+					test.done();
+				}
 			}
 		);
 	},
