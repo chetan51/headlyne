@@ -2,6 +2,7 @@
  * Dependencies
  **/
 var xml = require('node-xml'),
+    dbg = require('../../src/libraries/Debugger.js'),
     Ni  = require('ni');
 
 
