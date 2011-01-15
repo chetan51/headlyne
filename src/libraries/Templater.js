@@ -59,7 +59,7 @@ var Templater = function()
 		
 		var column_mold_html = jade.render(
 			Ni.view('column').template,
-			{locals: {feeds: null}}
+			{locals: {feeds: []}}
 		);
 		
 		var feed_mold_html = jade.render(
