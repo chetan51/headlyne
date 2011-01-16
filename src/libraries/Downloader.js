@@ -71,8 +71,10 @@ var Downloader = function() {
 			}
 		}).addListener('error', function processError(data, response) {
 			dbg.called();
-		
-			dbg.error('download error');
+			dbg.log('download error: ' + response);
+			
+			clearTimeout(timeout);
+			callback(new Error("Error :" + response));
 		});
 
 		process.on('uncaughtException', function processUncaughtException(err){
