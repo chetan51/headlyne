@@ -115,8 +115,8 @@ var HomeController = function()
 		// Set up return object and count the number of feeds to process
 		for (i in feed_map) {
 			columns[i] = {};
+			columns[i].feeds = [];
 			for (j in feed_map[i]) {
-				columns[i].feeds = [];
 				total_count++;
 			}
 		}
