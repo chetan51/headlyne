@@ -211,11 +211,10 @@ exports['fetch URLs'] = nodeunit.testCase(
 		);
 	},
 
-	'live example': function(test) {
+	'real life 1': function(test) {
 		test.expect(1);
-		
 		Downloader.fetch(
-			"http://google.com/",
+			"http://news.google.com/news/url?sa=t&fd=R&usg=AFQjCNFA02jifhs3yV7GZY_doiuccyjY7g&url=http://www.nytimes.com/2011/01/17/sports/football/17vecsey.html",
 			function(err, str) {
 				if (err) {
 					console.log(err);
