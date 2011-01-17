@@ -35,6 +35,13 @@ var sampleDocument3 = {
 	last_line  : "For more information about the Apache web server"
 };
 
+var sampleDocument4 = {
+	url        : './test/mocks/mock_app/views/webpage2.html',
+	title      : "First-timers win big at Golden Globes",
+	first_line : "It wasn't the same old same-old at the 68th Golden Globes Awards on Sunday night.",
+	last_line  : "susan.king@latimes.com"
+};
+
 /**
  *  Tests
  **/
@@ -116,6 +123,31 @@ exports['grab content from page'] = nodeunit.testCase(
 				}
 			}
 		);
+	},
+
+	'real life 1': function(test)
+	{
+		test.expect(3);
+		
+		var html = fs.readFileSync(sampleDocument4.url, 'utf-8');
+		
+		ContentGrabber.readable(
+			html,
+			function(err, title, readableHTML) {
+				if (err) {
+					test.ifError(err);
+					test.done();
+				}
+				else {
+					//console.log(readableHTML);
+					
+					test.equal(title, sampleDocument4.title);
+					test.notEqual(readableHTML.search(sampleDocument4.first_line), -1);
+					test.notEqual(readableHTML.search(sampleDocument4.last_line), -1);
+					test.done();
+				}
+			}
+		);
 	}
 });
 
@@ -147,7 +179,7 @@ exports['snippets'] = nodeunit.testCase(
 				else {
 					var snippet = ContentGrabber.snip(readableHTML);
 
-					console.log(snippet);
+					//console.log(snippet);
 					test.equal(snippet.length, 201);
 					test.done();
 				}
@@ -171,7 +203,7 @@ exports['snippets'] = nodeunit.testCase(
 				else {
 					var snippet = ContentGrabber.snip(readableHTML);
 					
-					console.log(snippet);
+					//console.log(snippet);
 					test.equal(snippet.length, 782);
 					test.done();
 				}
@@ -195,7 +227,7 @@ exports['snippets'] = nodeunit.testCase(
 				else {
 					var snippet = ContentGrabber.snip(readableHTML);
 					
-					console.log(snippet);
+					//console.log(snippet);
 					test.equal(snippet.length, 757);
 					test.done();
 				}
