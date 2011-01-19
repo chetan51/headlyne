@@ -18,6 +18,11 @@ var Connect = require('connect'),
     Ni      = require('ni');
     dbg     = require('./libraries/Debugger.js');
 
+var resque = require('coffee-resque').connect({
+	host: "localhost",
+	port: 6379
+});
+
 /**
  * Constants
  **/
@@ -150,6 +155,9 @@ Ni.boot(function initializeDatabase() {
 			);
 			*/
 			
+			// Connect workers
+			var worker = resque.worker('ContentGrabber', Ni.library('ContentGrabber').worker);
+	
 			var app = Connect.createServer(
 				Quip(),               
 				Connect.bodyDecoder(),

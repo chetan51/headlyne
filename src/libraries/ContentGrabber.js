@@ -5,6 +5,11 @@ var Readability = require('readability');
 var Ni          = require('ni');
 var dbg         = require('./Debugger.js');
 
+var resque = require('coffee-resque').connect({
+	host: "localhost",
+	port: 6379
+});
+
 /**
  * ContentGrabber: given a URL, fetch *only* the text
  * content from that page.
@@ -25,6 +30,9 @@ var ContentGrabber = function()
 	{
 		dbg.called();
 		
+		resque.enqueue('ContentGrabber', 'readable', html);
+		
+		/*
 		Readability.parse(
 			html,
 			"",
@@ -39,6 +47,7 @@ var ContentGrabber = function()
 				}
 			}
 		);
+		*/
 	};
 	
 	/**
@@ -156,6 +165,30 @@ var ContentGrabber = function()
 		// finish processing DOM
 		var dom_temp = jsdom.jsdom(snip_text);
 		return dom_temp.innerHTML;
+	}
+	
+	this.worker = new function()
+	{
+		var self = this;
+		
+		this.readable = function readable(html) {
+			dbg.called();
+			
+			Readability.parse(
+				html,
+				"",
+				function returnResult(result) {
+					dbg.called();
+			
+					if (result.err) {
+						//callback(result.err);
+					}
+					else {
+						//callback(null, result.title, result.content);
+					}
+				}
+			);
+		}
 	}
 };
 
