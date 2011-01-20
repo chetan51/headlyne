@@ -30,7 +30,7 @@ var ContentGrabber = function()
 	{
 		dbg.called();
 		
-		resque.enqueue('ContentGrabber', 'readable', html);
+		resque.enqueue('ContentGrabber', 'readable', [html]);
 		
 		/*
 		Readability.parse(

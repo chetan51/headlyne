@@ -157,6 +157,7 @@ Ni.boot(function initializeDatabase() {
 			
 			// Connect workers
 			var worker = resque.worker('ContentGrabber', Ni.library('ContentGrabber').worker);
+			worker.start();
 	
 			var app = Connect.createServer(
 				Quip(),               
