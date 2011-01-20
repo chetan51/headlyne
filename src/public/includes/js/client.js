@@ -11,8 +11,8 @@ var NUM_FEED_ITEMS  = 5,
  */
 $(document).ready(function() {
 	// Set up event listeners
-	$("#collapse-expand > #collapse-control > #collapse-button").click(expandOrCollapseClicked);
-	$("#collapse-expand > #expand-control > #expand-button").click(expandOrCollapseClicked);
+	$("#collapse-expand > #collapse-control > #collapse-button").click(collapseClicked);
+	$("#collapse-expand > #expand-control > #expand-button").click(expandClicked);
 	
 	$("#edit-page > #default-control > #edit-button").click(editClicked);
 	$("#edit-page > #editing-control > #done-button").click(doneClicked);
@@ -218,9 +218,19 @@ function notificationsClicked(e) {
 	$(this).slideUp("fast");
 }
 
-function expandOrCollapseClicked(e) {
-	$(".feed > .body > .item > .body").slideToggle("fast");
+function collapseClicked(e) {
+	$(".feed > .body > .item > .body").slideUp("fast");
 	
+	expandOrCollapseClicked(e);
+}
+
+function expandClicked(e) {
+	$(".feed > .body > .item > .body").slideDown("fast");
+	
+	expandOrCollapseClicked(e);
+}
+
+function expandOrCollapseClicked(e) {
 	$("#collapse-expand > #expand-control").toggle();
 	$("#collapse-expand > #collapse-control").toggle();
 }
