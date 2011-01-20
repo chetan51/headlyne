@@ -70,6 +70,7 @@ function addFeedListeners(feeds) {
 	
 	var feeditem_title = feeditem_div.find("> .header > .title");
 	
+	/*
 	feeditem_title.addClass("modalInput");
 	feeditem_title.attr('rel', "#reader");
 	feeditem_title.overlay({  // reader overlay
@@ -81,6 +82,7 @@ function addFeedListeners(feeds) {
 		},
 		closeOnClick: true
 	});
+	*/
 	feeditem_title.click(feedItemTitleClicked);
 	
 	feeds.children(".header").hover(feedHeaderHoverIn, feedHeaderHoverOut);
@@ -523,7 +525,9 @@ function fullArticleClicked(e) {
 
 function feedItemTitleClicked(e) {
 	var feeditem_div = $(this).parents(".item");
+	feeditem_div.children(".body").slideToggle("fast");
 	
+	/*
 	var reader_title_div = $("#reader > .content > .title");
 	var reader_body_div = $("#reader > .content > .body");
 	var feeditem_title = feeditem_div.find(".header > .title").text();
@@ -538,6 +542,7 @@ function feedItemTitleClicked(e) {
 			reader_body_div.html(data.page);
 		}
 	});
+	*/
 }
 
 function feedItemBodyLinkClicked(e) {
