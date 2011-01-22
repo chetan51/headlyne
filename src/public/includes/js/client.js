@@ -475,8 +475,8 @@ function feedURLKeyup(e) {
 		var feed_url = inputValue(source_div.find("> .url-control > .url-input"));
 		
 		var page = this_column.parents(".page");
-		var same_feeds = page.find("> .column > .content > .feed > .source > .url-control > .url-input[value='" + feed_url + "']");
-		if (same_feeds.size() > 1) {
+		var same_feeds = page.find("> .column > .content > .feed > .header > .settings > .url:contains('" + feed_url + "')");
+		if (same_feeds.size() > 0) {
 			var preview_div = feed_div.children(".preview");
 			preview_div.html("That feed already exists on this page.");
 			preview_div.slideDown("fast");
