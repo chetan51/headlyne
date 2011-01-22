@@ -478,6 +478,7 @@ function feedURLKeyup(e) {
 	else {
 		equallyWidenColumns();
 		
+		preview_div.html("Searching...");
 		google.feeds.findFeeds(feed_url, function(result) {
 			if (!result.error) {
 				var html = "";
