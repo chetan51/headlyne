@@ -1,5 +1,5 @@
-!!! 5
-html
+!!! strict
+html(xmlns="http://www.w3.org/1999/xhtml")
   head
     meta(http-equiv="Content-Type", content="text/html; charset=utf-8")
     title= title
@@ -12,11 +12,14 @@ html
     link(href=base_url+"includes/css/layout.less", rel="stylesheet/less", type="text/css")
     // LESS
     script(src=base_url+"includes/js/less-1.0.35.min.js", type="text/javascript")
-    // jQuery Library + UI Tools + plugins
-    script(src="http://cdn.jquerytools.org/1.2.5/full/jquery.tools.min.js", type="text/javascript")
-    // jQuery UI
-    link(href=base_url+"includes/css/ui-darkness/jquery-ui-1.8.7.custom.css", rel="stylesheet", type="text/css")
-    script(src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.min.js", type="text/javascript")
+    // Google Loader
+    script(src="http://www.google.com/jsapi?key=AIzaSyA5m1Nc8ws2BbmPRwKu5gFradvD_hgq6G0", type="text/javascript")
+    // Google Libraries
+    script
+      | google.load("jquery", "1.4.2")
+      | google.load("jqueryui", "1.7.2")
+      | google.load("feeds", "1");
+    // Headlyne Client
     script(src=base_url+"includes/js/client.js", type="text/javascript")
   body
     #header
