@@ -468,35 +468,66 @@ function feedHeaderHoverOut(e) {
 
 function feedURLKeyup(e) {
 	var feed_div = $(this).parents(".feed");
-	var this_column = feed_div.parents(".column");
-	
-	// Make sure feed doesn't already exist on page
 	var source_div = feed_div.children(".source");
 	var feed_url = inputValue(source_div.find("> .url-control > .url-input"));
-		
+	var preview_div = feed_div.children(".preview");
+	
 	if (e.keyCode == 13) {   // enter was pressed
-		var page = this_column.parents(".page");
-		var same_feeds = page.find("> .column > .content > .feed > .header > .settings > .url:contains('" + feed_url + "')");
-		if (same_feeds.size() > 0) {
-			var preview_div = feed_div.children(".preview");
-			preview_div.html("That feed already exists on this page.");
-			preview_div.slideDown("fast");
-		}
-		else {
-			// Save URL to settings div
-			var settings_div = feed_div.find("> .header > .settings");
-			settings_div.children(".url").html(feed_url);
-
-			updateFeedPreview(feed_div, function(err) {
-				if (!err) {
-					resizeColumnDynamically(this_column, 50);
-				}
-			});
-		}
+		feedURLEnterClicked(feed_div);
 	}
 	else {
+		equallyWidenColumns();
+		
 		google.feeds.findFeeds(feed_url, function(result) {
-			alert(result);
+			if (!result.error) {
+				var html = "";
+				for (var i = 0; i < result.entries.length; i++) {
+					var entry = result.entries[i];
+					html += '<p><a class="find-feed-result" href="' + entry.url + '">' + entry.title + '</a></p>';
+				}
+				preview_div.html(html);
+				
+				// Enable clicking on feed results
+				preview_div.find("> p > .find-feed-result").click(function(e) {
+					var result = $(this);
+					result.parents(".feed").find("> .source > .url-control > .url-input").val(result.attr("href"));
+					
+					feedURLEnterClicked(feed_div);
+					
+					e.stopPropagation();               
+					e.preventDefault();
+				});
+				
+				if (preview_div.is(":hidden")) {
+					preview_div.slideDown("fast");
+				}
+			}
+		});
+	}
+}
+
+function feedURLEnterClicked(feed_div) {
+	var source_div = feed_div.children(".source");
+	var feed_url = inputValue(source_div.find("> .url-control > .url-input"));
+	var this_column = feed_div.parents(".column");
+	var preview_div = feed_div.children(".preview");
+	var settings_div = feed_div.find("> .header > .settings");
+	
+	// Make sure feed doesn't already exist on page
+	var page = this_column.parents(".page");
+	var same_feeds = page.find("> .column > .content > .feed > .header > .settings > .url:contains('" + feed_url + "')");
+	if (same_feeds.size() > 0) {
+		preview_div.html("That feed already exists on this page.");
+		preview_div.slideDown("fast");
+	}
+	else {
+		// Save URL to settings div
+		settings_div.children(".url").html(feed_url);
+
+		updateFeedPreview(feed_div, function(err) {
+			if (!err) {
+				resizeColumnDynamically(this_column, 50);
+			}
 		});
 	}
 }
