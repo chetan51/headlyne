@@ -9,6 +9,7 @@ var NUM_FEED_ITEMS  = 5,
 /*
  * Initialization
  */
+
 $(document).ready(function() {
 	// Set up event listeners
 	$("#collapse-expand > #collapse-control > #collapse-button").click(collapseClicked);
@@ -466,14 +467,14 @@ function feedHeaderHoverOut(e) {
 }
 
 function feedURLKeyup(e) {
+	var feed_div = $(this).parents(".feed");
+	var this_column = feed_div.parents(".column");
+	
+	// Make sure feed doesn't already exist on page
+	var source_div = feed_div.children(".source");
+	var feed_url = inputValue(source_div.find("> .url-control > .url-input"));
+		
 	if (e.keyCode == 13) {   // enter was pressed
-		var feed_div = $(this).parents(".feed");
-		var this_column = feed_div.parents(".column");
-		
-		// Make sure feed doesn't already exist on page
-		var source_div = feed_div.children(".source");
-		var feed_url = inputValue(source_div.find("> .url-control > .url-input"));
-		
 		var page = this_column.parents(".page");
 		var same_feeds = page.find("> .column > .content > .feed > .header > .settings > .url:contains('" + feed_url + "')");
 		if (same_feeds.size() > 0) {
@@ -492,6 +493,11 @@ function feedURLKeyup(e) {
 				}
 			});
 		}
+	}
+	else {
+		google.feeds.findFeeds(feed_url, function(result) {
+			alert(result);
+		});
 	}
 }
 
