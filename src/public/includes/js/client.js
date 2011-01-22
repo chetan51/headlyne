@@ -479,8 +479,15 @@ function feedURLKeyup(e) {
 		equallyWidenColumns();
 		
 		preview_div.html("Searching...");
+		if (preview_div.is(":hidden")) {
+			preview_div.slideDown("fast");
+		}
+				
 		google.feeds.findFeeds(feed_url, function(result) {
-			if (!result.error) {
+			if (result.error) {
+				preview_div.html("No results found.");
+			}
+			else {
 				var html = "";
 				for (var i = 0; i < result.entries.length; i++) {
 					var entry = result.entries[i];
@@ -498,10 +505,6 @@ function feedURLKeyup(e) {
 					e.stopPropagation();               
 					e.preventDefault();
 				});
-				
-				if (preview_div.is(":hidden")) {
-					preview_div.slideDown("fast");
-				}
 			}
 		});
 	}
