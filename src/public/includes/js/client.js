@@ -533,7 +533,7 @@ function feedURLEnterClicked(feed_div) {
 
 		updateFeedPreview(feed_div, function(err) {
 			if (!err) {
-				resizeColumnDynamically(this_column, 50);
+				resizeColumnDynamically(this_column, 65);
 			}
 		});
 	}

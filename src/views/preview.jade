@@ -14,11 +14,11 @@
     option 9
     option 10
 .display
-  div
-    p Select a title and snippet:
   - var item = items[0]
   .titles
     form
+      .label
+        p Select title:
       .item
         .control
           input.input(type="radio", name="titles", value="item")
@@ -34,6 +34,8 @@
               h2= item.webpage.title
   .bodies
     form
+      .label
+        p Select snippet:
       .item
         .control
           input.input(type="radio", name="bodies", value="item")

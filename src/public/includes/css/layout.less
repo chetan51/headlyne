@@ -244,9 +244,15 @@
 			
 			> .titles, > .bodies {
 				> form {
+					> .label {
+						display: inline-block !important;
+						width: 20%;
+						vertical-align: middle;
+					}
+					
 					> .item, > .webpage {
 						display: inline-block !important;
-						width: 50%;
+						width: 40%;
 						vertical-align: top;
 						
 						> .control, > .title, > .body {
@@ -263,6 +269,12 @@
 						}
 					}
 				}
+			}
+			
+			> .titles {
+				border-bottom: 1px dotted;
+				margin-top: 5px;
+				margin-bottom: 5px;
 			}
 		}
 	}
