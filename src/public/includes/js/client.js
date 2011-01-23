@@ -330,7 +330,7 @@ function feedEditClicked(e) {
 	
 	updateFeedPreview(feed_div, function(err) {
 		if (!err) {
-			resizeColumnDynamically(this_column, 50);
+			resizeColumnDynamically(this_column, 65);
 		}
 	});
 }
