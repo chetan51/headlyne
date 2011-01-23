@@ -521,10 +521,11 @@ function feedURLEnterClicked(feed_div) {
 	var this_column = feed_div.parents(".column");
 	var preview_div = feed_div.children(".preview");
 	var settings_div = feed_div.find("> .header > .settings");
+	var url_div = settings_div.children(".url");
 	
 	// Make sure feed doesn't already exist on page
 	var page = this_column.parents(".page");
-	var same_feeds = page.find("> .column > .content > .feed > .header > .settings > .url:contains('" + feed_url + "')");
+	var same_feeds = page.find("> .column > .content > .feed > .header > .settings > .url:contains('" + feed_url + "')").not(url_div);
 	if (same_feeds.size() > 0) {
 		preview_div.html("That feed already exists on this page.");
 		preview_div.slideDown("fast");
