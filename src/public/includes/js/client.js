@@ -476,40 +476,42 @@ function feedURLKeyup(e) {
 		feedURLEnterClicked(feed_div);
 	}
 	else {
-		equallyWidenColumns();
-		
-		preview_div.html("Searching...");
-		if (preview_div.is(":hidden")) {
-			preview_div.slideDown("fast");
-		}
-		
-		preview_div.data('current_search', feed_url);
-		google.feeds.findFeeds(feed_url, function(result) {
-			if (result.error) {
-				preview_div.html("No results found.");
+		if (preview_div.data('current_search') != feed_url) {
+			equallyWidenColumns();
+			
+			preview_div.html("Searching...");
+			if (preview_div.is(":hidden")) {
+				preview_div.slideDown("fast");
 			}
-			else {
-				if (preview_div.data('current_search') == result.query) {
-					var html = "";
-					for (var i = 0; i < result.entries.length; i++) {
-						var entry = result.entries[i];
-						html += '<p><a class="find-feed-result" href="' + entry.url + '">' + entry.title + '</a></p>';
-					}
-					preview_div.html(html);
-					
-					// Enable clicking on feed results
-					preview_div.find("> p > .find-feed-result").click(function(e) {
-						var result = $(this);
-						result.parents(".feed").find("> .source > .url-control > .url-input").val(result.attr("href"));
-						
-						feedURLEnterClicked(feed_div);
-						
-						e.stopPropagation();               
-						e.preventDefault();
-					});
+			
+			preview_div.data('current_search', feed_url);
+			google.feeds.findFeeds(feed_url, function(result) {
+				if (result.error) {
+					preview_div.html("No results found.");
 				}
-			}
-		});
+				else {
+					if (preview_div.data('current_search') == result.query) {
+						var html = "";
+						for (var i = 0; i < result.entries.length; i++) {
+							var entry = result.entries[i];
+							html += '<p><a class="find-feed-result" href="' + entry.url + '">' + entry.title + '</a></p>';
+						}
+						preview_div.html(html);
+						
+						// Enable clicking on feed results
+						preview_div.find("> p > .find-feed-result").click(function(e) {
+							var result = $(this);
+							result.parents(".feed").find("> .source > .url-control > .url-input").val(result.attr("href"));
+							
+							feedURLEnterClicked(feed_div);
+							
+							e.stopPropagation();               
+							e.preventDefault();
+						});
+					}
+				}
+			});
+		}
 	}
 }
 
