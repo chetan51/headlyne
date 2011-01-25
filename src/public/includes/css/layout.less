@@ -11,7 +11,12 @@
 #navbar {
 	padding-left: 5px;
 	padding-right: 5px;
-	border-bottom: 1px dotted;
+	background-color: #333;
+	color: #eee;
+	
+	a {
+		color: #eee;
+	}
 	
 	#expand-control {
 		display: none;
@@ -52,7 +57,6 @@
 }
 
 #content {
-	
 	> .login, > .signup, > .request-invite {
 		text-align: center;
 		width: 100%;
@@ -215,7 +219,7 @@
 			
 			> .url-input {
 				width: 98%;
-				font-size: 14px;
+				font-size: 16px;
 			}
 		}
 	}
@@ -240,9 +244,15 @@
 			
 			> .titles, > .bodies {
 				> form {
+					> .label {
+						display: inline-block !important;
+						width: 20%;
+						vertical-align: middle;
+					}
+					
 					> .item, > .webpage {
 						display: inline-block !important;
-						width: 50%;
+						width: 40%;
 						vertical-align: top;
 						
 						> .control, > .title, > .body {
@@ -259,6 +269,12 @@
 						}
 					}
 				}
+			}
+			
+			> .titles {
+				border-bottom: 1px dotted;
+				margin-top: 5px;
+				margin-bottom: 5px;
 			}
 		}
 	}

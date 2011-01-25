@@ -9,10 +9,11 @@ var NUM_FEED_ITEMS  = 5,
 /*
  * Initialization
  */
+
 $(document).ready(function() {
 	// Set up event listeners
-	$("#collapse-expand > #collapse-control > #collapse-button").click(expandOrCollapseClicked);
-	$("#collapse-expand > #expand-control > #expand-button").click(expandOrCollapseClicked);
+	$("#collapse-expand > #collapse-control > #collapse-button").click(collapseClicked);
+	$("#collapse-expand > #expand-control > #expand-button").click(expandClicked);
 	
 	$("#edit-page > #default-control > #edit-button").click(editClicked);
 	$("#edit-page > #editing-control > #done-button").click(doneClicked);
@@ -70,6 +71,7 @@ function addFeedListeners(feeds) {
 	
 	var feeditem_title = feeditem_div.find("> .header > .title");
 	
+	/*
 	feeditem_title.addClass("modalInput");
 	feeditem_title.attr('rel', "#reader");
 	feeditem_title.overlay({  // reader overlay
@@ -81,6 +83,7 @@ function addFeedListeners(feeds) {
 		},
 		closeOnClick: true
 	});
+	*/
 	feeditem_title.click(feedItemTitleClicked);
 	
 	feeds.children(".header").hover(feedHeaderHoverIn, feedHeaderHoverOut);
@@ -218,9 +221,19 @@ function notificationsClicked(e) {
 	$(this).slideUp("fast");
 }
 
-function expandOrCollapseClicked(e) {
-	$(".feed > .body > .item > .body").slideToggle("fast");
+function collapseClicked(e) {
+	$(".feed > .body > .item > .body").slideUp("fast");
 	
+	expandOrCollapseClicked(e);
+}
+
+function expandClicked(e) {
+	$(".feed > .body > .item > .body").slideDown("fast");
+	
+	expandOrCollapseClicked(e);
+}
+
+function expandOrCollapseClicked(e) {
 	$("#collapse-expand > #expand-control").toggle();
 	$("#collapse-expand > #collapse-control").toggle();
 }
@@ -317,7 +330,7 @@ function feedEditClicked(e) {
 	
 	updateFeedPreview(feed_div, function(err) {
 		if (!err) {
-			resizeColumnDynamically(this_column, 50);
+			resizeColumnDynamically(this_column, 65);
 		}
 	});
 }
@@ -454,32 +467,78 @@ function feedHeaderHoverOut(e) {
 }
 
 function feedURLKeyup(e) {
+	var feed_div = $(this).parents(".feed");
+	var source_div = feed_div.children(".source");
+	var feed_url = inputValue(source_div.find("> .url-control > .url-input"));
+	var preview_div = feed_div.children(".preview");
+	
 	if (e.keyCode == 13) {   // enter was pressed
-		var feed_div = $(this).parents(".feed");
-		var this_column = feed_div.parents(".column");
-		
-		// Make sure feed doesn't already exist on page
-		var source_div = feed_div.children(".source");
-		var feed_url = inputValue(source_div.find("> .url-control > .url-input"));
-		
-		var page = this_column.parents(".page");
-		var same_feeds = page.find("> .column > .content > .feed > .source > .url-control > .url-input[value='" + feed_url + "']");
-		if (same_feeds.size() > 1) {
-			var preview_div = feed_div.children(".preview");
-			preview_div.html("That feed already exists on this page.");
-			preview_div.slideDown("fast");
-		}
-		else {
-			// Save URL to settings div
-			var settings_div = feed_div.find("> .header > .settings");
-			settings_div.children(".url").html(feed_url);
-
-			updateFeedPreview(feed_div, function(err) {
-				if (!err) {
-					resizeColumnDynamically(this_column, 50);
+		feedURLEnterClicked(feed_div);
+	}
+	else {
+		if (preview_div.data('current_search') != feed_url) {
+			equallyWidenColumns();
+			
+			preview_div.html("Searching...");
+			if (preview_div.is(":hidden")) {
+				preview_div.slideDown("fast");
+			}
+			
+			preview_div.data('current_search', feed_url);
+			google.feeds.findFeeds(feed_url, function(result) {
+				if (result.error) {
+					preview_div.html("No results found.");
+				}
+				else {
+					if (preview_div.data('current_search') == result.query) {
+						var html = "";
+						for (var i = 0; i < result.entries.length; i++) {
+							var entry = result.entries[i];
+							html += '<p><a class="find-feed-result" href="' + entry.url + '">' + entry.title + '</a></p>';
+						}
+						preview_div.html(html);
+						
+						// Enable clicking on feed results
+						preview_div.find("> p > .find-feed-result").click(function(e) {
+							var result = $(this);
+							result.parents(".feed").find("> .source > .url-control > .url-input").val(result.attr("href"));
+							
+							feedURLEnterClicked(feed_div);
+							
+							e.stopPropagation();               
+							e.preventDefault();
+						});
+					}
 				}
 			});
 		}
+	}
+}
+
+function feedURLEnterClicked(feed_div) {
+	var source_div = feed_div.children(".source");
+	var feed_url = inputValue(source_div.find("> .url-control > .url-input"));
+	var this_column = feed_div.parents(".column");
+	var preview_div = feed_div.children(".preview");
+	var settings_div = feed_div.find("> .header > .settings");
+	var url_div = settings_div.children(".url");
+	
+	// Make sure feed doesn't already exist on page
+	var page = this_column.parents(".page");
+	var same_feeds = page.find("> .column > .content > .feed > .header > .settings > .url:contains('" + feed_url + "')").not(url_div);
+	if (same_feeds.size() > 0) {
+		preview_div.html("That feed already exists on this page.");
+		preview_div.slideDown("fast");
+	}
+	else {
+		// Save URL to settings div
+		settings_div.children(".url").html(feed_url);
+
+		updateFeedPreview(feed_div, function(err) {
+			if (!err) {
+				resizeColumnDynamically(this_column, 65);
+			}
+		});
 	}
 }
 
@@ -513,7 +572,9 @@ function fullArticleClicked(e) {
 
 function feedItemTitleClicked(e) {
 	var feeditem_div = $(this).parents(".item");
+	feeditem_div.children(".body").slideToggle("fast");
 	
+	/*
 	var reader_title_div = $("#reader > .content > .title");
 	var reader_body_div = $("#reader > .content > .body");
 	var feeditem_title = feeditem_div.find(".header > .title").text();
@@ -528,6 +589,7 @@ function feedItemTitleClicked(e) {
 			reader_body_div.html(data.page);
 		}
 	});
+	*/
 }
 
 function feedItemBodyLinkClicked(e) {
