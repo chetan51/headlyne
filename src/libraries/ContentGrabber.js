@@ -30,7 +30,12 @@ var ContentGrabber = function()
 	{
 		dbg.called();
 		
-		resque.enqueue('ContentGrabber', 'readable', [html]);
+		resque.enqueue(
+			'ContentGrabber',
+			'readable',
+			[html],
+			callback
+		);
 		
 		/*
 		Readability.parse(
@@ -171,7 +176,7 @@ var ContentGrabber = function()
 	{
 		var self = this;
 		
-		this.readable = function readable(html) {
+		this.readable = function readable(html, callback) {
 			dbg.called();
 			
 			Readability.parse(
@@ -181,10 +186,10 @@ var ContentGrabber = function()
 					dbg.called();
 			
 					if (result.err) {
-						//callback(result.err);
+						callback(result.err);
 					}
 					else {
-						//callback(null, result.title, result.content);
+						callback(null, result.title, result.content);
 					}
 				}
 			);
