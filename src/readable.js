@@ -1,13 +1,5 @@
 /**
- *  This is an example of how to use Ni to organize your code into a nice,
- *  neat MVC project.
- *
- *  You can place your controllers, models, views, libraries and helpers into
- *  respective folders /controllers, /models, /views, /libraries, /helpers, and
- *  they will be loaded when you call Ni.boot into the Ni object.
- *
- *  Take a look at the example controllers and views for how to structure that
- *  code to make it integrate with Ni.
+ * 
  **/
 
 /**
@@ -17,6 +9,11 @@ var Connect = require('connect'),
     Quip    = require('quip'),
     Ni      = require('ni');
     dbg     = require('./libraries/Debugger.js');
+
+var resque = require('coffee-resque').connect({
+	host: "localhost",
+	port: 6379
+});
 
 /**
  * Constants
@@ -149,20 +146,10 @@ Ni.boot(function initializeDatabase() {
 				}
 			);
 			*/
-
-			var app = Connect.createServer(
-				Quip(),               
-				Connect.bodyDecoder(),
-				Ni.router,
-				Connect.staticProvider({
-					root: __dirname + '/public',
-					cache: true
-				})
-			);
-
-			app.listen(3000);
 			
-			dbg.log("Headlyne master server started on port 3000");
+			// Connect workers
+			var worker = resque.worker('ContentGrabber', Ni.library('ContentGrabber').worker);
+			worker.start();
 		}
 	);
 });
