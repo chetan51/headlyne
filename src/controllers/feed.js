@@ -190,7 +190,7 @@ var FeedController = function()
 				{
 					dbg.called();
 		
-					if(err) {
+					if(err || !webpage) {
 						res_obj.error = err;
 						res.json(res_obj);
 						return;
