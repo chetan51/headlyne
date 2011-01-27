@@ -219,6 +219,63 @@ var Feed = function()
 	}
 
 	/**
+	 * Fetches all feeds, ordered by time_accessed, older than given date.
+	 * Feeds it fetches are updated to current time.
+	 **/
+	 this.fetchOutdated = function(date, callback)
+	 {
+		 dbg.called();
+
+		 DatabaseDriver.getCollection(
+		 	'feeds',
+			function getFeeds(err, collection)
+			{
+				if (err) {
+					callback(err);
+				} else {
+					collection.find(
+						{'time_accessed' : {'$lt': date}},
+						{'sort'          : 'time_accessed'},
+						function checkGotFeeds(err, feeds_cursor)
+						{
+							dbg.called();
+		
+							if(err != null)
+								callback(new Error('Database Search Error'));
+							else {
+								if(typeof(feeds_cursor) == 'undefined') {
+									callback(new Error('No outdated feeds'));
+								} else {
+									feeds_cursor.toArray( function arrayFeeds(err, feeds)
+									{
+										dbg.called();
+
+										callback(null, feeds);
+
+										feeds.forEach(function eachFeed(feed, i) {
+											feed.time_accessed = new Date().getTime();
+											
+											// Update time accessed
+											DatabaseDriver.update(
+												collection,
+												{'url_hash':feed.url_hash},
+												feed,
+												function accessTimeUpdated(err, new_feed) {
+													dbg.called();
+												}
+											);
+										});
+									});
+								}
+							}
+						}
+					);
+				}
+			}
+		);
+	 }
+
+	/**
 	 * Pushes a feed item into a feed.
 	 *
 	 * 	Arguments:    feed_url, Feed({url, title, description, time_published})
