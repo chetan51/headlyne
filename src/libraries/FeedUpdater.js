@@ -21,6 +21,9 @@ var FeedUpdater = function() {
 	
 	this.start = function()
 	{
+		dbg.called();
+		console.log('checking...');
+
 		var deadline = new Date().getTime();
 		deadline = deadline - Ni.config('feed_expiry_length') + Ni.config('feed_time_to_expiry');
 
@@ -30,19 +33,28 @@ var FeedUpdater = function() {
 			{
 				dbg.called();
 				if(err && err.message != 'No feeds to process'){
-					setTimeout(30*1000, self.start);
+					setTimeout(self.start, 30*1000);
 					return;
 				} else if(err) {
 					dbg.log(err);
-					setTimeout(30*1000, self.start);
+					setTimeout(self.start, 30*1000);
 					return;
 				}
 
 				for(i=0; i<feed_array.length; i++)
 				{
-					self.enqueue(feed_array[i].url);
+					self.enqueue(
+						feed_array[i].url,
+						function unlock()
+						{
+							Ni.model('Feed').unlock(
+								feed_array[i].url,
+								function(){}
+							);
+						}
+					);
 				}
-				setTimeout(30*1000, self.start);
+				setTimeout(self.start, 30*1000);
 
 			}
 		);
@@ -67,7 +79,7 @@ var FeedUpdater = function() {
 		this.updateFeed = function updateFeed(feed_url, callback) {
 			dbg.called();
 
-			Ni.library('FeedServer').getFeedTeaser(
+			Ni.library('FeedServer').updateFeedForURL(
 				feed_url,
 				Ni.config('max_num_feed_items'),
 				function () {},

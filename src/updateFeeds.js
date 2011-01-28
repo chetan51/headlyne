@@ -37,6 +37,7 @@ Ni.config('base_url',            "/");
 Ni.config('http_timeout',        30000);
 Ni.config('feedparse_timeout',   5000);
 Ni.config('feed_expiry_length',  30 * 60 * 1000);
+Ni.config('feed_time_to_expiry', 29 * 60 * 1000);
 Ni.config('max_redirect',        5);
 Ni.config('session_lifetime',    14 * 24 * 60 * 60 * 1000);
 Ni.config('snippet_image_limit', 2);
@@ -150,6 +151,7 @@ Ni.boot(function initializeDatabase() {
 			// Connect workers
 			var worker = resque.worker('FeedUpdater', Ni.library('FeedUpdater').worker);
 			worker.start();
+			Ni.library('FeedUpdater').start();
 		}
 	);
 });

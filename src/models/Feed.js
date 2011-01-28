@@ -240,8 +240,10 @@ var Feed = function()
 					callback(err);
 				} else {
 					collection.find(
-						{'time_accessed' : {'$lt': date}},
-						{'sort'          : 'time_accessed'},
+						{ 'time_accessed' : {'$lt': date},
+						  'update_lock'   : false
+						},
+						{'sort'          : 'time_modified'},
 						function checkGotFeeds(err, feeds_cursor)
 						{
 							dbg.called();
@@ -259,20 +261,65 @@ var Feed = function()
 										callback(null, feeds);
 
 										feeds.forEach(function eachFeed(feed, i) {
-											feed.time_accessed = new Date().getTime();
+											feed.update_lock = true;
 											
 											// Update time accessed
 											DatabaseDriver.update(
 												collection,
 												{'url_hash':feed.url_hash},
 												feed,
-												function accessTimeUpdated(err, new_feed) {
+												function lockedForUpdates(err, new_feed) {
 													dbg.called();
 												}
 											);
 										});
 									});
 								}
+							}
+						}
+					);
+				}
+			}
+		);
+	 }
+
+	 this.unlock = function unlock(feed_url, callback)
+	 {
+		dbg.called();
+		
+		DatabaseDriver.getCollection(
+			'feeds',
+			function updateFeed(err, collection)
+			{
+				dbg.called();
+				
+				if (err) {
+					callback(err);
+				} else {
+					var hasher = crypto.createHash('sha256');
+					hasher.update(feed_url);
+					var url_hash = hasher.digest('hex');
+
+					collection.find(
+						{ 'url_hash' : url_hash },
+						function checkGotFeed(err, feed)
+						{
+							dbg.called();
+		
+							if(err != null)
+								callback(new Error('Database Search Error'));
+							else {
+								feed.update_lock = false;
+
+								DatabaseDriver.update(
+									collection,
+									{'url_hash': feed.url_hash},
+									feed,
+									function unlocked(err, new_feed) {
+										dbg.called();
+										callback(null);
+									}
+								);
 							}
 						}
 					);
