@@ -24,7 +24,7 @@ var FeedUpdater = function() {
 		var deadline = new Date().getTime();
 		deadline = deadline - Ni.config('feed_expiry_length') + Ni.config('feed_time_to_expiry');
 
-		Ni.model('Feeds').fetchOutdated(
+		Ni.model('Feed').fetchOutdated(
 			deadline,
 			function updateList(err, feed_array)
 			{
@@ -54,7 +54,7 @@ var FeedUpdater = function() {
 		
 		resque.enqueue(
 			'FeedUpdater',
-			'enqueue',
+			'updateFeed',
 			[feed_url],
 			callback
 		);
@@ -62,7 +62,18 @@ var FeedUpdater = function() {
 	
 	this.worker = new function()
 	{
+		var self = this;
+		
+		this.updateFeed = function updateFeed(feed_url, callback) {
+			dbg.called();
 
+			Ni.library('FeedServer').getFeedTeaser(
+				feed_url,
+				Ni.config('max_num_feed_items'),
+				function () {},
+				callback
+			);
+		}
 	}
 };
 
