@@ -18,49 +18,54 @@ var resque = require('coffee-resque').connect({
 var FeedUpdater = function() {
 	
 	var self = this;
+	var interval_id;
 	
-	this.start = function()
+	this.start = function start()
+	{
+		interval_id = setInterval(self.poll, Ni.config('feed_update_polls'));
+		self.poll();
+	}
+	this.poll = function poll()
 	{
 		dbg.called();
-		console.log('checking...');
 
 		var deadline = new Date().getTime();
 		deadline = deadline - Ni.config('feed_expiry_length') + Ni.config('feed_time_to_expiry');
 
 		Ni.model('Feed').fetchOutdated(
 			deadline,
-			function updateList(err, feed_array)
+			function fetchedOutdatedFeeds(err, feed_array)
 			{
 				dbg.called();
-				if(err && err.message != 'No feeds to process'){
-					setTimeout(self.start, Ni.config('feed_update_polls'));
+				if(err && err.message == 'No outdated feeds'){
+					console.log('No feeds to process');
 					return;
 				} else if(err) {
-					dbg.log(err);
-					setTimeout(self.start, Ni.config('feed_update_polls'));
+					console.log(err);
 					return;
 				}
 
 				for(i=0; i<feed_array.length; i++)
 				{
+					var url = feed_array[i].url;
 					self.enqueue(
-						feed_array[i].url,
-						function unlock()
+						url,
+						function unlockFeed(err, teaser)
 						{
+							dbg.called();
 							Ni.model('Feed').unlock(
-								feed_array[i].url,
+								url,
 								function(){}
 							);
 						}
 					);
 				}
-				setTimeout(self.start, Ni.config('feed_update_polls'));
-
+				delete feed_array;
 			}
 		);
 	}
 	
-	this.enqueue = function(feed_url, callback)
+	this.enqueue = function enqueue(feed_url, callback)
 	{
 		dbg.called();
 		
@@ -82,7 +87,7 @@ var FeedUpdater = function() {
 			Ni.library('FeedServer').updateFeedForURL(
 				feed_url,
 				Ni.config('max_num_feed_items'),
-				function () {},
+				function() {},
 				callback
 			);
 		}

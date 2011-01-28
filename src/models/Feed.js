@@ -228,7 +228,7 @@ var Feed = function()
 	 * 	Returns:
 	 * 		array of feeds.
 	 **/
-	 this.fetchOutdated = function(date, callback)
+	 this.fetchOutdated = function fetchOutdated(date, callback)
 	 {
 		 dbg.called();
 
@@ -240,10 +240,10 @@ var Feed = function()
 					callback(err);
 				} else {
 					collection.find(
-						{ 'time_accessed' : {'$lt': date},
+						{ 'time_modified' : {'$lt': date},
 						  'update_lock'   : false
 						},
-						{'sort'          : 'time_modified'},
+						{'sort'          : 'time_accessed'},
 						function checkGotFeeds(err, feeds_cursor)
 						{
 							dbg.called();
@@ -254,7 +254,7 @@ var Feed = function()
 								if(typeof(feeds_cursor) == 'undefined') {
 									callback(new Error('No outdated feeds'));
 								} else {
-									feeds_cursor.toArray( function arrayFeeds(err, feeds)
+									feeds_cursor.toArray( function convertFeedstoArray(err, feeds)
 									{
 										dbg.called();
 
@@ -268,7 +268,7 @@ var Feed = function()
 												collection,
 												{'url_hash':feed.url_hash},
 												feed,
-												function lockedForUpdates(err, new_feed) {
+												function setUpdateLock(err, new_feed) {
 													dbg.called();
 												}
 											);

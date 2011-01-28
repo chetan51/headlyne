@@ -1,5 +1,13 @@
 /**
- * 
+ *  This is an example of how to use Ni to organize your code into a nice,
+ *  neat MVC project.
+ *
+ *  You can place your controllers, models, views, libraries and helpers into
+ *  respective folders /controllers, /models, /views, /libraries, /helpers, and
+ *  they will be loaded when you call Ni.boot into the Ni object.
+ *
+ *  Take a look at the example controllers and views for how to structure that
+ *  code to make it integrate with Ni.
  **/
 
 /**
@@ -9,11 +17,6 @@ var Connect = require('connect'),
     Quip    = require('quip'),
     Ni      = require('ni');
     dbg     = require('./libraries/Debugger.js');
-
-var resque = require('coffee-resque').connect({
-	host: "localhost",
-	port: 6379
-});
 
 /**
  * Constants
@@ -37,10 +40,10 @@ Ni.config('base_url',            "/");
 Ni.config('http_timeout',        30000);
 Ni.config('feedparse_timeout',   5000);
 Ni.config('feed_expiry_length',  30 * 60 * 1000);
-Ni.config('feed_time_to_expiry', 29.6 * 60 * 1000);
+Ni.config('feed_time_to_expiry', 29 * 60 * 1000);
 Ni.config('feed_update_polls',        30 * 1000);
-Ni.config('max_redirect',        5);
 Ni.config('max_num_feed_items',  10);
+Ni.config('max_redirect',        5);
 Ni.config('session_lifetime',    14 * 24 * 60 * 60 * 1000);
 Ni.config('snippet_image_limit', 2);
 Ni.config('snippet_text_limit',  300);
@@ -79,7 +82,19 @@ Ni.config('default_feeds',
 			}
 		]
 	]
-);		
+);
+
+function refresh()
+{
+dbg.called();
+
+	Ni.library('FeedServer').updateFeedForURL(
+		Ni.config('default_feeds')[0][0].url,
+		Ni.config('max_num_feed_items'),
+		function() {},
+		function() {}
+	);
+}
 
 Ni.boot(function initializeDatabase() {
 	dbg.called();
@@ -149,11 +164,22 @@ Ni.boot(function initializeDatabase() {
 				}
 			);
 			*/
+
+			var app = Connect.createServer(
+				Quip(),               
+				Connect.bodyDecoder(),
+				Ni.router,
+				Connect.staticProvider({
+					root: __dirname + '/public',
+					cache: true
+				})
+			);
+
+			app.listen(3000);
 			
-			// Connect workers
-			var worker = resque.worker('FeedUpdater', Ni.library('FeedUpdater').worker);
-			worker.start();
-			Ni.library('FeedUpdater').start();
+			dbg.log("Headlyne master server started on port 3000");
+			
+			setInterval(refresh, 10000);
 		}
 	);
 });
