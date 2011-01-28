@@ -221,6 +221,12 @@ var Feed = function()
 	/**
 	 * Fetches all feeds, ordered by time_accessed, older than given date.
 	 * Feeds it fetches are updated to current time.
+	 *
+	 * 	Arguments:
+	 * 		date
+	 *
+	 * 	Returns:
+	 * 		array of feeds.
 	 **/
 	 this.fetchOutdated = function(date, callback)
 	 {

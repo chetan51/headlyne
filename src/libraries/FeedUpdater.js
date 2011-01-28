@@ -21,19 +21,29 @@ var FeedUpdater = function() {
 	
 	this.start = function()
 	{
-		Ni.model('Feeds').getAll(
+		var deadline = new Date().getTime();
+		deadline = deadline - Ni.config('feed_expiry_length') + Ni.config('feed_time_to_expiry');
+
+		Ni.model('Feeds').fetchOutdated(
+			deadline,
+			function updateList(err, feed_array)
 			{
-				//older than Ni.config seconds.
-				//var start = new Date(), end = new Date();
-				//db.feeds.find({updated_on: {$gte: start, $lt: end}});
-				// function should set 'updated_on' on all retrieved feeds.
-			},
-			function updateList(feed_array)
-			{
-				dbg.cal`led();
-				//for each one,
-					self.enqueue(feed_url);
+				dbg.called();
+				if(err && err.message != 'No feeds to process'){
+					setTimeout(30*1000, self.start);
+					return;
+				} else if(err) {
+					dbg.log(err);
+					setTimeout(30*1000, self.start);
+					return;
+				}
+
+				for(i=0; i<feed_array.length; i++)
+				{
+					self.enqueue(feed_array[i].url);
+				}
 				setTimeout(30*1000, self.start);
+
 			}
 		);
 	}
