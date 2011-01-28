@@ -309,6 +309,7 @@ var Feed = function()
 							if(err != null)
 								callback(new Error('Database Search Error'));
 							else {
+								feed.time_modified = new Date().getTime();
 								feed.update_lock = false;
 
 								DatabaseDriver.update(
