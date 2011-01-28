@@ -33,11 +33,11 @@ var FeedUpdater = function() {
 			{
 				dbg.called();
 				if(err && err.message != 'No feeds to process'){
-					setTimeout(self.start, 30*1000);
+					setTimeout(self.start, Ni.config('feed_update_polls'));
 					return;
 				} else if(err) {
 					dbg.log(err);
-					setTimeout(self.start, 30*1000);
+					setTimeout(self.start, Ni.config('feed_update_polls'));
 					return;
 				}
 
@@ -54,7 +54,7 @@ var FeedUpdater = function() {
 						}
 					);
 				}
-				setTimeout(self.start, 30*1000);
+				setTimeout(self.start, Ni.config('feed_update_polls'));
 
 			}
 		);
