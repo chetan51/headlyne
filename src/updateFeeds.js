@@ -40,6 +40,7 @@ Ni.config('feed_expiry_length',  30 * 60 * 1000);
 Ni.config('feed_time_to_expiry', 29 * 60 * 1000);
 Ni.config('feed_update_polls',        30 * 1000);
 Ni.config('max_redirect',        5);
+Ni.config('max_num_feed_items',  10);
 Ni.config('session_lifetime',    14 * 24 * 60 * 60 * 1000);
 Ni.config('snippet_image_limit', 2);
 Ni.config('snippet_text_limit',  300);
