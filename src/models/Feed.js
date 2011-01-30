@@ -367,13 +367,13 @@ var Feed = function()
 									collection,
 									{'url_hash': feed.url_hash},
 									feed,
-									function returnResult(err, feed)
+									function returnResult(err, updated_feed)
 									{
 										if (err) {
 											callback(err);
 										}
 										else {
-											callback(null, feed);
+											callback(null, updated_feed);
 										}
 									}
 								);

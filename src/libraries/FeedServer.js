@@ -217,7 +217,8 @@ var FeedServer = function()
 									function returnParsedFeed(err, teaser)
 									{
 										dbg.called();
-		
+										
+										console.log(process.memoryUsage().heapUsed);
 										callback(err, teaser);
 									}
 								);
@@ -268,19 +269,23 @@ var FeedServer = function()
 			)
 			{
 				dbg.called();
+				console.log(process.memoryUsage().heapUsed);
 		
-				var teaser = self.generateFeedTeaser(
+				//var teaser = ;
+				self.generateFeedTeaser(
 					saved_feed,
 					saved_feed.items,
 					num_feed_items,
 					saved_webpages
 				);
 				
+				console.log(process.memoryUsage().heapUsed);
 				if (err) {
 					callback(err);
-				}
-				else {
-					callback(null, teaser);
+					this();
+				} else {
+					callback(null, saved_feed);
+					this();
 				}
 			}
 		);
@@ -313,9 +318,8 @@ var FeedServer = function()
 					FeedModel.pushFeedItems(
 						url,
 						items,
-						function returnFeedWithFeedItemsUpdated(err, feed) {
+						function returnFeedWithFeedItemsUpdated(err, updated_feed) {
 							dbg.called();
-		
 							if (err) {
 								callback(err);
 							}
@@ -326,7 +330,7 @@ var FeedServer = function()
 								 * with it later when we need to
 								 * separate feed and feed items.
 								 */
-								callback(null, feed);
+								callback(null, updated_feed);
 							}
 						}
 					);
@@ -413,7 +417,7 @@ var FeedServer = function()
 				}
 			}
 		);
-				
+		
 	}
 	
 	/**
@@ -481,7 +485,7 @@ var FeedServer = function()
 			}
 		}
 		
-		return feed;
+		//return feed;
 	}
 };
 

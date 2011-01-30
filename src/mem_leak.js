@@ -87,12 +87,17 @@ Ni.config('default_feeds',
 function refresh()
 {
 dbg.called();
-
+	console.log(process.memoryUsage().heapUsed);
 	Ni.library('FeedServer').updateFeedForURL(
 		Ni.config('default_feeds')[0][0].url,
 		Ni.config('max_num_feed_items'),
-		function() {},
-		function() {}
+		function(err, teaser)
+		{
+			console.log(process.memoryUsage().heapUsed);
+			//for(i in teaser.items)
+			teaser=null;//.items[i].webpages;
+			console.log(process.memoryUsage().heapUsed);
+		}
 	);
 }
 
