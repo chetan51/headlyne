@@ -18,6 +18,7 @@
 *	[jade](https://github.com/visionmedia/jade) v0.6.0
 *	[cookie-node](https://github.com/jed/cookie-node) v0.1.4
 *	[chetan51/coffee-resque](https://github.com/chetan51/coffee-resque) v0.0.1
+*	[quip](https://github.com/caolan/quip) v0.0.1
 
 ## Infrastructure:
 *	app.js                : The driver for the webserver.
