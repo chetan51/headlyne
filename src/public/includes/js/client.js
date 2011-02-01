@@ -486,11 +486,11 @@ function feedURLKeyup(e) {
 			
 			preview_div.data('current_search', feed_url);
 			google.feeds.findFeeds(feed_url, function(result) {
-				if (result.error) {
-					preview_div.html("No results found.");
-				}
-				else {
-					if (preview_div.data('current_search') == result.query) {
+				if (preview_div.data('current_search') == result.query) {
+					if (result.error) {
+						preview_div.html("No results found.");
+					}
+					else {
 						var html = "";
 						for (var i = 0; i < result.entries.length; i++) {
 							var entry = result.entries[i];
