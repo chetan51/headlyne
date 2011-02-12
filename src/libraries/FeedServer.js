@@ -52,8 +52,10 @@ var FeedServer = function()
 				dbg.called();
 		
 				callback(err, webpage);
+				dbg.exited();
 			}
 		);
+		dbg.exited();
 	}
 	
 	/**
@@ -95,6 +97,7 @@ var FeedServer = function()
 								dbg.called();
 		
 								callback_updated(err, feed_teaser);
+								dbg.exited();
 							}
 						);
 					}
@@ -113,6 +116,7 @@ var FeedServer = function()
 		
 								callback_immediately(err, feed_teaser);
 								callback_updated(err, feed_teaser);
+								dbg.exited();
 							}
 						);
 					}
@@ -125,12 +129,15 @@ var FeedServer = function()
 								dbg.called();
 		
 								callback_updated(err, feed_teaser);
+								dbg.exited();
 							}
 						);
 					}
 				}
+				dbg.exited();
 			}
 		);
+		dbg.exited();
 	}
 	
 	/**
@@ -170,11 +177,14 @@ var FeedServer = function()
 								);
 								callback(null, teaser);
 							}
+							dbg.exited();
 						}
 					);
 				}
+				dbg.exited();
 			}
 		);
+		dbg.exited();
 	}
 	
 	/**
@@ -219,14 +229,18 @@ var FeedServer = function()
 										dbg.called();
 		
 										callback(err, teaser);
+										dbg.exited();
 									}
 								);
 							}
+							dbg.exited();
 						}
 					);
 				}
+				dbg.exited();
 			}
 		);
+		dbg.exited();
 	}
 	
 	/**
@@ -260,6 +274,7 @@ var FeedServer = function()
 					num_feed_items,
 					step.parallel()
 				);
+				dbg.exited();
 			},
 			function generateAndReturnTeaser(
 				err,
@@ -282,8 +297,10 @@ var FeedServer = function()
 				else {
 					callback(null, teaser);
 				}
+				dbg.exited();
 			}
 		);
+		dbg.exited();
 	}
 	
 	/**
@@ -328,11 +345,14 @@ var FeedServer = function()
 								 */
 								callback(null, feed);
 							}
+							dbg.exited();
 						}
 					);
 				}
+				dbg.exited();
 			}
 		);
+		dbg.exited();
 	}
 	
 	/**
@@ -364,8 +384,10 @@ var FeedServer = function()
 							);
 							total_items++;
 						}
+						dbg.exited();
 					}
 				);
+				dbg.exited();
 			},
 			function returnSavedWebpages(err, saved_webpages) {
 				dbg.called();
@@ -376,8 +398,10 @@ var FeedServer = function()
 				else {
 					callback(null, saved_webpages);
 				}
+				dbg.exited();
 			}
 		);
+		dbg.exited();
 	}
 	
 	/**
@@ -411,8 +435,10 @@ var FeedServer = function()
 				else {
 					callback(null, webpage);
 				}
+				dbg.exited();
 			}
 		);
+		dbg.exited();
 				
 	}
 	
@@ -449,14 +475,17 @@ var FeedServer = function()
 							else {
 								callback(null, null);
 							}
+							dbg.exited();
 						}
 					);
 				}
 				else {
 					callback(null, null);
 				}
+				dbg.exited();
 			}
 		);
+		dbg.exited();
 	}
 	
 	/**
@@ -481,6 +510,7 @@ var FeedServer = function()
 			}
 		}
 		
+		dbg.exited();
 		return feed;
 	}
 };
