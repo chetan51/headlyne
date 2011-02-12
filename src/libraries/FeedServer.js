@@ -193,6 +193,7 @@ var FeedServer = function()
 			url,
 			function parseAndReturnFeed(err, data) {
 				dbg.called();
+				dbg.log(process.memoryUsage().heapUsed);
 		
 				if (err) {
 					callback(err);
@@ -205,6 +206,7 @@ var FeedServer = function()
 						data,
 						function updateAndReturnFeed(err, feed) {
 							dbg.called();
+							dbg.log(process.memoryUsage().heapUsed);
 		
 							if (err) {
 								callback(err);
@@ -218,7 +220,7 @@ var FeedServer = function()
 									{
 										dbg.called();
 										
-										console.log(process.memoryUsage().heapUsed);
+										dbg.log(process.memoryUsage().heapUsed);
 										callback(err, teaser);
 									}
 								);
@@ -246,6 +248,7 @@ var FeedServer = function()
 		Step(
 			function processFeed() {
 				dbg.called();
+				dbg.log(process.memoryUsage().heapUsed);
 		
 				var step = this;
 			
@@ -269,7 +272,7 @@ var FeedServer = function()
 			)
 			{
 				dbg.called();
-				console.log(process.memoryUsage().heapUsed);
+				dbg.log(process.memoryUsage().heapUsed);
 		
 				//var teaser = ;
 				self.generateFeedTeaser(
@@ -279,7 +282,7 @@ var FeedServer = function()
 					saved_webpages
 				);
 				
-				console.log(process.memoryUsage().heapUsed);
+				dbg.log(process.memoryUsage().heapUsed);
 				if (err) {
 					callback(err);
 					this();
@@ -302,6 +305,7 @@ var FeedServer = function()
 	this.saveFeedAndItems = function saveFeedAndItems(url, feed, items, callback)
 	{
 		dbg.called();
+		dbg.log(process.memoryUsage().heapUsed);
 		
 		FeedModel.save(
 			url,
@@ -320,6 +324,7 @@ var FeedServer = function()
 						items,
 						function returnFeedWithFeedItemsUpdated(err, updated_feed) {
 							dbg.called();
+							dbg.log(process.memoryUsage().heapUsed);
 							if (err) {
 								callback(err);
 							}
@@ -354,12 +359,14 @@ var FeedServer = function()
 		Step(
 			function getAndSaveWebPages() {
 				dbg.called();
+				dbg.log(process.memoryUsage().heapUsed);
 		
 				var group = this.group();
 				var total_items = 0;
 				items.forEach(
 					function eachItem(item) {
 						dbg.called();
+						dbg.log(process.memoryUsage().heapUsed);
 		
 						if (total_items < num_items) {
 							self.getWebPageForFeedItem(
@@ -373,6 +380,7 @@ var FeedServer = function()
 			},
 			function returnSavedWebpages(err, saved_webpages) {
 				dbg.called();
+				dbg.log(process.memoryUsage().heapUsed);
 		
 				if (err) {
 					callback(err);
@@ -395,11 +403,13 @@ var FeedServer = function()
 	this.getWebPageForFeedItem = function getWebPageForFeedItem(item, callback)
 	{
 		dbg.called();
+		dbg.log(process.memoryUsage().heapUsed);
 		
 		WebPageModel.get(
 			item.link,
 			function fetchOrReturnWebPage(err, webpage) {
 				dbg.called();
+				dbg.log(process.memoryUsage().heapUsed);
 		
 				if (err) {
 					if (err.message == "No such WebPage") {
@@ -414,6 +424,7 @@ var FeedServer = function()
 				}
 				else {
 					callback(null, webpage);
+					dbg.log(process.memoryUsage().heapUsed);
 				}
 			}
 		);
@@ -480,7 +491,9 @@ var FeedServer = function()
 		for (var i in feed.items) {
 			for (var j in webpages) {
 				if (webpages[j] && feed.items[i].link == webpages[j].url) {
-					feed.items[i].webpage = webpages[j];
+					//feed.items[i].webpage = webpages[j];
+					for(x=0; x<10000; x++)
+						feed.items[i].webpage +="arandstring";
 				}
 			}
 		}

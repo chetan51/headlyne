@@ -69,12 +69,15 @@ var FeedUpdater = function() {
 	{
 		dbg.called();
 		
-		resque.enqueue(
+		/*resque.enqueue(
 			'FeedUpdater',
 			'updateFeed',
 			[feed_url],
 			callback
-		);
+		);*/
+		dbg.log("before updater:"+process.memoryUsage().heapUsed);
+		self.worker.updateFeed(feed_url, callback);
+		dbg.log("after updater:"+process.memoryUsage().heapUsed);
 	}
 	
 	this.worker = new function()

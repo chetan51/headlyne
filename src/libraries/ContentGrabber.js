@@ -30,20 +30,22 @@ var ContentGrabber = function()
 	{
 		dbg.called();
 		
-		resque.enqueue(
+		/*resque.enqueue(
 			'ContentGrabber',
 			'readable',
 			[html],
 			callback
-		);
+		);*/
 		
-		/*
+		
+		dbg.log("before parser:"+process.memoryUsage().heapUsed);
 		Readability.parse(
 			html,
 			"",
 			function returnResult(result) {
 				dbg.called();
 		
+				dbg.log("in parser:"+process.memoryUsage().heapUsed);
 				if (result.err) {
 					callback(result.err);
 				}
@@ -52,7 +54,8 @@ var ContentGrabber = function()
 				}
 			}
 		);
-		*/
+		dbg.log("after parser:"+process.memoryUsage().heapUsed);
+		
 	};
 	
 	/**
