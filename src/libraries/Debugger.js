@@ -29,6 +29,12 @@ var Debugger = function()
 			console.log("[" + arguments.callee.caller.name + "]" + " ERROR: " + err.message);
 		}
 	}
+
+	this.exited = function exited() {
+		if (Ni.config('log_enabled')) {
+			console.log("Exited: " + arguments.callee.caller.name);
+		}
+	}
 };
 
 module.exports = new Debugger();
