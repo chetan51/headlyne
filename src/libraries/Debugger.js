@@ -12,28 +12,33 @@ var Debugger = function()
 	
 	this.called = function called() {
 		if (Ni.config('log_enabled')) {
-			console.log("Called: " + arguments.callee.caller.name);
+			self.console_log("Called: " + arguments.callee.caller.name);
 		}
 	}
 	
 	this.log = function log(message)
 	{
 		if (Ni.config('log_enabled')) {
-			console.log("[" + arguments.callee.caller.name + "]" + " " + message);
+			self.console_log("[" + arguments.callee.caller.name + "]" + " " + message);
 		}
 	}
 	
 	this.error = function log(err)
 	{
 		if (Ni.config('log_enabled')) {
-			console.log("[" + arguments.callee.caller.name + "]" + " ERROR: " + err.message);
+			self.console_log("[" + arguments.callee.caller.name + "]" + " ERROR: " + err.message);
 		}
 	}
 
 	this.exit = function exit() {
 		if (Ni.config('log_enabled')) {
-			console.log("Exited: " + arguments.callee.caller.name);
+			self.console_log("Exited: " + arguments.callee.caller.name);
 		}
+	}
+	
+	this.console_log = function console_log(message) {
+		var time = new Date().getTime();
+		console.log("(" + time + ") " + message);
 	}
 };
 
