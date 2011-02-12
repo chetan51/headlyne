@@ -22,16 +22,13 @@ var Downloader = function() {
 	this.fetch = function fetch(url, callback)
 	{
 		dbg.called();
-		/*
+		
 		resque.enqueue(
 			'Downloader',
 			'fetch',
 			[url],
 			callback
-		);*/
-		dbg.log("before downloader:"+process.memoryUsage().heapUsed);
-		this.worker.fetch(url, callback);
-		dbg.log("after downloader:"+process.memoryUsage().heapUsed);
+		);
 	}
 	
 	this.worker = new function()
