@@ -339,7 +339,7 @@ var Feed = function()
 	this.pushFeedItems = function pushFeedItems(feed_url, feed_items, callback)
 	{
 		dbg.called();
-		
+		var local_items = feed_items;
 		self.get(
 			feed_url,
 			function pushItems(err, feed)
@@ -351,8 +351,10 @@ var Feed = function()
 				}
 				else {
 					// The feed exists.
-					feed.items = feed.items.concat(feed_items);
+					feed.items = feed.items.concat(local_items);
 					feed.time_modified = new Date().getTime();
+					var t_feed = JSON.stringify(feed);
+					var t2_feed = JSON.parse(t_feed);
 					DatabaseDriver.getCollection(
 						'feeds',
 						function updateDatabase(err, collection)
@@ -366,7 +368,7 @@ var Feed = function()
 								DatabaseDriver.update(
 									collection,
 									{'url_hash': feed.url_hash},
-									feed,
+									t2_feed,
 									function returnResult(err, updated_feed)
 									{
 										if (err) {

@@ -30,7 +30,7 @@ var Debugger = function()
 		}
 	}
 
-	this.exit = function exit() {
+	this.exited = function exited() {
 		if (Ni.config('log_enabled')) {
 			self.console_log("Exited: " + arguments.callee.caller.name);
 		}
