@@ -167,7 +167,7 @@ Ni.boot(function initializeDatabase() {
 			
 			dbg.log("Headlyne master server started on port 3000");
 			
-			Ni.library('FeedUpdater').start();
+			//Ni.library('FeedUpdater').start();
 		}
 	);
 });
