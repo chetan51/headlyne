@@ -38,7 +38,7 @@ var UserAuth = function()
 			'id'        : id,
 			'data'      : data,
 			'persistent': true,
-			'expires'  : parseInt(expiry_date.getTime())
+			'expires'   : expiry_date.getTime()+''
 		};
 		return session_cookie;
 	}
@@ -120,7 +120,7 @@ var UserAuth = function()
 					// generate a new session
 					var new_sesh={};
 					new_sesh.cookie = self.session_gen( username, Ni.config('session_lifetime') );
-					new_sesh.created = new Date().getTime();
+					new_sesh.created = new Date().getTime()+'';
 					
 					User.setSession(
 						username,

@@ -55,8 +55,8 @@ var Feed = function()
 						 'title': title,
 						 'author': author,
 						 'description': description,
-						 'time_modified': new Date().getTime(),
-						 'time_accessed': new Date().getTime(),
+						 'time_modified': new Date().getTime()+'',
+						 'time_accessed': new Date().getTime()+'',
 						 'items': []
 						},
 						function returnUpdatedFeed(err, feed)
@@ -120,7 +120,7 @@ var Feed = function()
 								if(typeof(feed) == 'undefined') {
 									callback(new Error('No such feed'));
 								} else {
-									feed.time_accessed = new Date().getTime();
+									feed.time_accessed = new Date().getTime()+'';
 									
 									callback(null, feed);
 									
@@ -263,7 +263,7 @@ var Feed = function()
 										feeds.forEach(function eachFeed(feed, i) {
 											feed.update_lock = true;
 											
-											// Update time accessed
+											// Set it with a lock
 											DatabaseDriver.update(
 												collection,
 												{'url_hash':feed.url_hash},
@@ -309,7 +309,7 @@ var Feed = function()
 							if(err != null)
 								callback(new Error('Database Search Error'));
 							else {
-								feed.time_modified = new Date().getTime();
+								feed.time_modified = new Date().getTime()+'';
 								feed.update_lock = false;
 
 								DatabaseDriver.update(
@@ -352,7 +352,7 @@ var Feed = function()
 				else {
 					// The feed exists.
 					feed.items = feed.items.concat(local_items);
-					feed.time_modified = new Date().getTime();
+					feed.time_modified = new Date().getTime()+'';
 					var t_feed = JSON.stringify(feed);
 					var t2_feed = JSON.parse(t_feed);
 					DatabaseDriver.getCollection(
@@ -415,7 +415,7 @@ var Feed = function()
 				else {
 					// The feed exists.
 					var feed_items = feed.items.splice(0, pop_size);
-					feed.time_modified = new Date().getTime();
+					feed.time_modified = new Date().getTime()+'';
 					
 					DatabaseDriver.getCollection(
 						'feeds',

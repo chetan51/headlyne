@@ -29,11 +29,11 @@ var FeedUpdater = function() {
 	{
 		dbg.called();
 
-		var deadline = new Date().getTime();
+		var deadline = parseInt(new Date().getTime());
 		deadline = deadline - Ni.config('feed_expiry_length') + Ni.config('feed_time_to_expiry');
 
 		Ni.model('Feed').fetchOutdated(
-			deadline,
+			deadline+'',
 			function fetchedOutdatedFeeds(err, feed_array)
 			{
 				dbg.called();

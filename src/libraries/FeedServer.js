@@ -511,7 +511,7 @@ var FeedServer = function()
 			}
 		}
 		dbg.exited();
-		//return feed;
+		return feed;
 	}
 };
 
