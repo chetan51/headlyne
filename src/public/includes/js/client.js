@@ -723,13 +723,20 @@ function updateAccountForFeedMap() {
 			var num_feed_items = settings_div.children(".num-feed-items").text();
 			var title_selection = settings_div.children(".title-selection").text();
 			var body_selection = settings_div.children(".body-selection").text();
+			var item_state = [];
+
+			$(this).find("> .body > .item > .body").each(function(feed_item) {
+				var collapsed = $(this).css("display") == "none";
+				item_state.push({"collapsed":collapsed});
+			});
 			
 			if (feed_url && feed_url != "") {
 				var feed = {
 					url             : feed_url,
 					num_feed_items  : num_feed_items,
 					title_selection : title_selection,
-					body_selection  : body_selection
+					body_selection  : body_selection,
+					item_state      : item_state
 				};
 				feed_map[column_index][feed_index] = feed;
 			}

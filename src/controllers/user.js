@@ -42,10 +42,11 @@ var UserController = function()
 				res.json(res_obj);
 				return;
 		}
-		else if ( req.body.feed_url == null ||
-		          req.body.num_feed_items == null ||
+		else if ( req.body.feed_url          == null ||
+		          req.body.num_feed_items    == null ||
 			    req.body.title_selection == null ||
-			    req.body.body_selection == null ) {
+			    req.body.body_selection  == null ||
+			    req.body.item_state      == null ) {
 				res_obj.error = new Error('POST variables not found.');
 				res.json(res_obj);
 				return;
@@ -63,6 +64,17 @@ var UserController = function()
 						res.json(res_obj);
 						return;
 					}
+
+					//convert item_state from string to json.
+
+					var item_state = [];
+					try{
+						item_state = JSON.parse(req.body.item_state);
+					} catch(e) {
+						res_obj.error = new Error('Item state invalid');
+						res.json(res_obj);
+						return;
+					}
 					
 					// do the actual editing!
 					Ni.model('User').editFeed(
@@ -71,6 +83,7 @@ var UserController = function()
 						req.body.num_feed_items,
 						req.body.title_selection,
 						req.body.body_selection,
+						item_state,
 						function sendResponse(err, feeds)
 						{
 							dbg.called();
@@ -127,10 +140,18 @@ var UserController = function()
 						res.json(res_obj);
 						return;
 					}
+					var feed_array = [];
+					try{
+						feed_array = JSON.parse(req.body.feed_array);
+					} catch(e) {
+						res_obj.error = new Error('Feed Array invalid');
+						res.json(res_obj);
+						return;
+					}
 					
 					Ni.model('User').updateFeeds(
 						cookie.data.user,
-						JSON.parse(req.body.feed_array),
+						feed_array,
 						function sendResponse(err, feeds)
 						{
 							dbg.called();
