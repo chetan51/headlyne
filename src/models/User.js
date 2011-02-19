@@ -333,6 +333,7 @@ var User = function()
 	                          num_feed_items,
 	                          title_selection,
 	                          body_selection,
+	                          item_state,
 	                          callback)
 	{
 		self.get(
@@ -376,17 +377,25 @@ var User = function()
 						0,
 						{
 							'url'            : feed_url,
-							'num_feed_items' : 0,
+							'num_feed_items' : num_feed_items,
 							'title_selection': null,
-							'body_selection' : null
+							'body_selection' : null,
+							'item_state'     : []
 						}
 					);
+
+					// initialize the item state for each item.
+					for( i=0; i<num_feed_items; i++ )
+					{
+						user.feeds[col][row].item_state.push({'collapsed': false});
+					}
 				}
 
 				// now, update its content.
-				user.feeds[col][row].num_feed_items  =  num_feed_items;
+				user.feeds[col][row].num_feed_items  = num_feed_items;
 				user.feeds[col][row].title_selection = title_selection;
-				user.feeds[col][row].body_selection  =  body_selection;
+				user.feeds[col][row].body_selection  = body_selection;
+				user.feeds[col][row].item_state      = item_state;
 
 				// update the user.
 				self.userUpdateHelper(
@@ -464,7 +473,8 @@ var User = function()
 						'url'            : feed_url,
 						'num_feed_items' : 0,
 						'title_selection': null,
-						'body_selection' : null
+						'body_selection' : null,
+						'item_state'     : []
 					}
 				);
 				
