@@ -22,6 +22,7 @@ $(document).ready(function() {
 	$("#add-column-button").click(addColumnClicked);
 	
 	$("#notifications").click(notificationsClicked);
+	addNotificationsListeners();
 	
 	addColumnListeners($(".column"));
 	addFeedListeners($(".feed"));
@@ -33,6 +34,13 @@ $(document).ready(function() {
 /*
  * Functions that refresh elements on the page
  */
+
+function addNotificationsListeners() {
+	// Make all links open in new window and block event bubbling
+	var links = $("#notifications").find("a");
+	links.unbind("click");
+	links.click(notificationsLinkClicked);
+}
 
 function addColumnListeners(columns) {
 	// Set up sortable
@@ -593,6 +601,14 @@ function feedItemTitleClicked(e) {
 }
 
 function feedItemBodyLinkClicked(e) {
+	noPropagationLinkClicked(e);
+}
+
+function notificationsLinkClicked(e) {
+	noPropagationLinkClicked(e);
+}
+
+function noPropagationLinkClicked(e) {
 	window.open($(this).attr('href'));
 
 	e.stopPropagation();               
@@ -912,6 +928,8 @@ function notify(html) {
 			notifications_div.slideDown("fast");
 		}
 	}
+	
+	addNotificationsListeners();
 }
 
 function scrollTo(element) {
