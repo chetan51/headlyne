@@ -150,8 +150,17 @@ var HomeController = function()
 							for (key in feed_map[i][j])
 							{
 								teaser[key] = feed_map[i][j][key];
+								
+								if (key == 'item_state' && teaser.items) {
+									var item_state = feed_map[i][j][key];
+									for (k in teaser.items) {
+										if (item_state && item_state[k]) {
+											teaser.items[k].collapsed = item_state[k].collapsed;
+										}
+									}
+								}
 							}
-
+				
 							var teaser_html = Ni.library('Templater').getFeedTeaser(
 								{feed: teaser}
 							);
