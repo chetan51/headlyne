@@ -76,7 +76,7 @@ var Downloader = function() {
 				
 				switch(response.statusCode) {
 					case 200:
-						callback(null, data);
+						callback(null, data, url);
 						break;
 					case 301:
 					case 302:

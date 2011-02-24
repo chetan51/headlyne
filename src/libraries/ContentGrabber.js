@@ -4,6 +4,7 @@ var path        = require('path');
 var Readability = require('readability');
 var Ni          = require('ni');
 var dbg         = require('./Debugger.js');
+var modurl      = require('url');
 
 var resque = require('coffee-resque').connect({
 	host: "localhost",
@@ -26,14 +27,14 @@ var ContentGrabber = function()
 		return jsdom.jsdom(html);
 	};
 
-	this.readable = function readable(html, callback)
+	this.readable = function readable(url, html, callback)
 	{
 		dbg.called();
 		
 		resque.enqueue(
 			'ContentGrabber',
 			'readable',
-			[html],
+			[url, html],
 			callback
 		);
 		
@@ -176,7 +177,7 @@ var ContentGrabber = function()
 	{
 		var self = this;
 		
-		this.readable = function readable(html, callback) {
+		this.readable = function readableWorker(url, html, callback) {
 			dbg.called();
 			
 			Readability.parse(
@@ -189,6 +190,21 @@ var ContentGrabber = function()
 						callback(result.err);
 					}
 					else {
+						if(result.content == null)
+							result.content = '';
+						
+						//re-make all relative links absolute.
+						var len = url.lastIndexOf("/") + 1;
+						var rel_url = url;
+						if(len > 6)
+							rel_url = url.substr(0, url.lastIndexOf("/")+1);
+						result.content = result.content.replace(/(<(a|img)[^>]+(href|src)=")(?!http)(?!\/)([^"]+)/g, '$1'+rel_url+'/'+'$4');
+
+						//re-make all relative-root links absolute.
+						var url_obj = modurl.parse(url);
+						var base_url = url_obj.protocol + "//" + url_obj.host;
+						result.content = result.content.replace(/(<(a|img)[^>]+(href|src)=")(?!http)(\/)([^"]+)/g, '$1'+base_url+'/'+'$5');
+
 						callback(null, result.title, result.content);
 					}
 				}

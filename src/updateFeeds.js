@@ -37,7 +37,7 @@ Ni.config('base_url',            "/");
 Ni.config('http_timeout',        30000);
 Ni.config('feedparse_timeout',   5000);
 Ni.config('feed_expiry_length',  30 * 60 * 1000);
-Ni.config('feed_time_to_expiry', 29.6 * 60 * 1000);
+Ni.config('feed_time_to_expiry',  5 * 60 * 1000);
 Ni.config('feed_update_polls',        30 * 1000);
 Ni.config('max_redirect',        5);
 Ni.config('max_num_feed_items',  10);
