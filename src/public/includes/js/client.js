@@ -601,16 +601,16 @@ function feedItemTitleClicked(e) {
 }
 
 function feedItemBodyLinkClicked(e) {
+	window.open($(this).attr('href'));
 	noPropagationLinkClicked(e);
 }
 
 function notificationsLinkClicked(e) {
+	window.location = $(this).attr('href');
 	noPropagationLinkClicked(e);
 }
 
 function noPropagationLinkClicked(e) {
-	window.open($(this).attr('href'));
-
 	e.stopPropagation();               
 	e.preventDefault();
 }
