@@ -201,7 +201,7 @@ var FeedServer = function()
 		
 		Downloader.fetch(
 			url,
-			function parseAndReturnFeed(err, data) {
+			function parseAndReturnFeed(err, data, real_url) {
 				dbg.called();
 		
 				if (err) {
@@ -456,11 +456,12 @@ var FeedServer = function()
 		
 		Downloader.fetch(
 			item.link,
-			function grabContentForWebPage(err, data) {
+			function grabContentForWebPage(err, data, real_url) {
 				dbg.called();
 		
 				if (!err && data) {
 					ContentGrabber.readable(
+						real_url,
 						data,
 						function saveWebPage(err, title, article) {
 							dbg.called();
