@@ -468,7 +468,7 @@ var FeedServer = function()
 		
 							if (!err && title && article) {
 								WebPageModel.save(
-									item.link,
+									real_url,
 									title,
 									article,
 									callback
