@@ -46,6 +46,7 @@ var FeedServer = function()
 		
 		var fake_item = {}; fake_item.link = webpage_url;
 		self.getWebPageForFeedItem(
+			true,
 			fake_item,
 			function returnWebPage(err, webpage)
 			{
@@ -379,6 +380,7 @@ var FeedServer = function()
 		
 						if (total_items < num_items) {
 							self.getWebPageForFeedItem(
+								(total_items != 0),
 								item,
 								group()
 							);
@@ -409,11 +411,14 @@ var FeedServer = function()
 	 *	Retrieves the web page associated with given feed item.
 	 *	Gets it from the database if it's there.
 	 *	
-	 *		Arguments: the feed item
-	 *		           callback function called with retrieved
-	 *		               web page when complete
+	 *	Arguments:
+	 *		fetch_immediately -- flag. if true, background 
+	 *		    download. If false, fetch and return.
+	 *		the feed item
+	 *		callback function called with retrieved
+	 *		    web page when complete
 	 **/
-	this.getWebPageForFeedItem = function getWebPageForFeedItem(item, callback)
+	this.getWebPageForFeedItem = function getWebPageForFeedItem(fetch_immediately, item, callback)
 	{
 		dbg.called();
 		dbg.log(process.memoryUsage().heapUsed);
@@ -425,10 +430,32 @@ var FeedServer = function()
 		
 				if (err) {
 					if (err.message == "No such WebPage") {
-						self.fetchWebPageForFeedItem(
-							item,
-							callback
-						);
+						// return a null page, fetch the item afterwards.
+						if( fetch_immediately ) {
+							callback(null, 
+								{
+									"url":item.link,
+									"title": item.title,
+									"snippet": "Loading Snippet...",
+									"body": "Loading Article..."
+								}
+							);
+							self.fetchWebPageForFeedItem(
+								item,
+								function updatedWebPage(err, webpage)
+								{
+									dbg.called();
+									// do nothing, for now.
+									dbg.exited();
+								}
+							);
+						} else {
+							// return after fetching.
+							self.fetchWebPageForFeedItem(
+								item,
+								callback
+							);
+						}
 					}
 					else {
 						callback(err);
@@ -465,10 +492,9 @@ var FeedServer = function()
 						data,
 						function saveWebPage(err, title, article) {
 							dbg.called();
-		
 							if (!err && title && article) {
 								WebPageModel.save(
-									real_url,
+									item.link,
 									title,
 									article,
 									callback
