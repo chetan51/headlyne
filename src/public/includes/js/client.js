@@ -25,10 +25,11 @@ $(document).ready(function() {
 	addNotificationsListeners();
 	
 	addColumnListeners($(".column"));
-	addFeedListeners($(".feed"));
 	refreshColumnDeleteOptions($(".column"));
-      enablePlaceholders();
-      initializeNotifications();
+	enablePlaceholders();
+	initializeNotifications();
+	initializeCollapseStates();
+	addFeedListeners($(".feed"));
 });
 
 /*
@@ -219,6 +220,18 @@ function initializeNotifications() {
 	if (body_div.text() && body_div.text() != "") {
 		notifications_div.slideDown("fast");
 	}
+}
+
+function initializeCollapseStates() {
+	console.log("in function");
+	$(".column > .content > .feed > .body > .item").each(function(it_index) {
+		var item = $(this);
+		item.find("> .header > .settings > .collapsed").each(function(collapsed) {
+			if($(this).html() == "true") {
+				item.children(".body").slideToggle("fast");
+			}
+		});
+	});
 }
 
 /*
